@@ -27,6 +27,7 @@ rtp:prepend(lazypath)
 require('lazy').setup {
   spec = {
     -- import/override with your plugins
+    -- { 'LazyVim/LazyVim', import = 'lazyvim.plugins' },
     { import = 'custom.plugins' },
   },
   defaults = {

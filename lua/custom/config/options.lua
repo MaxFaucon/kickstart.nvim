@@ -9,6 +9,8 @@ vim.o.smartcase = true -- Override ignorecase if search pattern has uppercase
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.o.scrolloff = 20
 
+vim.o.shiftwidth = 4 -- Number of spaces when using tab
+
 -- Make line numbers default
 vim.o.number = true
 vim.o.relativenumber = true
