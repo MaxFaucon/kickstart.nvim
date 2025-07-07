@@ -14,6 +14,12 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+-- Tabs keymaps
+-- vim.keymap.set('n', 'H', '<cmd>tabprevious<CR>', { desc = 'Go to previous tab' })
+-- vim.keymap.set('n', 'L', '<cmd>tabnext<CR>', { desc = 'Go to next tab' })
+-- vim.keymap.set('n', 'X', '<cmd>tabclose<CR>', { desc = 'Close current tab' })
+-- vim.keymap.set('n', 'T', '<cmd>tabnew<CR>', { desc = 'Open new tab' })
+
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -27,3 +33,9 @@ vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
 vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
 vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
 vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+
+-- Bufferline keymaps
+vim.keymap.set('n', '<leader>bl', '<cmd>BufferLinePick<CR>', { desc = 'Pick a buffer tab', silent = true })
+vim.keymap.set('n', 'L', '<cmd>BufferLineCycleNext<CR>', { desc = 'Cycle to next buffer', silent = true })
+vim.keymap.set('n', 'H', '<cmd>BufferLineCyclePrev<CR>', { desc = 'Cycle to previous buffer', silent = true })
+vim.keymap.set('n', '<leader>bc', '<cmd>bdelete<CR>', { desc = 'Close a buffer tab', silent = true })
