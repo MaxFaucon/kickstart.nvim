@@ -14,6 +14,8 @@ require 'custom.config.options'
 require 'custom.config.keymaps'
 -- Autocommands
 require 'custom.config.autocommands'
+-- Custom plugins
+require 'custom.config.floaterminal'
 
 -- [[ PLUGINS ]]
 -- Init

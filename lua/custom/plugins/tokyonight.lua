@@ -1,14 +1,15 @@
 return {
   {
-    -- 'folke/tokyonight.nvim',
-    -- lazy = false,
-    -- priority = 1000,
-    -- opts = {},
-    -- config = function()
-    --   vim.cmd.colorscheme 'tokyonight'
-    -- end,
-    -- integrations = {
-    --   neotree = true,
-    -- },
+    'folke/tokyonight.nvim',
+    enabled = false,
+    lazy = false,
+    priority = 1000,
+    opts = {},
+    config = function()
+      vim.cmd.colorscheme 'tokyonight'
+    end,
+    integrations = {
+      neotree = true,
+    },
   },
 }
