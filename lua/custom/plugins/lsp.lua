@@ -220,6 +220,21 @@ return {
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         -- ts_ls = {},
         --
+        intelephense = {
+          settings = {
+            intelephense = {
+              -- Tell it where to find all Laravel symbols
+              stubs = { 'laravel', 'eloquent', 'blade', 'tinker', 'php' },
+              environment = {
+                includePaths = { vim.loop.cwd() .. '_ide_helper.php', vim.loop.cwd() .. '_ide_helper_models.php' },
+              },
+              diagnostics = {
+                undefinedTypes = true, -- Facades & macros
+                undefinedFunctions = true,
+              },
+            },
+          },
+        },
 
         lua_ls = {
           -- cmd = { ... },
