@@ -13,6 +13,7 @@ return {
       'nvim-lua/plenary.nvim',
       { -- If encountering errors, see telescope-fzf-native README for installation instructions
         'nvim-telescope/telescope-fzf-native.nvim',
+        'camgraff/telescope-tmux.nvim',
 
         -- `build` is used to run some command when the plugin is installed/updated.
         -- This is only run then, not every time Neovim starts up.
@@ -90,6 +91,9 @@ return {
       vim.keymap.set('n', '<leader>s;', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader>si', builtin.lsp_document_symbols, { desc = '[S]earch Def[I]nition (lol)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+
+      -- Tmux
+      vim.keymap.set('n', '<leader>st', '<cmd>Telescope tmux windows<cr>', { desc = '[S]earch [T]mux Windows' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()

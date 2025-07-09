@@ -34,6 +34,18 @@ vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
 vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
 vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
+-- Insert mode key mapping
+vim.keymap.set('i', '<C-h>', '<C-o>h', { desc = 'Move left in insert mode' })
+vim.keymap.set('i', '<C-l>', '<C-o>l', { desc = 'Move right in insert mode' })
+vim.keymap.set('i', '<C-b>', '<C-o>b', { desc = 'Move to the previous word in insert mode' })
+vim.keymap.set('i', '<C-w>', '<C-o>w', { desc = 'Move to the next word in insert mode' })
+vim.keymap.set('i', '<C-j>', '<C-o>db', { desc = 'Move down in insert mode' })
+-- vim.keymap.set('i', '<C-k>', '<C-o>de', { desc = 'Move up in insert mode' }) -- Not working because mapped on show definition
+
+-- Copilot
+vim.g.copilot_no_tab_map = true
+vim.api.nvim_set_keymap('i', '<C-l>', 'copilot#Accept("<CR>")', { silent = true, expr = true, script = true })
+
 -- Bufferline keymaps
 vim.keymap.set('n', '<leader>bl', '<cmd>BufferLinePick<CR>', { desc = 'Pick a buffer tab', silent = true })
 vim.keymap.set('n', 'L', '<cmd>BufferLineCycleNext<CR>', { desc = 'Cycle to next buffer', silent = true })
