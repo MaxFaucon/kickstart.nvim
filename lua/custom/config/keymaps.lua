@@ -11,9 +11,6 @@ vim.keymap.set('v', '<space>x', ':lua<CR>')
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
--- Diagnostic keymaps
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
-
 -- Tabs keymaps
 -- vim.keymap.set('n', 'H', '<cmd>tabprevious<CR>', { desc = 'Go to previous tab' })
 -- vim.keymap.set('n', 'L', '<cmd>tabnext<CR>', { desc = 'Go to next tab' })
@@ -43,7 +40,7 @@ vim.keymap.set('i', '<C-j>', '<C-o>db', { desc = 'Move down in insert mode' })
 
 -- Copilot
 vim.g.copilot_no_tab_map = true
-vim.api.nvim_set_keymap('i', '<C-ù>', 'copilot#Accept("<CR>")', { silent = true, expr = true, script = true })
+vim.api.nvim_set_keymap('i', '<C-v>', 'copilot#Accept("<CR>")', { silent = true, expr = true, script = true })
 
 -- Bufferline keymaps
 vim.keymap.set('n', '<leader>bl', '<cmd>BufferLinePick<CR>', { desc = 'Pick a buffer tab', silent = true })
@@ -59,6 +56,13 @@ vim.keymap.set('n', '<leader>tt', '<cmd>ToggleTermToggleAll<CR>', { desc = 'Togg
 vim.keymap.set('n', '<leader>tf', '<cmd>ToggleTerm direction=float<CR>', { desc = 'Toggle floating terminal', silent = true })
 vim.keymap.set('n', '<leader>th', '<cmd>ToggleTerm direction=horizontal size=30<CR>', { desc = 'Toggle horizontal terminal', silent = true })
 vim.keymap.set('n', '<leader>tv', '<cmd>ToggleTerm direction=vertical size=100<CR>', { desc = 'Toggle horizontal terminal', silent = true })
+
+-- Quickfix
+vim.keymap.set('n', '<leader>qd', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<M-j>', '<cmd>cnext<CR>', { desc = 'Go to next diagnostic [Q]uickfix' })
+vim.keymap.set('n', '<M-k>', '<cmd>cprev<CR>', { desc = 'Go to previous diagnostic [Q]uickfix' })
+vim.keymap.set('n', '<leader>qo', '<cmd>copen<CR>', { desc = 'Open [Q]uickfix list' })
+vim.keymap.set('n', '<leader>qc', '<cmd>cclose<CR>', { desc = 'Close [Q]uickfix list' })
 
 -- Code rain
 vim.keymap.set('n', '<leader>fml', '<cmd>CellularAutomaton make_it_rain<CR>')
