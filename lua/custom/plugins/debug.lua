@@ -23,6 +23,15 @@ return {
 
     -- Add your own debuggers here
     'leoluz/nvim-dap-go',
+    {
+      {
+        'microsoft/vscode-js-debug',
+        -- After install, build it and rename the dist directory to out
+        build = 'npm install --legacy-peer-deps --no-save && npx gulp vsDebugServerBundle && rm -rf out && mv dist out',
+        version = '1.*',
+      },
+    },
+    'mxsdev/nvim-dap-vscode-js',
   },
   keys = {
     -- Basic debugging keymaps, feel free to change to your liking!
@@ -76,6 +85,13 @@ return {
       end,
       desc = 'Debug: See last session result.',
     },
+    {
+      '<leader>de',
+      function()
+        require('dapui').eval()
+      end,
+      desc = 'Debug: Eval expression',
+    },
   },
   config = function()
     local dap = require 'dap'
@@ -96,6 +112,7 @@ return {
         -- Update this to ensure that you have the debuggers for the langs you want
         'delve',
         'php-debug-adapter',
+        'js-debug-adapter',
       },
     }
 
@@ -145,6 +162,59 @@ return {
         detached = vim.fn.has 'win32' == 0,
       },
     }
+
+    -- JS/TS Debug Adapter Configuration
+    require('dap-vscode-js').setup {
+      -- node_path = "node", -- Path of node executable. Defaults to $NODE_PATH, and then "node"
+      -- debugger_path = "(runtimedir)/site/pack/packer/opt/vscode-js-debug", -- Path to vscode-js-debug installation.
+      debugger_path = vim.fn.stdpath 'data' .. '/lazy/vscode-js-debug',
+      -- debugger_cmd = { "js-debug-adapter" }, -- Command to use to launch the debug server. Takes precedence over `node_path` and `debugger_path`.
+      adapters = { 'node', 'chrome', 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost' }, -- which adapters to register in nvim-dap
+      -- log_file_path = "(stdpath cache)/dap_vscode_js.log" -- Path for file logging
+      -- log_file_level = false -- Logging level for output to file. Set to false to disable file logging.
+      -- log_console_level = vim.log.levels.ERROR -- Logging level for output to console. Set to false to disable console output.
+    }
+
+    for _, language in ipairs { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact' } do
+      require('dap').configurations[language] = {
+        {
+          name = 'Launch Chrome (localhost)',
+          type = 'pwa-chrome',
+          request = 'launch',
+          url = 'http://localhost:3000',
+          webRoot = '${workspaceFolder}/src',
+          sourceMaps = true,
+          protocol = 'inspector',
+        },
+        {
+          name = 'Attach to existing Chrome',
+          type = 'pwa-chrome',
+          request = 'attach',
+          port = 9222, -- start Chrome with --remote-debugging-port=9222
+          webRoot = '${workspaceFolder}/src',
+        },
+        {
+          name = 'Launch current file',
+          type = 'pwa-node',
+          request = 'launch',
+          program = '${file}',
+          cwd = '${workspaceFolder}',
+          runtimeArgs = { '--nolazy' },
+          sourceMaps = true,
+          resolveSourceMapLocations = { '${workspaceFolder}/**', '!**/node_modules/**' },
+          outFiles = { '${workspaceFolder}/dist/**/*.js' },
+        },
+        {
+          name = 'Attach to running process',
+          type = 'pwa-node',
+          request = 'attach',
+          processId = pick,
+          cwd = '${workspaceFolder}',
+          sourceMaps = true,
+          skipFiles = { '<node_internals>/**' },
+        },
+      }
+    end
 
     -- PHP Debug Adapter Configuration
     dap.configurations.php = {

@@ -43,7 +43,7 @@ vim.keymap.set('i', '<C-j>', '<C-o>db', { desc = 'Move down in insert mode' })
 
 -- Copilot
 vim.g.copilot_no_tab_map = true
-vim.api.nvim_set_keymap('i', '<C-p>', 'copilot#Accept("<CR>")', { silent = true, expr = true, script = true })
+vim.api.nvim_set_keymap('i', '<C-ù>', 'copilot#Accept("<CR>")', { silent = true, expr = true, script = true })
 
 -- Bufferline keymaps
 vim.keymap.set('n', '<leader>bl', '<cmd>BufferLinePick<CR>', { desc = 'Pick a buffer tab', silent = true })
