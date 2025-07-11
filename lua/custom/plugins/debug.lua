@@ -226,7 +226,7 @@ return {
         port = 9003,
         -- Only if PHP is running in a container
         -- pathMappings = {
-        -- 	['/var/www/html'] = vim.fn.getcwd(),
+        --   ['/var/www/html'] = vim.fn.getcwd(),
         -- },
       },
       {

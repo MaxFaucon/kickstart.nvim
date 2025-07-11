@@ -37,7 +37,7 @@ return {
         return '%t' .. file_not_saved_icon
       end
 
-      require('mini.animate').setup()
+      -- require('mini.animate').setup()
     end,
   },
 }
