@@ -1,4 +1,4 @@
--- ~/.config/nvim/lua/plugins/copilot.lua
+-- https://github.com/github/copilot.vim
 return {
   'github/copilot.vim',
   event = 'InsertEnter',

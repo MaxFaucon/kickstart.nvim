@@ -32,7 +32,7 @@ vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
 -- Insert mode key mapping
 vim.keymap.set('i', '<C-h>', '<C-o>h', { desc = 'Move left in insert mode' })
-vim.keymap.set('i', '<C-l>', '<C-o>l', { desc = 'Move right in insert mode' })
+vim.keymap.set('i', '<C-l>', '<C-o>a', { desc = 'Move right in insert mode' })
 vim.keymap.set('i', '<C-b>', '<C-o>b', { desc = 'Move to the previous word in insert mode' })
 vim.keymap.set('i', '<C-w>', '<C-o>w', { desc = 'Move to the next word in insert mode' })
 vim.keymap.set('i', '<C-j>', '<C-o>db', { desc = 'Move down in insert mode' })

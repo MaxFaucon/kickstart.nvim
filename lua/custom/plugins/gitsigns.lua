@@ -1,6 +1,6 @@
+-- https://github.com/lewis6991/gitsigns.nvim
 -- NOTE: gitsigns is already included in init.lua but contains only the base
 -- config. This will add also the recommended keymaps.
-
 return {
   {
     'lewis6991/gitsigns.nvim',

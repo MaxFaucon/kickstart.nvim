@@ -1,3 +1,4 @@
+-- https://github.com/nvzone/typr
 return {
   {
     'nvzone/typr',

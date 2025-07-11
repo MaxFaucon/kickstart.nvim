@@ -1,3 +1,4 @@
+-- https://github.com/Saghen/blink.cmp
 return {
   { -- Autocompletion
     'saghen/blink.cmp',
