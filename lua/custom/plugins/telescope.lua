@@ -12,6 +12,7 @@ return {
     event = 'VimEnter',
     dependencies = {
       'nvim-lua/plenary.nvim',
+      'nvim-lua/popup.nvim',
       { -- If encountering errors, see telescope-fzf-native README for installation instructions
         'nvim-telescope/telescope-fzf-native.nvim',
         'camgraff/telescope-tmux.nvim',
@@ -27,6 +28,7 @@ return {
         end,
       },
       { 'nvim-telescope/telescope-ui-select.nvim' },
+      { 'nvim-telescope/telescope-media-files.nvim' },
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
       -- { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
@@ -57,11 +59,13 @@ return {
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
-        -- },
+        defaults = {
+          -- file_ignore_patterns = {
+          -- },
+          -- mappings = {
+          --   i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+          -- },
+        },
         pickers = {
           find_files = {
             hidden = true, -- Show hidden files
@@ -72,12 +76,17 @@ return {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
           },
+          media_files = {
+            filetypes = { 'png', 'jpg', 'jpeg', 'mp4', 'webm', 'mkv' },
+            find_cmd = 'rg',
+          },
         },
       }
 
       -- Enable Telescope extensions if they are installed
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
+      pcall(require('telescope').load_extension, 'media_files')
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
@@ -86,6 +95,8 @@ return {
       vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
+      vim.keymap.set('n', '<leader>su', builtin.git_status, { desc = '[S]earch Git Stat[U]s' })
+      vim.keymap.set('n', '<leader>sp', builtin.spell_suggest, { desc = '[S]earch S[P]ell Suggest' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
