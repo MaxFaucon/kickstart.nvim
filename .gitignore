@@ -2,6 +2,6 @@ tags
 test.sh
 .luarc.json
 nvim
-lua/custom/config/db.lua
+lua/custom/config/db
 
 spell/

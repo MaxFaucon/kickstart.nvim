@@ -2,6 +2,8 @@
 -- See `:help vim.o`
 --  For more options, you can see `:help option-list`
 
+vim.o.shiftwidth = 4 -- Number of spaces to use for each step of (auto)indent
+
 vim.o.timeoutlen = 300 -- 300ms between 'j's
 vim.o.colorcolumn = '80' -- Code length indicator
 vim.o.ignorecase = true -- Ignore case in search patterns
