@@ -66,4 +66,46 @@ M.convert_sql_keywords_to_uppercase = function(start_line, end_line)
   end
 end
 
+M.format_sql_query = function(start_line, end_line)
+  -- Get the query content
+  local lines = {}
+  for line = start_line, end_line do
+    table.insert(lines, vim.fn.getline(line))
+  end
+  local query = table.concat(lines, '\n')
+
+  -- Create a temporary file with the query
+  local temp_file = vim.fn.tempname() .. '.sql'
+  local file = io.open(temp_file, 'w')
+  if not file then
+    vim.notify('Failed to create temporary file for formatting', vim.log.levels.ERROR)
+    return
+  end
+  file:write(query)
+  file:close()
+
+  -- Format using pg_format
+  local cmd = string.format('pg_format --no-extra-line %s', temp_file)
+  local formatted = vim.fn.system(cmd)
+
+  -- Clean up temp file
+  os.remove(temp_file)
+
+  -- Check if formatting was successful
+  if vim.v.shell_error ~= 0 then
+    vim.notify('pg_format failed: ' .. formatted, vim.log.levels.ERROR)
+    return
+  end
+
+  -- Replace the lines with formatted content
+  local formatted_lines = vim.split(formatted, '\n')
+  -- Remove empty last line if it exists
+  if formatted_lines[#formatted_lines] == '' then
+    table.remove(formatted_lines)
+  end
+
+  -- Replace the original lines
+  vim.api.nvim_buf_set_lines(0, start_line, end_line, false, formatted_lines)
+end
+
 return M

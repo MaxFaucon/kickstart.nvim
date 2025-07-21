@@ -236,7 +236,7 @@ local sql_keywords_set = {
 
   -- Permissions and Security
   ['role'] = true,
-  ['user'] = true,
+  -- ['user'] = true,
   ['login'] = true,
   ['password'] = true,
   ['encrypted'] = true,

@@ -6,7 +6,7 @@ return {
       width = 180,
     },
     plugins = {
-      tmux = { enabled = true },
+      tmux = { enabled = false },
       wezterm = { enabled = false },
     },
   },

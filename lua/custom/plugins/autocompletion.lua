@@ -79,7 +79,7 @@ return {
       sources = {
         default = { 'lsp', 'path', 'snippets', 'lazydev', 'buffer' },
         per_filetype = {
-          sql = { 'snippets', 'dadbod', 'buffer' },
+          sql = { 'lsp', 'snippets', 'dadbod', 'buffer' },
         },
         providers = {
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },

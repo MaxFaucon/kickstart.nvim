@@ -30,6 +30,14 @@ vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
 vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
 vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
+-- Avoid c, d and x to set text in the default register (clipboard)
+-- vim.keymap.set({ 'n', 'v' }, 'd', '"_d')
+vim.keymap.set({ 'n', 'v' }, 'c', '"_c')
+vim.keymap.set({ 'n', 'v' }, 'x', '"_x')
+vim.keymap.set({ 'n', 'v' }, 'C', '"_C')
+-- vim.keymap.set({ 'n', 'v' }, 'D', '"_D')
+vim.keymap.set({ 'n', 'v' }, 'X', '"_X')
+
 -- Insert mode key mapping
 vim.keymap.set('i', '<C-h>', '<C-o>h', { desc = 'Move left in insert mode' })
 vim.keymap.set('i', '<C-l>', '<C-o>a', { desc = 'Move right in insert mode' })
@@ -37,6 +45,13 @@ vim.keymap.set('i', '<C-b>', '<C-o>b', { desc = 'Move to the previous word in in
 vim.keymap.set('i', '<C-w>', '<C-o>w', { desc = 'Move to the next word in insert mode' })
 vim.keymap.set('i', '<C-j>', '<C-o>db', { desc = 'Move down in insert mode' })
 -- vim.keymap.set('i', '<C-k>', '<C-o>de', { desc = 'Move up in insert mode' }) -- Not working because mapped on show definition
+
+-- Refresh the current file
+vim.keymap.set('n', '<leader>r', '<cmd>edit!<CR>', { desc = 'Refresh current file' })
+
+-- Notification keymaps
+vim.keymap.set('n', '<leader>ns', '<cmd>Noice telescope<CR>', { desc = '[N]otification [S]how' })
+vim.keymap.set('n', '<leader>nd', '<cmd>Noice dismiss<CR>', { desc = '[N]otification [D]ismiss' })
 
 -- Copilot
 vim.g.copilot_no_tab_map = true
@@ -47,6 +62,7 @@ vim.keymap.set('n', '<leader>bl', '<cmd>BufferLinePick<CR>', { desc = 'Pick a bu
 vim.keymap.set('n', 'L', '<cmd>BufferLineCycleNext<CR>', { desc = 'Cycle to next buffer', silent = true })
 vim.keymap.set('n', 'H', '<cmd>BufferLineCyclePrev<CR>', { desc = 'Cycle to previous buffer', silent = true })
 vim.keymap.set('n', '<leader>bc', '<cmd>bdelete<CR>', { desc = 'Close a buffer tab', silent = true })
+vim.keymap.set('n', '<leader>so', '<cmd>b#<CR>', { desc = 'Switch to previous buffer', silent = true })
 
 -- Zen mode
 vim.keymap.set('n', '<leader>z', '<cmd>ZenMode<CR>', { desc = 'Toggle Zen mode', silent = true })

@@ -219,7 +219,7 @@ return {
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-        -- ts_ls = {},
+        ts_ls = {},
         --
         intelephense = {
           settings = {
@@ -236,6 +236,41 @@ return {
             },
           },
         },
+
+        phpactor = {
+          settings = {
+            phpactor = {
+              enableCompletion = false,
+              enableHover = false,
+              enableDiagnostics = false,
+              inlayHints = {
+                enabled = false,
+              },
+              diagnostics = {
+                undefinedTypes = true, -- Facades & macros
+                undefinedFunctions = true,
+              },
+            },
+          },
+        },
+
+        -- postgres_lsp = {
+        --   cmd = { 'postgresql-language-server', '--stdio' },
+        --   filetypes = { 'sql', 'pgsql' },
+        --   root_dir = function()
+        --     return vim.loop.cwd()
+        --   end,
+        --   single_file_support = true,
+        --   settings = {
+        --     postgresqlLanguageServer = {
+        --       connections = {},
+        --       -- Enable all SQL features
+        --       enableCompletion = true,
+        --       enableHover = true,
+        --       enableDiagnostics = true,
+        --     },
+        --   },
+        -- },
 
         lua_ls = {
           -- cmd = { ... },
