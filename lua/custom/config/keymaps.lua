@@ -39,12 +39,13 @@ vim.keymap.set({ 'n', 'v' }, 'C', '"_C')
 vim.keymap.set({ 'n', 'v' }, 'X', '"_X')
 
 -- Insert mode key mapping
+vim.keymap.del('i', '<C-s>') -- Remove default <C-s> mapping in insert mode
 vim.keymap.set('i', '<C-h>', '<C-o>h', { desc = 'Move left in insert mode' })
 vim.keymap.set('i', '<C-l>', '<C-o>a', { desc = 'Move right in insert mode' })
 vim.keymap.set('i', '<C-b>', '<C-o>b', { desc = 'Move to the previous word in insert mode' })
 vim.keymap.set('i', '<C-w>', '<C-o>w', { desc = 'Move to the next word in insert mode' })
-vim.keymap.set('i', '<C-j>', '<C-o>db', { desc = 'Move down in insert mode' })
--- vim.keymap.set('i', '<C-k>', '<C-o>de', { desc = 'Move up in insert mode' }) -- Not working because mapped on show definition
+vim.keymap.set('i', '<C-j>', '<C-o>db', { desc = 'Delete previous word' })
+vim.keymap.set('i', '<C-k>', '<C-o>de', { desc = 'Delete next word' })
 
 -- Refresh the current file
 vim.keymap.set('n', '<leader>r', '<cmd>edit!<CR>', { desc = 'Refresh current file' })
@@ -63,6 +64,9 @@ vim.keymap.set('n', 'L', '<cmd>BufferLineCycleNext<CR>', { desc = 'Cycle to next
 vim.keymap.set('n', 'H', '<cmd>BufferLineCyclePrev<CR>', { desc = 'Cycle to previous buffer', silent = true })
 vim.keymap.set('n', '<leader>bc', '<cmd>bdelete<CR>', { desc = 'Close a buffer tab', silent = true })
 vim.keymap.set('n', '<leader>so', '<cmd>b#<CR>', { desc = 'Switch to previous buffer', silent = true })
+
+-- Buffer keymaps
+vim.keymap.set('n', '<leader>bac', '<cmd>%bd<CR>', { desc = 'Close all buffers', silent = true })
 
 -- Zen mode
 vim.keymap.set('n', '<leader>z', '<cmd>ZenMode<CR>', { desc = 'Toggle Zen mode', silent = true })

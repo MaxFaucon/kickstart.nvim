@@ -103,10 +103,23 @@ return {
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s;', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', function()
-        builtin.buffers { ignore_current_buffer = true, sort_mru = true }
+        builtin.buffers { initial_mode = 'normal', ignore_current_buffer = true, sort_mru = true }
       end, { desc = '[ ] Find existing buffers' })
       vim.keymap.set('n', '<leader>si', function()
-        builtin.lsp_document_symbols { symbols = 'method' }
+        builtin.lsp_document_symbols {
+          symbols = 'method',
+          symbol_width = 60, -- Increase width
+          symbol_type_width = 15, -- More room for type info
+          show_line = false, -- Don't show line preview (saves space)
+          fname_width = 0, -- Hide filename (you're in the file already)
+
+          -- Custom formatter to show access modifiers
+          symbol_fmt = function(symbol_path, filetype)
+            -- symbol_path contains the full context
+            -- For PHP, it might include visibility info
+            return table.concat(symbol_path, ' → ')
+          end,
+        }
       end, { desc = '[S]earch Def[I]nition (lol)' })
 
       -- Tmux

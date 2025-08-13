@@ -1,22 +1,9 @@
--- https://github.com/folke/lazydev.nvim
+-- https://github.com/neovim/nvim-lspconfig
 return {
-  -- LSP Plugins
-  {
-    -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
-    -- used for completion, annotations and signatures of Neovim apis
-    'folke/lazydev.nvim',
-    ft = 'lua',
-    opts = {
-      library = {
-        -- Load luvit types when the `vim.uv` word is found
-        { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
-      },
-    },
-  },
   {
     -- Main LSP Configuration
-    -- https://github.com/neovim/nvim-lspconfig
     'neovim/nvim-lspconfig',
+    enabled = true,
     dependencies = {
       -- Automatically install LSPs and related tools to stdpath for Neovim
       -- Mason must be loaded before its dependents so we need to set it up here.
@@ -182,6 +169,7 @@ return {
           source = 'if_many',
           spacing = 2,
           format = function(diagnostic)
+            -- Get current lsp
             local diagnostic_message = {
               [vim.diagnostic.severity.ERROR] = diagnostic.message,
               [vim.diagnostic.severity.WARN] = diagnostic.message,
@@ -219,7 +207,7 @@ return {
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-        ts_ls = {},
+        -- ts_ls = {},
         --
         intelephense = {
           settings = {
@@ -237,22 +225,13 @@ return {
           },
         },
 
-        phpactor = {
-          settings = {
-            phpactor = {
-              enableCompletion = false,
-              enableHover = false,
-              enableDiagnostics = false,
-              inlayHints = {
-                enabled = false,
-              },
-              diagnostics = {
-                undefinedTypes = true, -- Facades & macros
-                undefinedFunctions = true,
-              },
-            },
-          },
-        },
+        -- phpactor = {
+        --   Settings = {
+        --     phpactor = {
+        --       enableDiagnostics = false,
+        --     },
+        --   },
+        -- },
 
         -- postgres_lsp = {
         --   cmd = { 'postgresql-language-server', '--stdio' },
@@ -282,7 +261,7 @@ return {
                 callSnippet = 'Replace',
               },
               -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-              -- diagnostics = { disable = { 'missing-fields' } },
+              diagnostics = { disable = { 'missing-fields' } },
             },
           },
         },
@@ -313,6 +292,8 @@ return {
         handlers = {
           function(server_name)
             local server = servers[server_name] or {}
+
+            print('Setting up LSP server: ' .. server_name)
             -- This handles overriding only values explicitly passed
             -- by the server configuration above. Useful when disabling
             -- certain features of an LSP (for example, turning off formatting for ts_ls)
