@@ -84,5 +84,61 @@ vim.keymap.set('n', '<M-k>', '<cmd>cprev<CR>', { desc = 'Go to previous diagnost
 vim.keymap.set('n', '<leader>qo', '<cmd>copen<CR>', { desc = 'Open [Q]uickfix list' })
 vim.keymap.set('n', '<leader>qc', '<cmd>cclose<CR>', { desc = 'Close [Q]uickfix list' })
 
+-- Copilot
+vim.keymap.set('n', '<leader>co', '<cmd>CopilotChatOpen<CR>', { desc = '[C]opilot chat [O]pen' })
+vim.keymap.set('n', '<leader>cc', '<cmd>CopilotChatClose<CR>', { desc = '[C]opilot chat [C]lose' })
+vim.keymap.set('n', '<leader>cr', '<cmd>CopilotChatReset<CR>', { desc = '[C]opilot chat [R]eset' })
+vim.keymap.set('n', '<leader>cs', function()
+  local name = vim.fn.input 'Save chat as: '
+  if name ~= '' then
+    vim.cmd('CopilotChatSave ' .. name)
+  end
+end, { desc = '[C]opilot chat [S]ave with name' })
+vim.keymap.set('n', '<leader>cl', function()
+  local name = vim.fn.input 'Load chat: '
+  if name ~= '' then
+    vim.cmd('CopilotChatLoad ' .. name)
+  end
+end, { desc = '[C]opilot chat [L]oad by name' })
+vim.keymap.set('v', '<leader>ca', function()
+  -- Save visual selection range before any input prompts
+  local start_line = vim.fn.line "'<"
+  local end_line = vim.fn.line "'>"
+
+  local actions = {
+    'e - Explain this code',
+    'r - Refactor this code',
+    'i - Improve this code',
+    'f - Fix this code',
+    'v - Review this code',
+    'o - Optimize this code',
+    'q - Ask custom question about this code',
+  }
+
+  print 'Choose action:'
+  for _, action in ipairs(actions) do
+    print('  ' .. action)
+  end
+
+  local choice = vim.fn.input 'Enter choice (e/r/i/f/v/o/q): '
+  local action_map = {
+    e = 'Explain',
+    r = 'Refactor',
+    i = 'Improve',
+    f = 'Fix',
+    v = 'Review',
+    o = 'Optimize',
+  }
+
+  if action_map[choice] then
+    vim.cmd(start_line .. ',' .. end_line .. 'CopilotChat ' .. action_map[choice])
+  elseif choice == 'q' then
+    local question = vim.fn.input 'Ask question about this code: '
+    if question ~= '' then
+      vim.cmd(start_line .. ',' .. end_line .. 'CopilotChat ' .. question)
+    end
+  end
+end, { desc = '[C]opilot chat [A]ction on selection' })
+
 -- Code rain
 vim.keymap.set('n', '<leader>fml', '<cmd>CellularAutomaton make_it_rain<CR>')

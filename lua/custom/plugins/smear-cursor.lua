@@ -2,7 +2,7 @@
 return {
   {
     'sphamba/smear-cursor.nvim',
-    enabled = true,
+    enabled = false,
     opts = {},
   },
 }
