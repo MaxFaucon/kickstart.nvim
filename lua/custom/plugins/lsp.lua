@@ -5,8 +5,7 @@ return {
     'neovim/nvim-lspconfig',
     enabled = true,
     dependencies = {
-      -- Automatically install LSPs and related tools to stdpath for Neovim
-      -- Mason must be loaded before its dependents so we need to set it up here.
+      -- Automatically install LSPs and related tools to stdpath for Neovim Mason must be loaded before its dependents so we need to set it up here.
       { 'mason-org/mason.nvim', opts = {} },
       'mason-org/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
@@ -116,6 +115,7 @@ return {
           --
           -- When you move your cursor, the highlights will be cleared (the second autocommand).
           local client = vim.lsp.get_client_by_id(event.data.client_id)
+
           if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf) then
             local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
             vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
@@ -208,48 +208,6 @@ return {
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         -- ts_ls = {},
-        --
-        intelephense = {
-          settings = {
-            intelephense = {
-              -- Tell it where to find all Laravel symbols
-              stubs = { 'laravel', 'eloquent', 'blade', 'tinker', 'php' },
-              environment = {
-                includePaths = { vim.loop.cwd() .. '_ide_helper.php', vim.loop.cwd() .. '_ide_helper_models.php' },
-              },
-              diagnostics = {
-                undefinedTypes = true, -- Facades & macros
-                undefinedFunctions = true,
-              },
-            },
-          },
-        },
-
-        -- phpactor = {
-        --   Settings = {
-        --     phpactor = {
-        --       enableDiagnostics = false,
-        --     },
-        --   },
-        -- },
-
-        -- postgres_lsp = {
-        --   cmd = { 'postgresql-language-server', '--stdio' },
-        --   filetypes = { 'sql', 'pgsql' },
-        --   root_dir = function()
-        --     return vim.loop.cwd()
-        --   end,
-        --   single_file_support = true,
-        --   settings = {
-        --     postgresqlLanguageServer = {
-        --       connections = {},
-        --       -- Enable all SQL features
-        --       enableCompletion = true,
-        --       enableHover = true,
-        --       enableDiagnostics = true,
-        --     },
-        --   },
-        -- },
 
         lua_ls = {
           -- cmd = { ... },
@@ -289,8 +247,13 @@ return {
       require('mason-lspconfig').setup {
         ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
         automatic_installation = false,
+        automatic_enable = { exclude = { 'intelephense' } },
         handlers = {
           function(server_name)
+            if server_name == 'intelephense' then
+              return -- Manual setup below
+            end
+
             local server = servers[server_name] or {}
 
             -- This handles overriding only values explicitly passed
@@ -299,6 +262,107 @@ return {
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
             require('lspconfig')[server_name].setup(server)
           end,
+        },
+      }
+
+      -- Now configure intelephense manually AFTER the handler setup
+      require('lspconfig').intelephense.setup {
+        capabilities = capabilities,
+        init_options = {
+          licenceKey = os.getenv 'INTELEPHENSE_LICENSE_KEY',
+        },
+        settings = {
+          intelephense = {
+            stubs = {
+              'apache',
+              'bcmath',
+              'bz2',
+              'calendar',
+              'com_dotnet',
+              'Core',
+              'ctype',
+              'curl',
+              'date',
+              'dba',
+              'dom',
+              'enchant',
+              'exif',
+              'FFI',
+              'fileinfo',
+              'filter',
+              'fpm',
+              'ftp',
+              'gd',
+              'gettext',
+              'gmp',
+              'hash',
+              'iconv',
+              'imap',
+              'intl',
+              'json',
+              'ldap',
+              'libxml',
+              'mbstring',
+              'meta',
+              'mysqli',
+              'oci8',
+              'odbc',
+              'openssl',
+              'pcntl',
+              'pcre',
+              'PDO',
+              'pdo_ibm',
+              'pdo_mysql',
+              'pdo_pgsql',
+              'pdo_sqlite',
+              'pgsql',
+              'Phar',
+              'posix',
+              'pspell',
+              'readline',
+              'Reflection',
+              'session',
+              'shmop',
+              'SimpleXML',
+              'snmp',
+              'soap',
+              'sockets',
+              'sodium',
+              'SPL',
+              'sqlite3',
+              'standard',
+              'superglobals',
+              'sysvmsg',
+              'sysvsem',
+              'sysvshm',
+              'tidy',
+              'tokenizer',
+              'xml',
+              'xmlreader',
+              'xmlrpc',
+              'xmlwriter',
+              'xsl',
+              'Zend OPcache',
+              'zip',
+              'zlib',
+              -- Laravel specific
+              'laravel',
+              'eloquent',
+              'blade',
+              'tinker',
+              'php',
+            },
+            environment = {
+              includePaths = {
+                vim.fn.getcwd() .. '/_ide_helper.php',
+                vim.fn.getcwd() .. '/_ide_helper_models.php',
+              },
+            },
+            diagnostics = {
+              undefinedTypes = true,
+              undefinedFunctions = true,
+            },
+          },
         },
       }
     end,

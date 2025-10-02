@@ -78,3 +78,9 @@ vim.o.cursorline = true
 -- instead raise a dialog asking if you wish to save the current file(s)
 -- See `:help 'confirm'`
 vim.o.confirm = true
+
+-- Folds
+vim.opt.foldmethod = 'expr'
+vim.opt.foldexpr = 'v:lua.vim.lsp.foldexpr()'
+vim.opt.foldlevelstart = 99 -- Start with all folds open
+vim.opt.foldenable = true

@@ -5,12 +5,7 @@ return {
     opts = {
       -- Context configuration
       context = {
-        auto_include = {
-          buffer = true,
-          cursor = true,
-          diagnostics = true,
-          selection = true,
-        },
+        auto_include = { buffer = true, cursor = true, diagnostics = true, selection = true },
       },
       cli = {
         mux = {
@@ -20,10 +15,10 @@ return {
       },
       -- Custom prompts for better context usage
       prompts = {
-        explain_selection = "Explain the selected code:",
-        fix_diagnostics = "Fix the diagnostics in this buffer:",
-        optimize_code = "Optimize this code for better performance:",
-        add_tests = "Write comprehensive tests for this code:",
+        explain_selection = 'Explain the selected code:',
+        fix_diagnostics = 'Fix the diagnostics in this buffer:',
+        optimize_code = 'Optimize this code for better performance:',
+        add_tests = 'Write comprehensive tests for this code:',
       },
     },
     keys = {
@@ -81,7 +76,7 @@ return {
       {
         '<leader>ae',
         function()
-          require('sidekick.cli').ask_with_context('explain_selection')
+          require('sidekick.cli').ask_with_context 'explain_selection'
         end,
         desc = 'Sidekick Explain Selection',
         mode = { 'v' },
@@ -89,7 +84,7 @@ return {
       {
         '<leader>af',
         function()
-          require('sidekick.cli').ask_with_context('fix_diagnostics')
+          require('sidekick.cli').ask_with_context 'fix_diagnostics'
         end,
         desc = 'Sidekick Fix Diagnostics',
         mode = { 'n' },
@@ -97,7 +92,7 @@ return {
       {
         '<leader>ao',
         function()
-          require('sidekick.cli').ask_with_context('optimize_code')
+          require('sidekick.cli').ask_with_context 'optimize_code'
         end,
         desc = 'Sidekick Optimize Code',
         mode = { 'n', 'v' },
@@ -105,7 +100,7 @@ return {
       {
         '<leader>at',
         function()
-          require('sidekick.cli').ask_with_context('add_tests')
+          require('sidekick.cli').ask_with_context 'add_tests'
         end,
         desc = 'Sidekick Add Tests',
         mode = { 'n', 'v' },
@@ -116,6 +111,22 @@ return {
           require('sidekick.cli').include_buffer_context()
         end,
         desc = 'Sidekick Include Buffer Context',
+        mode = { 'n', 'v' },
+      },
+      {
+        '<leader>au',
+        function()
+          require('sidekick.nes').update()
+        end,
+        desc = 'Sidekick Fresh Edit Suggestions',
+        mode = { 'n', 'v' },
+      },
+      {
+        '<leader>ah',
+        function()
+          require('sidekick.nes').have()
+        end,
+        desc = 'Sidekick Check If Any Edits Active In Buffer',
         mode = { 'n', 'v' },
       },
     },
