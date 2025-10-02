@@ -84,6 +84,26 @@ vim.keymap.set('n', '<M-k>', '<cmd>cprev<CR>', { desc = 'Go to previous diagnost
 vim.keymap.set('n', '<leader>qo', '<cmd>copen<CR>', { desc = 'Open [Q]uickfix list' })
 vim.keymap.set('n', '<leader>qc', '<cmd>cclose<CR>', { desc = 'Close [Q]uickfix list' })
 
+-- Git
+-- Neogit - Core operations
+vim.keymap.set('n', '<leader>gg', '<cmd>Neogit<cr>', { desc = 'Neogit status' })
+vim.keymap.set('n', '<leader>gc', '<cmd>Neogit commit<cr>', { desc = 'Git commit' })
+vim.keymap.set('n', '<leader>gp', '<cmd>Neogit push<cr>', { desc = 'Git push' })
+vim.keymap.set('n', '<leader>gP', '<cmd>Neogit pull<cr>', { desc = 'Git pull' })
+vim.keymap.set('n', '<leader>gB', '<cmd>Neogit branch<cr>', { desc = 'Git branches' })
+vim.keymap.set('n', '<leader>gl', '<cmd>Neogit log<cr>', { desc = 'Git log' })
+
+-- Diffview - Visualization & comparison
+vim.keymap.set('n', '<leader>gd', '<cmd>DiffviewOpen<cr>', { desc = 'Diff working tree' })
+vim.keymap.set('n', '<leader>gD', '<cmd>DiffviewOpen HEAD~1<cr>', { desc = 'Diff last commit' })
+vim.keymap.set('n', '<leader>gh', '<cmd>DiffviewFileHistory %<cr>', { desc = 'File history (current)' })
+vim.keymap.set('n', '<leader>gH', '<cmd>DiffviewFileHistory<cr>', { desc = 'File history (all)' })
+vim.keymap.set('n', '<leader>gm', '<cmd>DiffviewOpen origin/main...HEAD<cr>', { desc = 'Diff with main' })
+vim.keymap.set('n', '<leader>gq', '<cmd>DiffviewClose<cr>', { desc = 'Close diffview' })
+
+-- Git conflict resolution
+vim.keymap.set('n', '<leader>gx', '<cmd>DiffviewOpen<cr>', { desc = 'Resolve conflicts' })
+
 -- Copilot
 vim.keymap.set('n', '<leader>co', '<cmd>CopilotChatOpen<CR>', { desc = '[C]opilot chat [O]pen' })
 vim.keymap.set('n', '<leader>cc', '<cmd>CopilotChatClose<CR>', { desc = '[C]opilot chat [C]lose' })
