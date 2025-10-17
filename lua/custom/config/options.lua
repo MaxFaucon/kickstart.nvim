@@ -16,6 +16,9 @@ vim.o.tabstop = 4 -- Number of spaces that a <Tab> counts for
 
 vim.opt.termguicolors = true
 
+-- Disable swap files
+vim.opt.swapfile = false
+
 -- Make line numbers default
 vim.o.number = true
 vim.o.relativenumber = true
@@ -84,3 +87,6 @@ vim.opt.foldmethod = 'expr'
 vim.opt.foldexpr = 'v:lua.vim.lsp.foldexpr()'
 vim.opt.foldlevelstart = 99 -- Start with all folds open
 vim.opt.foldenable = true
+
+-- Git
+vim.opt.diffopt:append { 'internal', 'algorithm:patience', 'linematch:30', 'indent-heuristic', 'iwhiteall' }

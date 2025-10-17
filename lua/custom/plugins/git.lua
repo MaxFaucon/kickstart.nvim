@@ -4,7 +4,7 @@ return {
     'NeogitOrg/neogit',
     dependencies = {
       'nvim-lua/plenary.nvim', -- required
-      { 'sindrets/diffview.nvim', opts = { enhanced_diff_hl = true } }, -- optional - Diff integration
+      { 'sindrets/diffview.nvim' }, -- optional - Diff integration
 
       -- Only one of these is needed.
       'nvim-telescope/telescope.nvim', -- optional
@@ -14,6 +14,40 @@ return {
     },
     opts = {
       integrations = { diffview = true },
+    },
+  },
+  {
+    'rickhowe/diffchar.vim',
+  },
+  {
+    'isakbm/gitgraph.nvim',
+    opts = {
+      git_cmd = 'git',
+      symbols = {
+        merge_commit = 'M',
+        commit = '*',
+      },
+      format = {
+        timestamp = '%H:%M:%S %d-%m-%Y',
+        fields = { 'hash', 'timestamp', 'author', 'branch_name', 'tag' },
+      },
+      hooks = {
+        on_select_commit = function(commit)
+          print('selected commit:', commit.hash)
+        end,
+        on_select_range_commit = function(from, to)
+          print('selected range:', from.hash, to.hash)
+        end,
+      },
+    },
+    keys = {
+      {
+        '<leader>gL',
+        function()
+          require('gitgraph').draw({}, { all = true, max_count = 5000 })
+        end,
+        desc = 'GitGraph - Draw',
+      },
     },
   },
   {
@@ -55,7 +89,7 @@ return {
         -- end, { desc = 'git [r]eset hunk' })
         -- normal mode
         -- map('n', '<leader>gs', gitsigns.stage_hunk, { desc = 'git [s]tage hunk' })
-        -- map('n', '<leader>gr', gitsigns.reset_hunk, { desc = 'git [r]eset hunk' })
+        map('n', '<leader>gr', gitsigns.reset_hunk, { desc = 'git [r]eset hunk' })
         -- map('n', '<leader>gS', gitsigns.stage_buffer, { desc = 'git [S]tage buffer' })
         -- map('n', '<leader>gu', gitsigns.stage_hunk, { desc = 'git [u]ndo stage hunk' })
         -- map('n', '<leader>gR', gitsigns.reset_buffer, { desc = 'git [R]eset buffer' })
@@ -68,5 +102,17 @@ return {
         -- end, { desc = 'git [D]iff against last commit' })
       end,
     },
+  },
+  -- https://github.com/pwntester/octo.nvim
+  {
+    'pwntester/octo.nvim',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-telescope/telescope.nvim',
+      'nvim-tree/nvim-web-devicons',
+    },
+    config = function()
+      require('octo').setup()
+    end,
   },
 }

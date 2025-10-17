@@ -6,7 +6,7 @@ return {
   -- you do for a plugin at the top level, you can do for a dependency.
   --
   -- Use the `dependencies` key to specify the dependencies of a particular plugin
-
+  { 'natecraddock/telescope-zf-native.nvim' },
   { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
     event = 'VimEnter',
@@ -73,6 +73,43 @@ return {
           },
         },
         extensions = {
+          ['zf-native'] = {
+            -- options for sorting file-like items
+            file = {
+              -- override default telescope file sorter
+              enable = true,
+
+              -- highlight matching text in results
+              highlight_results = true,
+
+              -- enable zf filename match priority
+              match_filename = true,
+
+              -- optional function to define a sort order when the query is empty
+              initial_sort = nil,
+
+              -- set to false to enable case sensitive matching
+              smart_case = true,
+            },
+
+            -- options for sorting all other items
+            generic = {
+              -- override default telescope generic item sorter
+              enable = false,
+
+              -- highlight matching text in results
+              highlight_results = true,
+
+              -- disable zf filename match priority
+              match_filename = false,
+
+              -- optional function to define a sort order when the query is empty
+              initial_sort = nil,
+
+              -- set to false to enable case sensitive matching
+              smart_case = true,
+            },
+          },
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
           },
@@ -87,6 +124,7 @@ return {
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
       pcall(require('telescope').load_extension, 'media_files')
+      pcall(require('telescope').load_extension, 'zf-native')
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'

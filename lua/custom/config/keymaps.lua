@@ -160,5 +160,14 @@ vim.keymap.set('v', '<leader>ca', function()
   end
 end, { desc = '[C]opilot chat [A]ction on selection' })
 
+-- Tmux: Switch to last tmux window
+vim.keymap.set('n', '<leader>tl', function()
+  vim.fn.system 'tmux last-window'
+end, { desc = 'Switch to last tmux window' })
+
 -- Code rain
-vim.keymap.set('n', '<leader>fml', '<cmd>CellularAutomaton make_it_rain<CR>')
+vim.keymap.set('n', '<leader>fml', '<cmd>CellularAutomaton make_it_rain<CR>', { desc = 'Make it Rain' })
+
+-- Miscellaneous
+-- Open .env
+vim.keymap.set('n', '<leader>me', '<cmd>e .env<CR>', { desc = 'Open .env file' })

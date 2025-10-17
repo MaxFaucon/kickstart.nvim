@@ -25,6 +25,7 @@ rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup {
+  rocks = { enabled = false },
   spec = {
     -- import/override with your plugins
     -- { 'LazyVim/LazyVim', import = 'lazyvim.plugins' },

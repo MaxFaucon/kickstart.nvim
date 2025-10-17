@@ -6,6 +6,15 @@ vim.keymap.set('n', '<leader>dbo', function()
   vim.cmd 'DBUI'
 end, { desc = 'Open DBUI' })
 
+-- Toggle DBUI sidebar
+vim.keymap.set('n', '<leader>dbt', '<cmd>DBUIToggle<cr>', { desc = 'Toggle DBUI sidebar' })
+
+-- Find/switch DB environment
+vim.keymap.set('n', '<leader>dbe', '<cmd>DBUIFindBuffer<cr>', { desc = 'Find/switch DB environment' })
+
+-- Last query info
+vim.keymap.set('n', '<leader>dbl', '<cmd>DBUILastQueryInfo<cr>', { desc = 'Last query info' })
+
 -- Execute SQL query between two semicolons
 vim.keymap.set('n', '<leader>dbq', function()
   local start_line, end_line = helpers.get_sql_query()
