@@ -84,6 +84,9 @@ vim.keymap.set('n', '<M-k>', '<cmd>cprev<CR>', { desc = 'Go to previous diagnost
 vim.keymap.set('n', '<leader>qo', '<cmd>copen<CR>', { desc = 'Open [Q]uickfix list' })
 vim.keymap.set('n', '<leader>qc', '<cmd>cclose<CR>', { desc = 'Close [Q]uickfix list' })
 
+-- Oil
+vim.keymap.set('n', '<leader>o', '<cmd>Oil<CR>', { desc = 'Open Oil', silent = true })
+
 -- Git
 -- Neogit - Core operations
 vim.keymap.set('n', '<leader>gg', '<cmd>Neogit<cr>', { desc = 'Neogit status' })

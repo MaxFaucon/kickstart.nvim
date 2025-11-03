@@ -266,7 +266,7 @@ return {
       }
 
       -- Now configure intelephense manually AFTER the handler setup
-      require('lspconfig').intelephense.setup {
+      vim.lsp.config('intelephense', {
         capabilities = capabilities,
         init_options = {
           licenceKey = os.getenv 'INTELEPHENSE_LICENSE_KEY',
@@ -364,7 +364,7 @@ return {
             },
           },
         },
-      }
+      })
     end,
   },
 }
