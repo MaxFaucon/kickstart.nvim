@@ -54,9 +54,8 @@ vim.keymap.set('n', '<leader>r', '<cmd>edit!<CR>', { desc = 'Refresh current fil
 vim.keymap.set('n', '<leader>ns', '<cmd>Noice telescope<CR>', { desc = '[N]otification [S]how' })
 vim.keymap.set('n', '<leader>nd', '<cmd>Noice dismiss<CR>', { desc = '[N]otification [D]ismiss' })
 
--- Copilot
-vim.g.copilot_no_tab_map = true
-vim.api.nvim_set_keymap('i', '<C-v>', 'copilot#Accept("<CR>")', { silent = true, expr = true, script = true })
+-- Aerial
+vim.keymap.set('n', '<leader>sa', '<cmd>Telescope aerial<CR>', { desc = '[S]how [A]erial', silent = true })
 
 -- Bufferline keymaps
 vim.keymap.set('n', '<leader>bl', '<cmd>BufferLinePick<CR>', { desc = 'Pick a buffer tab', silent = true })
@@ -106,6 +105,19 @@ vim.keymap.set('n', '<leader>gq', '<cmd>DiffviewClose<cr>', { desc = 'Close diff
 
 -- Git conflict resolution
 vim.keymap.set('n', '<leader>gx', '<cmd>DiffviewOpen<cr>', { desc = 'Resolve conflicts' })
+
+-- Env
+vim.keymap.set('n', '<leader>se', '<cmd>e .env<CR>', { desc = 'Open .env file' })
+
+-- Laravel
+vim.keymap.set('n', '<leader>ll', function()
+  local log_path = vim.fn.getcwd() .. '/storage/logs/laravel.log'
+  if vim.fn.filereadable(log_path) == 1 then
+    vim.cmd('edit ' .. log_path)
+  else
+    vim.notify('Laravel log file not found', vim.log.levels.WARN)
+  end
+end, { desc = 'Laravel: Open Log File' })
 
 -- Copilot
 vim.keymap.set('n', '<leader>co', '<cmd>CopilotChatOpen<CR>', { desc = '[C]opilot chat [O]pen' })

@@ -365,6 +365,7 @@ return {
           },
         },
       })
+      vim.lsp.enable 'intelephense'
     end,
   },
 }

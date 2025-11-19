@@ -68,8 +68,9 @@ return {
         },
         pickers = {
           find_files = {
-            hidden = true, -- Show hidden files
-            find_command = { 'rg', '--files', '--hidden' },
+            hidden = false, -- Show hidden files
+            no_ignore = false, -- Don't respect .gitignore
+            file_ignore_patterns = { 'vendor/*', 'node_modules/*', '.git/*', '.idea/*' },
           },
         },
         extensions = {
@@ -143,22 +144,28 @@ return {
       vim.keymap.set('n', '<leader><leader>', function()
         builtin.buffers { initial_mode = 'normal', ignore_current_buffer = true, sort_mru = true }
       end, { desc = '[ ] Find existing buffers' })
-      vim.keymap.set('n', '<leader>si', function()
-        builtin.lsp_document_symbols {
-          symbols = 'method',
-          symbol_width = 60, -- Increase width
-          symbol_type_width = 15, -- More room for type info
-          show_line = false, -- Don't show line preview (saves space)
-          fname_width = 0, -- Hide filename (you're in the file already)
-
-          -- Custom formatter to show access modifiers
-          symbol_fmt = function(symbol_path, filetype)
-            -- symbol_path contains the full context
-            -- For PHP, it might include visibility info
-            return table.concat(symbol_path, ' → ')
-          end,
+      vim.keymap.set('n', '<leader>si', builtin.lsp_document_symbols, { desc = '[S]earch [I]n-document Symbols' })
+      vim.keymap.set('n', '<leader>sF', function()
+        builtin.find_files {
+          find_command = {
+            'fd',
+            '--type',
+            'f',
+            '--hidden',
+            '--no-ignore',
+            '--exclude',
+            'node_modules',
+            '--exclude',
+            '.git',
+            '--exclude',
+            'vendor',
+            '--exclude',
+            '.idea',
+            '--exclude',
+            '.vscode',
+          },
         }
-      end, { desc = '[S]earch Def[I]nition (lol)' })
+      end, { desc = '[F]ind [F]iles (all)' })
 
       -- Tmux
       vim.keymap.set('n', '<leader>st', '<cmd>Telescope tmux windows<cr>', { desc = '[S]earch [T]mux Windows' })

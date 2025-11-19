@@ -20,6 +20,9 @@ return {
         optimize_code = 'Optimize this code for better performance:',
         add_tests = 'Write comprehensive tests for this code:',
       },
+      nes = {
+        enabled = false,
+      },
     },
     keys = {
       {

@@ -1,5 +1,15 @@
--- https://github.com/github/copilot.vim
+-- https://github.com/zbirenbaum/copilot.lua
 return {
-  'github/copilot.vim',
+  'zbirenbaum/copilot.lua',
+  cmd = 'Copilot',
   event = 'InsertEnter',
+  config = true,
+  opts = {
+    suggestion = {
+      auto_trigger = true,
+      keymap = {
+        accept = '<C-v>',
+      },
+    },
+  },
 }

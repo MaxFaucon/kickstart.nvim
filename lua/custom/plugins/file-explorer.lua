@@ -2,9 +2,28 @@
 -- https://github.com/nvim-neo-tree/neo-tree.nvim
 
 return {
+  {
+    'stevearc/oil.nvim',
+    ---@module 'oil'
+    ---@type oil.SetupOpts
+    opts = {
+      keymaps = {
+        -- Mappings can be a function
+        ['gd'] = function()
+          require('oil').set_columns { 'icon', 'permissions', 'size', 'mtime' }
+        end,
+      },
+    },
+    -- Optional dependencies
+    dependencies = { { 'nvim-mini/mini.icons', opts = {} } },
+    -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
+    -- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
+    lazy = false,
+  },
   -- Neo-tree's file operations to work with LSP (updating imports, etc.)
   {
     'antosha417/nvim-lsp-file-operations',
+    enabled = false,
     dependencies = {
       'nvim-lua/plenary.nvim',
       'nvim-neo-tree/neo-tree.nvim',
@@ -15,6 +34,7 @@ return {
   },
   {
     'nvim-neo-tree/neo-tree.nvim',
+    enabled = false,
     version = '*',
     dependencies = {
       'nvim-lua/plenary.nvim',
@@ -56,16 +76,5 @@ return {
         },
       },
     },
-  },
-  {
-    'stevearc/oil.nvim',
-    ---@module 'oil'
-    ---@type oil.SetupOpts
-    opts = {},
-    -- Optional dependencies
-    dependencies = { { 'nvim-mini/mini.icons', opts = {} } },
-    -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
-    -- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
-    lazy = false,
   },
 }
