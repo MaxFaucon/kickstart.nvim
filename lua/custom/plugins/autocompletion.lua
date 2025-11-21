@@ -28,16 +28,34 @@ return {
           end
           return 'make install_jsregexp'
         end)(),
+        config = function()
+          require('luasnip.loaders.from_lua').load {
+            paths = { '~/.config/nvim/lua/custom/config/snippets' },
+          }
+
+          local ls = require 'luasnip'
+          vim.keymap.set({ 'i', 's' }, '<C-j>', function()
+            if ls.choice_active() then
+              ls.change_choice(1)
+            end
+          end)
+
+          vim.keymap.set({ 'i', 's' }, '<C-k>', function()
+            if ls.choice_active() then
+              ls.change_choice(-1)
+            end
+          end)
+        end,
         dependencies = {
           -- `friendly-snippets` contains a variety of premade snippets.
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
-          -- {
-          --   'rafamadriz/friendly-snippets',
-          --   config = function()
-          --     require('luasnip.loaders.from_vscode').lazy_load()
-          --   end,
-          -- },
+          {
+            'rafamadriz/friendly-snippets',
+            config = function()
+              require('luasnip.loaders.from_vscode').lazy_load()
+            end,
+          },
         },
         opts = {},
       },
