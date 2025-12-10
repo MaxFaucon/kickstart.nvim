@@ -113,7 +113,11 @@ return {
         },
         providers = {
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
-          dadbod = { name = 'Dadbod', module = 'vim_dadbod_completion.blink' },
+          dadbod = {
+            name = 'Dadbod',
+            module = 'vim_dadbod_completion.blink',
+            score_offset = 100,
+          },
           laravel = {
             name = 'laravel',
             module = 'blink.compat.source',

@@ -17,9 +17,15 @@ return {
     }),
   }),
 
-  s('ddl', {
+  s('ddlv', {
     t "SELECT pg_get_viewdef('views.",
     i(1, 'view_name'),
     t "'::regclass, true);",
+  }),
+
+  s('ddlc', {
+    t { "SELECT * FROM information_schema.columns WHERE table_name = '" },
+    i(1, 'table_name'),
+    t { " AND table_schema = 'public'; " },
   }),
 }

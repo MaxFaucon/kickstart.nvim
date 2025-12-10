@@ -38,3 +38,8 @@ vim.keymap.set('n', '<leader>dbu', function()
   -- Convert SQL keywords to uppercase
   helpers.convert_sql_keywords_to_uppercase(start_line, end_line)
 end, { desc = 'Convert SQL keywords to uppercase' })
+
+-- Save current content to history
+vim.keymap.set('n', '<leader>dbh', function()
+  helpers.save_to_history()
+end, { desc = 'Save current content to history' })

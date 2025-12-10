@@ -1,3 +1,4 @@
+-- https://github.com/stevearc/quicker.nvim
 return {
   {
     'stevearc/quicker.nvim',

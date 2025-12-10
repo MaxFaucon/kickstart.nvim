@@ -6,23 +6,10 @@ vim.keymap.set('i', 'jj', '<Esc>', { noremap = true, silent = true })
 vim.keymap.set('n', '<space><space>x', '<cmd>source %<CR>')
 vim.keymap.set('n', '<space>x', ':.lua<CR>')
 vim.keymap.set('v', '<space>x', ':lua<CR>')
-
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
--- Tabs keymaps
--- vim.keymap.set('n', 'H', '<cmd>tabprevious<CR>', { desc = 'Go to previous tab' })
--- vim.keymap.set('n', 'L', '<cmd>tabnext<CR>', { desc = 'Go to next tab' })
--- vim.keymap.set('n', 'X', '<cmd>tabclose<CR>', { desc = 'Close current tab' })
--- vim.keymap.set('n', 'T', '<cmd>tabnew<CR>', { desc = 'Open new tab' })
-
--- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
--- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
--- is not what someone will guess without a bit more experience.
---
--- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
--- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 -- TIP: Disable arrow keys in normal mode
 vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
@@ -38,6 +25,26 @@ vim.keymap.set({ 'n', 'v' }, 'C', '"_C')
 -- vim.keymap.set({ 'n', 'v' }, 'D', '"_D')
 vim.keymap.set({ 'n', 'v' }, 'X', '"_X')
 
+-- Toggle focus between floating windows and main windows (ex: K preview, debugger var eveluation, etc.)
+vim.keymap.set('n', '<CR>', function()
+  local current_win = vim.api.nvim_get_current_win()
+  local current_config = vim.api.nvim_win_get_config(current_win)
+
+  if current_config.relative ~= '' then
+    vim.cmd 'wincmd p' -- Jump to previous window
+    return
+  end
+
+  local wins = vim.api.nvim_list_wins()
+  for _, win in ipairs(wins) do
+    local config = vim.api.nvim_win_get_config(win)
+    if config.relative ~= '' then
+      vim.api.nvim_set_current_win(win)
+      return
+    end
+  end
+end, { desc = 'Toggle floating Windows focus' })
+
 -- Insert mode key mapping
 vim.keymap.del('i', '<C-s>') -- Remove default <C-s> mapping in insert mode
 vim.keymap.set('i', '<C-h>', '<C-o>h', { desc = 'Move left in insert mode' })
@@ -47,8 +54,11 @@ vim.keymap.set('i', '<C-w>', '<C-o>w', { desc = 'Move to the next word in insert
 vim.keymap.set('i', '<C-j>', '<C-o>db', { desc = 'Delete previous word' })
 vim.keymap.set('i', '<C-k>', '<C-o>de', { desc = 'Delete next word' })
 
--- Refresh the current file
-vim.keymap.set('n', '<leader>r', '<cmd>edit!<CR>', { desc = 'Refresh current file' })
+-- Buffer keymaps
+vim.keymap.set('n', '<leader>br', '<cmd>edit!<CR>', { desc = 'Refresh current file' })
+vim.keymap.set('n', '<leader>bac', '<cmd>%bd<CR>', { desc = 'Close all buffers', silent = true })
+-- Copy absolute path of current file to clipboard
+vim.keymap.set('n', '<leader>bp', '<cmd>let @+ = expand("%:p")<CR>', { desc = 'Copy absolute path of current file to clipboard' })
 
 -- Notification keymaps
 vim.keymap.set('n', '<leader>ns', '<cmd>Noice telescope<CR>', { desc = '[N]otification [S]how' })
@@ -56,6 +66,11 @@ vim.keymap.set('n', '<leader>nd', '<cmd>Noice dismiss<CR>', { desc = '[N]otifica
 
 -- Aerial
 vim.keymap.set('n', '<leader>sa', '<cmd>Telescope aerial<CR>', { desc = '[S]how [A]erial', silent = true })
+vim.keymap.set('n', '<leader>ta', '<cmd>AerialToggle!<CR>', { desc = '[T]oggle [A]erial', silent = true })
+vim.keymap.del('n', '[a') -- Unset default keymap to avoid conflict
+vim.keymap.del('n', ']a') -- Unset default keymap to avoid conflict
+vim.keymap.set('n', '[a', '<cmd>AerialPrev<CR>', { desc = 'Go to previous symbol in Aerial', silent = true })
+vim.keymap.set('n', ']a', '<cmd>AerialNext<CR>', { desc = 'Go to next symbol in Aerial', silent = true })
 
 -- Bufferline keymaps
 vim.keymap.set('n', '<leader>bl', '<cmd>BufferLinePick<CR>', { desc = 'Pick a buffer tab', silent = true })
@@ -63,9 +78,6 @@ vim.keymap.set('n', 'L', '<cmd>BufferLineCycleNext<CR>', { desc = 'Cycle to next
 vim.keymap.set('n', 'H', '<cmd>BufferLineCyclePrev<CR>', { desc = 'Cycle to previous buffer', silent = true })
 vim.keymap.set('n', '<leader>bc', '<cmd>bdelete<CR>', { desc = 'Close a buffer tab', silent = true })
 vim.keymap.set('n', '<leader>so', '<cmd>b#<CR>', { desc = 'Switch to previous buffer', silent = true })
-
--- Buffer keymaps
-vim.keymap.set('n', '<leader>bac', '<cmd>%bd<CR>', { desc = 'Close all buffers', silent = true })
 
 -- Zen mode
 vim.keymap.set('n', '<leader>z', '<cmd>ZenMode<CR>', { desc = 'Toggle Zen mode', silent = true })
@@ -78,6 +90,7 @@ vim.keymap.set('n', '<leader>tv', '<cmd>ToggleTerm direction=vertical size=100<C
 
 -- Quickfix
 vim.keymap.set('n', '<leader>qd', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<leader>qs', ':vimgrep /<C-r>//g %<CR>:copen<CR>', { desc = 'Search to quickfix' })
 vim.keymap.set('n', '<M-j>', '<cmd>cnext<CR>', { desc = 'Go to next diagnostic [Q]uickfix' })
 vim.keymap.set('n', '<M-k>', '<cmd>cprev<CR>', { desc = 'Go to previous diagnostic [Q]uickfix' })
 vim.keymap.set('n', '<leader>qo', '<cmd>copen<CR>', { desc = 'Open [Q]uickfix list' })
@@ -85,6 +98,21 @@ vim.keymap.set('n', '<leader>qc', '<cmd>cclose<CR>', { desc = 'Close [Q]uickfix 
 
 -- Oil
 vim.keymap.set('n', '<leader>o', '<cmd>Oil<CR>', { desc = 'Open Oil', silent = true })
+
+-- Persistence
+vim.keymap.set('n', '<leader>ps', function()
+  require('persistence').load()
+end, { desc = 'Load session for current dir' })
+vim.keymap.set('n', '<leader>pS', function()
+  require('persistence').select()
+end, { desc = 'Select session to load' })
+vim.keymap.set('n', '<leader>pl', function()
+  require('persistence').load { last = true }
+end, { desc = 'Load last session' })
+-- stop Persistence => session won't be saved on exit
+vim.keymap.set('n', '<leader>pd', function()
+  require('persistence').stop()
+end, { desc = 'Stop persistence' })
 
 -- Git
 -- Neogit - Core operations
@@ -119,69 +147,19 @@ vim.keymap.set('n', '<leader>ll', function()
   end
 end, { desc = 'Laravel: Open Log File' })
 
--- Copilot
-vim.keymap.set('n', '<leader>co', '<cmd>CopilotChatOpen<CR>', { desc = '[C]opilot chat [O]pen' })
-vim.keymap.set('n', '<leader>cc', '<cmd>CopilotChatClose<CR>', { desc = '[C]opilot chat [C]lose' })
-vim.keymap.set('n', '<leader>cr', '<cmd>CopilotChatReset<CR>', { desc = '[C]opilot chat [R]eset' })
-vim.keymap.set('n', '<leader>cs', function()
-  local name = vim.fn.input 'Save chat as: '
-  if name ~= '' then
-    vim.cmd('CopilotChatSave ' .. name)
-  end
-end, { desc = '[C]opilot chat [S]ave with name' })
-vim.keymap.set('n', '<leader>cl', function()
-  local name = vim.fn.input 'Load chat: '
-  if name ~= '' then
-    vim.cmd('CopilotChatLoad ' .. name)
-  end
-end, { desc = '[C]opilot chat [L]oad by name' })
-vim.keymap.set('v', '<leader>ca', function()
-  -- Save visual selection range before any input prompts
-  local start_line = vim.fn.line "'<"
-  local end_line = vim.fn.line "'>"
-
-  local actions = {
-    'e - Explain this code',
-    'r - Refactor this code',
-    'i - Improve this code',
-    'f - Fix this code',
-    'v - Review this code',
-    'o - Optimize this code',
-    'q - Ask custom question about this code',
-  }
-
-  print 'Choose action:'
-  for _, action in ipairs(actions) do
-    print('  ' .. action)
-  end
-
-  local choice = vim.fn.input 'Enter choice (e/r/i/f/v/o/q): '
-  local action_map = {
-    e = 'Explain',
-    r = 'Refactor',
-    i = 'Improve',
-    f = 'Fix',
-    v = 'Review',
-    o = 'Optimize',
-  }
-
-  if action_map[choice] then
-    vim.cmd(start_line .. ',' .. end_line .. 'CopilotChat ' .. action_map[choice])
-  elseif choice == 'q' then
-    local question = vim.fn.input 'Ask question about this code: '
-    if question ~= '' then
-      vim.cmd(start_line .. ',' .. end_line .. 'CopilotChat ' .. question)
-    end
-  end
-end, { desc = '[C]opilot chat [A]ction on selection' })
+-- Neotest keymaps
+vim.keymap.set('n', '<leader>nr', '<cmd>lua require("neotest").run.run()<CR>', { desc = 'Run Nearest Test' })
+vim.keymap.set('n', '<leader>nf', '<cmd>lua require("neotest").run.run(vim.fn.expand("%"))<CR>', { desc = 'Run File Tests' })
+vim.keymap.set('n', '<leader>nq', '<cmd>lua require("neotest").run.stop()<CR>', { desc = 'Stop Test' })
+vim.keymap.set('n', '<leader>np', '<cmd>lua require("neotest").summary.toggle()<CR>', { desc = 'Toggle Test Summary' })
+vim.keymap.set('n', '<leader>no', '<cmd>lua require("neotest").output.open()<CR>', { desc = 'Open Test Output' })
+vim.keymap.set('n', '<leader>nl', '<cmd>lua require("neotest").run.run({strategy = "dap"})<CR>', { desc = 'Run Nearest Test with DAP' })
+vim.keymap.set('n', '<leader>na', '<cmd>lua require("neotest").run.attach()<CR>', { desc = 'Attach to Running Test' })
 
 -- Tmux: Switch to last tmux window
 vim.keymap.set('n', '<leader>tl', function()
   vim.fn.system 'tmux last-window'
 end, { desc = 'Switch to last tmux window' })
-
--- Code rain
-vim.keymap.set('n', '<leader>fml', '<cmd>CellularAutomaton make_it_rain<CR>', { desc = 'Make it Rain' })
 
 -- Miscellaneous
 -- Open .env

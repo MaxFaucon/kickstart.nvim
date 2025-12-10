@@ -3,7 +3,7 @@ return {
   'folke/zen-mode.nvim',
   opts = {
     window = {
-      width = 180,
+      width = 1,
     },
     plugins = {
       tmux = { enabled = false },

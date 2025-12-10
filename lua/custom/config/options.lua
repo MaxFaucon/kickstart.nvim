@@ -10,6 +10,7 @@ vim.o.ignorecase = true -- Ignore case in search patterns
 vim.o.smartcase = true -- Override ignorecase if search pattern has uppercase
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.o.scrolloff = 20
+vim.o.sidescrolloff = 40
 
 vim.o.shiftwidth = 4 -- Number of spaces to use for each step of (auto)indent
 vim.o.tabstop = 4 -- Number of spaces that a <Tab> counts for

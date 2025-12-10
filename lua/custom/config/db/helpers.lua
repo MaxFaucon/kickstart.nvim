@@ -108,4 +108,29 @@ M.format_sql_query = function(start_line, end_line)
   vim.api.nvim_buf_set_lines(0, start_line, end_line, false, formatted_lines)
 end
 
+M.save_to_history = function()
+  local buffer_first_line = 2
+  local buffer_last_line = vim.fn.line '$'
+  local buffer_directory = vim.fn.expand '%:h:t'
+  local history_file = os.getenv 'HOME' .. '/Documents/sql_queries/' .. buffer_directory .. '/history.sql'
+  local file, err = io.open(history_file, 'a')
+
+  if not file then
+    vim.notify('Failed to open history file for writing', vim.log.levels.ERROR, { title = err })
+    return
+  end
+
+  file:write('-- ' .. os.date '%Y-%m-%d %H:%M:%S' .. '\n')
+  for line = buffer_first_line, buffer_last_line do
+    local line_content = vim.fn.getline(line)
+    file:write(line_content .. '\n')
+  end
+  file:write '\n'
+
+  file:close()
+
+  -- Delete the current buffer content
+  vim.api.nvim_buf_set_lines(0, buffer_first_line, buffer_last_line, false, {})
+end
+
 return M
