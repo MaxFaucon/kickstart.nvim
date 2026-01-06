@@ -33,3 +33,12 @@ vim.api.nvim_create_autocmd('FileType', {
     vim.b.copilot_enabled = false
   end,
 })
+
+-- Enable spelling check in specific file types
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'markdown', 'text', 'gitcommit' },
+  callback = function()
+    vim.opt_local.spell = true
+    vim.opt.spelllang = { 'en', 'fr' }
+  end,
+})

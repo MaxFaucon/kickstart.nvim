@@ -126,6 +126,7 @@ return {
       pcall(require('telescope').load_extension, 'ui-select')
       pcall(require('telescope').load_extension, 'media_files')
       pcall(require('telescope').load_extension, 'zf-native')
+      pcall(require('telescope').load_extension, 'zk')
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
