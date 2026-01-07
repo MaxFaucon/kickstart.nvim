@@ -164,3 +164,21 @@ end, { desc = 'Switch to last tmux window' })
 -- Miscellaneous
 -- Open .env
 vim.keymap.set('n', '<leader>me', '<cmd>e .env<CR>', { desc = 'Open .env file' })
+
+-- Change case (camel to snake or the opposite)
+vim.keymap.set('n', '<leader>tc', function()
+  local current_word = vim.fn.expand '<cword>'
+  local is_snake_case = string.match(current_word, '^[a-z][a-z0-9_]*$') ~= nil
+  local transformed_word = ''
+
+  if is_snake_case then
+    -- transformed_word = current_word:gsub('[_]',
+    transformed_word = current_word:gsub('_(%w)', function(c)
+      return c:upper()
+    end)
+  else
+    transformed_word = current_word:gsub('(%u)', '_%1'):gsub('^_', ''):lower()
+  end
+
+  vim.api.nvim_command('normal! ciw' .. transformed_word .. '\x1b')
+end, { desc = 'Change word case' })
