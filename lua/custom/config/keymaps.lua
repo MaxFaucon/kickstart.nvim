@@ -134,6 +134,9 @@ vim.keymap.set('n', '<leader>gq', '<cmd>DiffviewClose<cr>', { desc = 'Close diff
 -- Git conflict resolution
 vim.keymap.set('n', '<leader>gx', '<cmd>DiffviewOpen<cr>', { desc = 'Resolve conflicts' })
 
+-- Code diff
+vim.keymap.set('n', '<leader>gv', '<cmd>CodeDiff<cr>', { desc = 'Open CodeDiff' })
+
 -- Env
 vim.keymap.set('n', '<leader>se', '<cmd>e .env<CR>', { desc = 'Open .env file' })
 
