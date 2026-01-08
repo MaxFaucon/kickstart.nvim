@@ -1,3 +1,4 @@
+-- https://github.com/kdheepak/lazygit.nvim
 return {
   {
     'NeogitOrg/neogit',
@@ -12,12 +13,42 @@ return {
       -- 'folke/snacks.nvim', -- optional
     },
     opts = {
-      integrations = { telescope = true, diffview = true },
-      graph_style = 'kitty',
+      integrations = { diffview = true },
     },
   },
   {
     'rickhowe/diffchar.vim',
+  },
+  {
+    'isakbm/gitgraph.nvim',
+    opts = {
+      git_cmd = 'git',
+      symbols = {
+        merge_commit = 'M',
+        commit = '*',
+      },
+      format = {
+        timestamp = '%H:%S:%S %d-%m-%Y',
+        fields = { 'hash', 'timestamp', 'author', 'branch_name', 'tag' },
+      },
+      hooks = {
+        on_select_commit = function(commit)
+          print('selected commit:', commit.hash)
+        end,
+        on_select_range_commit = function(from, to)
+          print('selected range:', from.hash, to.hash)
+        end,
+      },
+    },
+    keys = {
+      {
+        '<leader>gL',
+        function()
+          require('gitgraph').draw({}, { all = true, max_count = 5000 })
+        end,
+        desc = 'GitGraph - Draw',
+      },
+    },
   },
   {
     'lewis6991/gitsigns.nvim',
