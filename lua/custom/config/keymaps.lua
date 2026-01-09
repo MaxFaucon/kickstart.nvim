@@ -80,7 +80,7 @@ vim.keymap.set('n', '<leader>bc', '<cmd>bdelete<CR>', { desc = 'Close a buffer t
 vim.keymap.set('n', '<leader>so', '<cmd>b#<CR>', { desc = 'Switch to previous buffer', silent = true })
 
 -- Zen mode
-vim.keymap.set('n', '<leader>z', '<cmd>ZenMode<CR>', { desc = 'Toggle Zen mode', silent = true })
+vim.keymap.set('n', '<leader>zz', '<cmd>ZenMode<CR>', { desc = 'Toggle Zen mode', silent = true })
 
 -- Toggle terminal
 vim.keymap.set('n', '<leader>tt', '<cmd>ToggleTermToggleAll<CR>', { desc = 'Toggle all terminals', silent = true })
@@ -163,6 +163,39 @@ vim.keymap.set('n', '<leader>na', '<cmd>lua require("neotest").run.attach()<CR>'
 vim.keymap.set('n', '<leader>tl', function()
   vim.fn.system 'tmux last-window'
 end, { desc = 'Switch to last tmux window' })
+
+-- Zk notes
+vim.keymap.set('n', '<leader>zd', "<cmd>ZkNew { dir = 'journal/daily' }<CR>", { desc = 'Create a daily note' })
+vim.keymap.set('n', '<leader>zf', "<cmd>ZkNotes { hrefs = { 'learning/' }, sort = { 'modified' } }<CR>", { desc = 'Search notes' })
+
+vim.keymap.set('n', '<leader>zt', function()
+  local tags_input = vim.fn.input 'Tags (comma-separated): '
+  if tags_input == '' then
+    return
+  end
+
+  -- Split by comma and trim whitespace
+  local tags = {}
+  for tag in tags_input:gmatch '([^,]+)' do
+    table.insert(tags, vim.trim(tag))
+  end
+
+  require('zk.commands').get 'ZkNotes' { hrefs = { 'learning/' }, tags = tags, sort = { 'modified' } }
+end, { noremap = true, silent = false, desc = 'Search notes by tags' })
+
+vim.keymap.set('n', '<leader>zn', function()
+  require('zk.commands').get 'ZkNew' {
+    dir = 'learning',
+    title = vim.fn.input 'Title: ',
+    extra = {
+      tags = vim.fn.input 'Tags (comma-separated): ',
+      source = vim.fn.input 'Source: ',
+      source_type = vim.fn.input 'Source type (book/article/personal/etc): ',
+    },
+  }
+end, { desc = 'Create a new note' })
+
+vim.keymap.set('n', '<leader>zl', '<cmd>ZkInsertLink<CR>', { desc = 'Link a note' })
 
 -- Miscellaneous
 -- Open .env
