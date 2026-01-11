@@ -60,6 +60,13 @@ return {
         --  All the info you're looking for is in `:help telescope.setup()`
         --
         defaults = {
+          layout_strategy = 'center',
+          layout_config = {
+            anchor = 'S',
+            height = 0.40,
+            width = 0.99,
+            preview_cutoff = 1,
+          },
           -- file_ignore_patterns = {
           -- },
           -- mappings = {

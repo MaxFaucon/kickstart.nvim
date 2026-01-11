@@ -12,14 +12,22 @@ return {
       require('neotest').setup {
         adapters = {
           require 'neotest-jest' {
-            jestCommand = 'npm test --',
+            jestCommand = 'npx jest',
             jestArguments = function(defaultArguments, context)
               return defaultArguments
             end,
-            jestConfigFile = 'custom.jest.config.ts',
+            jestConfigFile = 'jest.config.ts',
             env = { CI = true },
             cwd = function(path)
-              return vim.fn.getcwd()
+              -- Traverse up from test file to find nearest package.json
+              local root = vim.fn.fnamemodify(path, ':p:h')
+              while root ~= '/' do
+                if vim.fn.filereadable(root .. '/package.json') == 1 and root ~= vim.fn.getcwd() then -- exclude monorepo root
+                  return root
+                end
+                root = vim.fn.fnamemodify(root, ':h')
+              end
+              return vim.fn.getcwd() -- fallback
             end,
             isTestFile = require('neotest-jest.jest-util').defaultIsTestFile,
           },
