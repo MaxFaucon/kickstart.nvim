@@ -1,3 +1,8 @@
+-- https://github.com/necrom4/calcium.nvim
 return {
-  'jbyuki/quickmath.nvim',
+  {
+    'necrom4/calcium.nvim',
+    cmd = { 'Calcium' },
+    opts = {},
+  },
 }

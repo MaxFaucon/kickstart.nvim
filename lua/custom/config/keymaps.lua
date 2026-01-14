@@ -137,6 +137,9 @@ vim.keymap.set('n', '<leader>gx', '<cmd>DiffviewOpen<cr>', { desc = 'Resolve con
 -- Code diff
 vim.keymap.set('n', '<leader>gv', '<cmd>CodeDiff<cr>', { desc = 'Open CodeDiff' })
 
+-- Calcium (math)
+vim.keymap.set('n', '<leader>mc', '<cmd>Calcium<cr>', { desc = 'Calculate' })
+
 -- Env
 vim.keymap.set('n', '<leader>se', '<cmd>e .env<CR>', { desc = 'Open .env file' })
 
