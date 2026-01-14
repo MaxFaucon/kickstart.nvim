@@ -1,12 +1,4 @@
 -- https://github.com/mfussenegger/nvim-dap
--- debug.lua
---
--- Shows how to use the DAP plugin to debug your code.
---
--- Primarily focused on configuring the debugger for Go, but can
--- be extended to other languages as well. That's why it's called
--- kickstart.nvim and not kitchen-sink.nvim ;)
-
 return {
   -- NOTE: Yes, you can install new plugins here!
   'mfussenegger/nvim-dap',
@@ -93,6 +85,13 @@ return {
       end,
       desc = 'Debug: Eval expression',
     },
+    {
+      '<leader>dc',
+      function()
+        require('dap').clear_breakpoints()
+      end,
+      desc = 'Debug: Clear breakpoints',
+    },
   },
   config = function()
     local dap = require 'dap'
@@ -176,46 +175,36 @@ return {
     -- log_console_level = vim.log.levels.ERROR -- Logging level for output to console. Set to false to disable console output.
     -- }
 
-    for _, language in ipairs { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact' } do
-      require('dap').configurations[language] = {
-        {
-          name = 'Launch Chrome (localhost)',
-          type = 'pwa-chrome',
-          request = 'launch',
-          url = 'http://localhost:3000',
-          webRoot = '${workspaceFolder}/src',
-          sourceMaps = true,
-          protocol = 'inspector',
-        },
-        {
-          name = 'Attach to existing Chrome',
-          type = 'pwa-chrome',
-          request = 'attach',
-          port = 9222, -- start Chrome with --remote-debugging-port=9222
-          webRoot = '${workspaceFolder}/src',
-        },
-        {
-          name = 'Launch current file',
-          type = 'pwa-node',
-          request = 'launch',
-          program = '${file}',
-          cwd = '${workspaceFolder}',
-          runtimeArgs = { '--nolazy' },
-          sourceMaps = true,
-          resolveSourceMapLocations = { '${workspaceFolder}/**', '!**/node_modules/**' },
-          outFiles = { '${workspaceFolder}/dist/**/*.js' },
-        },
-        {
-          name = 'Attach to running process',
-          type = 'pwa-node',
-          request = 'attach',
-          processId = pick,
-          cwd = '${workspaceFolder}',
-          sourceMaps = true,
-          skipFiles = { '<node_internals>/**' },
-        },
-      }
-    end
+    dap.adapters['pwa-node'] = {
+      type = 'server',
+      host = 'localhost',
+      port = '${port}',
+      executable = {
+        command = 'js-debug-adapter',
+        args = { '${port}' },
+      },
+    }
+
+    dap.configurations.typescript = {
+      {
+        type = 'pwa-node',
+        request = 'launch',
+        name = 'Launch file',
+        program = '${file}',
+        cwd = '${workspaceFolder}',
+        sourceMaps = true,
+        resolveSourceMapLocations = { '${workspaceFolder}/**', '!**/node_modules/**' },
+        outFiles = { '${workspaceFolder}/**/dist/**/*.js' }, -- adjust to your build output
+      },
+      {
+        type = 'pwa-node',
+        request = 'attach',
+        name = 'Attach to process',
+        processId = require('dap.utils').pick_process,
+        cwd = '${workspaceFolder}',
+        sourceMaps = true,
+      },
+    }
 
     -- PHP Debug Adapter Configuration
     dap.configurations.php = {

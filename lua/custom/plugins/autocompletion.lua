@@ -135,7 +135,35 @@ return {
       -- the rust implementation via `'prefer_rust_with_warning'`
       --
       -- See :h blink-cmp-config-fuzzy for more information
-      fuzzy = { implementation = 'lua' },
+      fuzzy = {
+        implementation = 'prefer_rust_with_warning',
+        sorts = {
+          'score',
+          function(a, b)
+            local kinds = require('blink.cmp.types').CompletionItemKind
+            local priority = {
+              [kinds.Keyword] = 1, -- SQL keywords
+              [kinds.Class] = 2, -- Tables
+              [kinds.Field] = 3, -- Columns
+              [kinds.Module] = 4, -- Schemas
+              [kinds.Function] = 5, -- SQL functions
+              [kinds.Variable] = 6, -- Aliases
+            }
+
+            local a_priority = priority[a.kind] or 99
+            local b_priority = priority[b.kind] or 99
+
+            if a_priority ~= b_priority then
+              return a_priority < b_priority
+            else
+              -- Fallback to score comparison if priorities are equal
+              return a.score > b.score
+            end
+          end,
+          'sort_text',
+          'exact',
+        },
+      },
 
       -- Shows a signature help window while you type arguments for a function
       signature = { enabled = true },
