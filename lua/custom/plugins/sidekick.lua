@@ -12,6 +12,11 @@ return {
           backend = 'tmux',
           enabled = true,
         },
+        tools = {
+          opencode = {
+            keys = { prompt = { '<a-p>', 'prompt' } },
+          },
+        },
       },
       -- Custom prompts for better context usage
       prompts = {
@@ -25,6 +30,7 @@ return {
       },
     },
     keys = {
+      prompt = { '<a-p>', 'prompt' },
       {
         '<tab>',
         function()
