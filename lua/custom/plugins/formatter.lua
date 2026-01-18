@@ -1,5 +1,5 @@
 -- https://github.com/stevearc/conform.nvim
-return {
+local plugins = {
   { -- Autoformat
     'stevearc/conform.nvim',
     event = { 'BufWritePre' },
@@ -42,3 +42,5 @@ return {
     },
   },
 }
+
+return plugins

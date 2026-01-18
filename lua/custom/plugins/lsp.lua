@@ -1,5 +1,26 @@
--- https://github.com/neovim/nvim-lspconfig
-return {
+local plugins = {
+  -- Typescript specific lsp
+  -- https://github.com/pmizio/typescript-tools.nvim
+  {
+    'pmizio/typescript-tools.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
+    opts = {},
+  },
+  {
+    -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
+    -- used for completion, annotations and signatures of Neovim apis
+    -- https://github.com/folke/lazydev.nvim
+    'folke/lazydev.nvim',
+    ft = 'lua',
+    opts = {
+      library = {
+        -- Load luvit types when the `vim.uv` word is found
+        { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
+      },
+    },
+  },
+  -- General lsp configuration
+  -- https://github.com/neovim/nvim-lspconfig
   {
     -- Main LSP Configuration
     'neovim/nvim-lspconfig',
@@ -369,3 +390,5 @@ return {
     end,
   },
 }
+
+return plugins

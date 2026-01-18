@@ -1,6 +1,7 @@
--- https://github.com/nvim-treesitter/nvim-treesitter
-return {
-  { -- Highlight, edit, and navigate code
+local plugins = {
+  -- Highlight, edit, and navigate code
+  -- https://github.com/nvim-treesitter/nvim-treesitter
+  {
     'nvim-treesitter/nvim-treesitter',
     enabled = true,
     build = ':TSUpdate',
@@ -46,4 +47,17 @@ return {
     --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
+  -- Handle code comment
+  -- https://github.com/numToStr/Comment.nvim
+  {
+    'numToStr/Comment.nvim',
+    opts = {
+      -- add any options here
+    },
+  },
+  -- Highlight todo, notes, etc in comments
+  -- https://github.com/folke/todo-comments.nvim
+  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 }
+
+return plugins

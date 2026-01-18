@@ -1,4 +1,4 @@
-return {
+local plugins = {
   {
     'nvim-neotest/neotest',
     dependencies = {
@@ -36,3 +36,16 @@ return {
     end,
   },
 }
+
+-- Keymaps
+local map = vim.keymap.set
+-- Neotest keymaps
+map('n', '<leader>nr', '<cmd>lua require("neotest").run.run()<CR>', { desc = 'Run Nearest Test' })
+map('n', '<leader>nf', '<cmd>lua require("neotest").run.run(vim.fn.expand("%"))<CR>', { desc = 'Run File Tests' })
+map('n', '<leader>nq', '<cmd>lua require("neotest").run.stop()<CR>', { desc = 'Stop Test' })
+map('n', '<leader>np', '<cmd>lua require("neotest").summary.toggle()<CR>', { desc = 'Toggle Test Summary' })
+map('n', '<leader>no', '<cmd>lua require("neotest").output.open()<CR>', { desc = 'Open Test Output' })
+map('n', '<leader>nl', '<cmd>lua require("neotest").run.run({strategy = "dap"})<CR>', { desc = 'Run Nearest Test with DAP' })
+map('n', '<leader>na', '<cmd>lua require("neotest").run.attach()<CR>', { desc = 'Attach to Running Test' })
+
+return plugins

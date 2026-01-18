@@ -1,5 +1,5 @@
 -- https://github.com/Saghen/blink.cmp
-return {
+local plugins = {
   {
     'saghen/blink.compat',
     -- use v2.* for blink.cmp v1.*
@@ -170,3 +170,5 @@ return {
     },
   },
 }
+
+return plugins
