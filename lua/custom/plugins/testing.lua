@@ -12,11 +12,30 @@ local plugins = {
       require('neotest').setup {
         adapters = {
           require 'neotest-jest' {
-            jestCommand = 'npx jest',
-            jestArguments = function(defaultArguments, context)
-              return defaultArguments
+            jestCommand = function()
+              local filename = vim.fn.expand '%:t'
+              if string.find(filename, 'integration') then
+                return 'npx jest --detectOpenHandles --testTimeout=60000'
+              end
+              return 'npx jest'
             end,
-            jestConfigFile = 'jest.config.ts',
+
+            jestConfigFile = function()
+              local filename = vim.fn.expand '%:t'
+              local jest_config_file = 'jest.config.js'
+
+              -- Soil cap specific config
+              if string.find(filename, 'spec') then
+                jest_config_file = 'jest.unit.config.js'
+              else
+                if string.find(filename, 'integration') then
+                  jest_config_file = 'jest.integration.config.js'
+                end
+              end
+
+              return jest_config_file
+            end,
+
             env = { CI = true },
             cwd = function(path)
               -- Traverse up from test file to find nearest package.json
