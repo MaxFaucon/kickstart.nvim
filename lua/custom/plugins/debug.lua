@@ -188,19 +188,18 @@ local plugins = {
     dap.configurations.typescript = {
       {
         type = 'pwa-node',
-        request = 'launch',
-        name = 'Launch file',
-        program = '${file}',
+        request = 'attach',
+        name = 'Attach to process',
+        processId = require('dap.utils').pick_process,
         cwd = '${workspaceFolder}',
         sourceMaps = true,
-        resolveSourceMapLocations = { '${workspaceFolder}/**', '!**/node_modules/**' },
-        outFiles = { '${workspaceFolder}/**/dist/**/*.js' }, -- adjust to your build output
       },
       {
         type = 'pwa-node',
         request = 'attach',
-        name = 'Attach to process',
-        processId = require('dap.utils').pick_process,
+        name = 'Attach to 9229',
+        port = 9229,
+        restart = true,
         cwd = '${workspaceFolder}',
         sourceMaps = true,
       },

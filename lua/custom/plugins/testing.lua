@@ -7,8 +7,11 @@ local plugins = {
       'antoinemadec/FixCursorHold.nvim',
       'nvim-treesitter/nvim-treesitter',
       'nvim-neotest/neotest-jest',
+      'mfussenegger/nvim-dap',
     },
+    log_level = vim.log.levels.INFO,
     config = function()
+      require 'dap'
       require('neotest').setup {
         adapters = {
           require 'neotest-jest' {
