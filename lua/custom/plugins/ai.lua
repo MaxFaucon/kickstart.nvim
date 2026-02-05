@@ -1,143 +1,105 @@
 local plugins = {
   -- Agents management
-  -- https://github.com/folke/sidekick.nvim
   {
-    'folke/sidekick.nvim',
+    'olimorris/codecompanion.nvim',
+    version = '^18.0.0',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-treesitter/nvim-treesitter',
+    },
+    cmd = {
+      'CodeCompanion',
+      'CodeCompanionChat',
+      'CodeCompanionCmd',
+      'CodeCompanionActions',
+    },
     opts = {
-      -- Context configuration
-      context = {
-        auto_include = { buffer = true, cursor = true, diagnostics = true, selection = true },
-      },
-      cli = {
-        mux = {
-          backend = 'tmux',
-          enabled = true,
+      interactions = {
+        chat = {
+          adapter = {
+            name = 'copilot',
+            -- Best quality model available through your Copilot subscription.
+            -- You can switch models on the fly in the chat buffer with `ga`.
+            -- Other good options: "claude-sonnet-4", "gpt-4.1", "gemini-2.5-pro"
+            model = 'claude-sonnet-4',
+          },
         },
-        tools = {
-          opencode = {
-            keys = { prompt = { '<a-p>', 'prompt' } },
+        inline = {
+          adapter = {
+            name = 'copilot',
+            -- Sonnet is a good balance of speed/quality for inline.
+            -- If you find it slow, try "gpt-4.1" which streams faster.
+            model = 'claude-sonnet-4',
+          },
+        },
+        cmd = {
+          adapter = {
+            name = 'copilot',
+            model = 'claude-sonnet-4',
           },
         },
       },
-      -- Custom prompts for better context usage
-      prompts = {
-        explain_selection = 'Explain the selected code:',
-        fix_diagnostics = 'Fix the diagnostics in this buffer:',
-        optimize_code = 'Optimize this code for better performance:',
-        add_tests = 'Write comprehensive tests for this code:',
+
+      display = {
+        action_palette = {
+          provider = 'telescope',
+          width = 95,
+          height = 15,
+        },
+        chat = {
+          -- Render markdown nicely in chat buffer (uses your render-markdown.nvim)
+          render_headers = false,
+          -- Start in insert mode when opening chat
+          start_in_insert_mode = true,
+          window = {
+            layout = 'vertical',
+            width = 0.4,
+            height = 0.8,
+            border = 'rounded',
+          },
+          separator = '─',
+          show_settings = true,
+        },
       },
-      nes = {
-        enabled = false,
+
+      opts = {
+        -- Set to "DEBUG" or "TRACE" when troubleshooting
+        log_level = 'ERROR',
+        -- Send code context with inline requests for better results
+        send_code = true,
       },
-    },
-    keys = {
-      prompt = { '<a-p>', 'prompt' },
-      {
-        '<tab>',
-        function()
-          -- if there is a next edit, jump to it, otherwise apply it if any
-          if not require('sidekick').nes_jump_or_apply() then
-            return '<Tab>' -- fallback to normal tab
-          end
-        end,
-        expr = true,
-        desc = 'Goto/Apply Next Edit Suggestion',
-      },
-      {
-        '<c-.>',
-        function()
-          require('sidekick.cli').focus()
-        end,
-        mode = { 'n', 'x', 'i', 't' },
-        desc = 'Sidekick Switch Focus',
-      },
-      {
-        '<leader>aa',
-        function()
-          require('sidekick.cli').toggle { focus = true }
-        end,
-        desc = 'Sidekick Toggle CLI',
-        mode = { 'n', 'v' },
-      },
-      {
-        '<leader>ac',
-        function()
-          require('sidekick.cli').toggle { name = 'claude', focus = true }
-        end,
-        desc = 'Sidekick Claude Toggle',
-        mode = { 'n', 'v' },
-      },
-      {
-        '<leader>ag',
-        function()
-          require('sidekick.cli').toggle { name = 'grok', focus = true }
-        end,
-        desc = 'Sidekick Grok Toggle',
-        mode = { 'n', 'v' },
-      },
-      {
-        '<leader>ap',
-        function()
-          require('sidekick.cli').prompt()
-        end,
-        desc = 'Sidekick Ask Prompt',
-        mode = { 'n', 'v' },
-      },
-      {
-        '<leader>ae',
-        function()
-          require('sidekick.cli').ask_with_context 'explain_selection'
-        end,
-        desc = 'Sidekick Explain Selection',
-        mode = { 'v' },
-      },
-      {
-        '<leader>af',
-        function()
-          require('sidekick.cli').ask_with_context 'fix_diagnostics'
-        end,
-        desc = 'Sidekick Fix Diagnostics',
-        mode = { 'n' },
-      },
-      {
-        '<leader>ao',
-        function()
-          require('sidekick.cli').ask_with_context 'optimize_code'
-        end,
-        desc = 'Sidekick Optimize Code',
-        mode = { 'n', 'v' },
-      },
-      {
-        '<leader>at',
-        function()
-          require('sidekick.cli').ask_with_context 'add_tests'
-        end,
-        desc = 'Sidekick Add Tests',
-        mode = { 'n', 'v' },
-      },
-      {
-        '<leader>ai',
-        function()
-          require('sidekick.cli').include_buffer_context()
-        end,
-        desc = 'Sidekick Include Buffer Context',
-        mode = { 'n', 'v' },
-      },
-      {
-        '<leader>au',
-        function()
-          require('sidekick.nes').update()
-        end,
-        desc = 'Sidekick Fresh Edit Suggestions',
-        mode = { 'n', 'v' },
-      },
-      {
-        '<leader>ah',
-        function()
-          require('sidekick.nes').have()
-        end,
-        desc = 'Sidekick Check If Any Edits Active In Buffer',
-        mode = { 'n', 'v' },
+
+      system_prompt = [[
+				You are a senior software engineer and code reviewer. Be concise and focus on practical solutions. Always consider:
+				- Code readability and maintainability
+			  - Performance implications
+				- Security best practices
+				- Language-specific idioms
+
+				Prefer showing working code examples over lengthy explanations.
+			]],
+
+      slash_commands = {
+        ['buffer'] = {
+          callback = 'strategies.chat.slash_commands.buffer',
+          description = 'Insert open buffers',
+          opts = {
+            contains_code = true,
+            provider = 'telescope',
+          },
+        },
+        ['commit'] = {
+          callback = function()
+            return 'Generate a conventional commit message for the staged changes'
+          end,
+          description = 'Generate commit message',
+        },
+        ['test'] = {
+          callback = function()
+            return 'Generate comprehensive unit tests for the selected code'
+          end,
+          description = 'Generate tests',
+        },
       },
     },
   },
@@ -221,5 +183,27 @@ local plugins = {
     end,
   },
 }
+
+-- Keymaps --
+local set = vim.keymap.set
+-- CodeCompanion
+set({ 'n', 'v' }, '<leader>ac', '<cmd>CodeCompanionChat Toggle<cr>', { desc = 'AI: Toggle chat' })
+-- Inline assistant (works on visual selection too)
+set({ 'n', 'v' }, '<leader>ai', '<cmd>CodeCompanion<cr>', { desc = 'AI: Inline assistant' })
+-- Action palette (all available actions/prompts)
+set({ 'n', 'v' }, '<leader>aa', '<cmd>CodeCompanionActions<cr>', { desc = 'AI: Actions' })
+-- Add visual selection to current chat
+set('v', '<leader>av', '<cmd>CodeCompanionChat Add<cr>', { desc = 'AI: Add to chat' })
+-- Quick prompts from the built-in prompt library
+set('v', '<leader>ae', '<cmd>CodeCompanion /explain<cr>', { desc = 'AI: Explain selection' })
+set('v', '<leader>af', '<cmd>CodeCompanion /fix<cr>', { desc = 'AI: Fix selection' })
+set('v', '<leader>ar', '<cmd>CodeCompanion /refactor<cr>', { desc = 'AI: Refactor selection' })
+-- Additional workflow keybindings
+set('v', '<leader>at', '<cmd>CodeCompanion /test<cr>', { desc = 'AI: Generate tests' })
+set('v', '<leader>ad', '<cmd>CodeCompanion Generate documentation for this code<cr>', { desc = 'AI: Document code' })
+set('v', '<leader>aw', '<cmd>CodeCompanion Review this code for potential issues<cr>', { desc = 'AI: Review code' })
+-- Command mode (generate Neovim commands from natural language)
+set('n', '<leader>a:', '<cmd>CodeCompanionCmd<cr>', { desc = 'AI: Generate command' })
+vim.cmd [[cab cc CodeCompanion]]
 
 return plugins

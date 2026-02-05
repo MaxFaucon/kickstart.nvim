@@ -5,8 +5,8 @@ local map_del = vim.keymap.del
 -- [[ General ]]
 -- Lua file execution helpers
 map_set('n', '<space><space>x', '<cmd>source %<CR>')
-map_set('n', '<space>x', ':.lua<CR>')
-map_set('v', '<space>x', ':lua<CR>')
+-- map_set('n', '<space>x', ':.lua<CR>')
+-- map_set('v', '<space>x', ':lua<CR>')
 
 -- Insert mode key mapping
 map_del('i', '<C-s>') -- Remove default <C-s> mapping in insert mode
@@ -85,22 +85,23 @@ map_set('n', '<leader>tc', function()
   vim.api.nvim_command('normal! ciw' .. transformed_word .. '\x1b')
 end, { desc = 'Change word case' })
 
+-- Commented because <CR> conflicts with other plugins
 -- Toggle focus between floating windows and main windows (ex: K preview, debugger var eveluation, etc.)
-map_set('n', '<CR>', function()
-  local current_win = vim.api.nvim_get_current_win()
-  local current_config = vim.api.nvim_win_get_config(current_win)
-
-  if current_config.relative ~= '' then
-    vim.cmd 'wincmd p' -- Jump to previous window
-    return
-  end
-
-  local wins = vim.api.nvim_list_wins()
-  for _, win in ipairs(wins) do
-    local config = vim.api.nvim_win_get_config(win)
-    if config.relative ~= '' then
-      vim.api.nvim_set_current_win(win)
-      return
-    end
-  end
-end, { desc = 'Toggle floating Windows focus' })
+-- map_set('n', '<CR>', function()
+--   local current_win = vim.api.nvim_get_current_win()
+--   local current_config = vim.api.nvim_win_get_config(current_win)
+--
+--   if current_config.relative ~= '' then
+--     vim.cmd 'wincmd p' -- Jump to previous window
+--     return
+--   end
+--
+--   local wins = vim.api.nvim_list_wins()
+--   for _, win in ipairs(wins) do
+--     local config = vim.api.nvim_win_get_config(win)
+--     if config.relative ~= '' then
+--       vim.api.nvim_set_current_win(win)
+--       return
+--     end
+--   end
+-- end, { desc = 'Toggle floating Windows focus' })
