@@ -9,4 +9,13 @@ return {
     },
     cmd = { 'DB', 'DBUI', 'DBUIToggle', 'DBUIAddConnection', 'DBEnv' },
   },
+  {
+    dir = '~/Documents/projects/nvim-plugins/neosql.nvim',
+    dev = true,
+    config = function()
+      require('neosql').setup {
+        -- configuration options
+      }
+    end,
+  },
 }

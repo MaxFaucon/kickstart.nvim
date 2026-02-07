@@ -6,13 +6,14 @@ local plugins = {
   --
   -- Then, because we use the `opts` key (recommended), the configuration runs
   -- after the plugin has been loaded as `require(MODULE).setup(opts)`.
-
+  --
   { -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
     enabled = true,
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
     opts = {
       -- delay between pressing a key and opening which-key (milliseconds)
+      --
       -- this setting is independent of vim.o.timeoutlen
       delay = 100,
       preset = 'modern',
@@ -58,6 +59,81 @@ local plugins = {
         { '<leader>s', group = '[S]earch' },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+      },
+    },
+  },
+  -- Status line
+  -- https://github.com/nvim-lualine/lualine.nvim
+  {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    opts = {
+      options = {
+        component_separators = { left = '|', right = '|' },
+        section_separators = { left = '', right = '' },
+      },
+      sections = {
+        lualine_a = {
+          {
+            'mode',
+          },
+        },
+        lualine_b = {
+          {
+            'branch',
+            fmt = function(str)
+              -- Check for diff between head and upstream
+              local upstream_indicator = ''
+              local handle = io.popen 'git rev-list --left-right --count HEAD...@{upstream} 2>/dev/null'
+
+              if handle then
+                local result = handle:read '*a'
+                handle:close()
+
+                local behind, ahead = result:match '(%d+)%s+(%d+)'
+                if behind then
+                  ahead, behind = tonumber(behind), tonumber(ahead)
+
+                  if behind > 0 and ahead > 0 then
+                    upstream_indicator = ' ⇣⇡'
+                  elseif behind > 0 then
+                    upstream_indicator = ' ⇣'
+                  elseif ahead > 0 then
+                    upstream_indicator = ' ⇡'
+                  end
+                end
+              end
+
+              -- Check for unstaged or uncommitted changes
+              local dirty_indicator = ''
+              handle = io.popen 'git status --porcelain 2>/dev/null'
+
+              if handle then
+                local result = handle:read '*a'
+                handle:close()
+
+                if result ~= '' then
+                  dirty_indicator = '!'
+                else
+                  dirty_indicator = '✓'
+                end
+
+                return str .. upstream_indicator .. dirty_indicator
+              end
+            end,
+          },
+          'diff',
+          'diagnostics',
+        },
+        lualine_c = {
+          {
+            'filename',
+
+            symbols = {
+              modified = ' ●',
+            },
+          },
+        },
       },
     },
   },
@@ -108,45 +184,6 @@ local plugins = {
         wezterm = { enabled = false },
       },
     },
-  },
-  -- Homepage
-  -- https://github.com/goolord/alpha-nvim
-  {
-    'goolord/alpha-nvim',
-    config = function()
-      local alpha = require 'alpha'
-      local dashboard = require 'alpha.themes.dashboard'
-      dashboard.section.header.val = {
-        [[                                                                       ]],
-        [[  ██████   █████                   █████   █████  ███                  ]],
-        [[ ░░██████ ░░███                   ░░███   ░░███  ░░░                   ]],
-        [[  ░███░███ ░███   ██████   ██████  ░███    ░███  ████  █████████████   ]],
-        [[  ░███░░███░███  ███░░███ ███░░███ ░███    ░███ ░░███ ░░███░░███░░███  ]],
-        [[  ░███ ░░██████ ░███████ ░███ ░███ ░░███   ███   ░███  ░███ ░███ ░███  ]],
-        [[  ░███  ░░█████ ░███░░░  ░███ ░███  ░░░█████░    ░███  ░███ ░███ ░███  ]],
-        [[  █████  ░░█████░░██████ ░░██████     ░░███      █████ █████░███ █████ ]],
-        [[ ░░░░░    ░░░░░  ░░░░░░   ░░░░░░       ░░░      ░░░░░ ░░░░░ ░░░ ░░░░░  ]],
-        [[                                                                       ]],
-      }
-      dashboard.section.buttons.val = {
-        dashboard.button('e', '  New file', ':ene <BAR> startinsert <CR>'),
-        dashboard.button('SPACE s f', '  Search file', ':ene <BAR> Telescope find_files <CR>'),
-        dashboard.button('SPACE s ;', '󱋡  Search recent file', ':ene <BAR> Telescope oldfiles <CR>'),
-        dashboard.button('SPACE s g', '󰈞  Search text', ':ene <BAR> Telescope live_grep <CR>'),
-        dashboard.button('SPACE e', '󰙅  Open file explorer', ':ene <BAR> Neotree <CR>'),
-        dashboard.button('q', '󰅚  Quit NVIM', ':qa<CR>'),
-      }
-      local handle = io.popen 'fortune'
-      local fortune = handle:read '*a'
-      handle:close()
-      dashboard.section.footer.val = fortune
-
-      dashboard.config.opts.noautocmd = true
-
-      vim.cmd [[autocmd User AlphaReady echo 'ready']]
-
-      alpha.setup(dashboard.config)
-    end,
   },
   -- Icons
   -- https://github.com/nvim-tree/nvim-web-devicons
