@@ -79,49 +79,7 @@ local plugins = {
           },
         },
         lualine_b = {
-          {
-            'branch',
-            fmt = function(str)
-              -- Check for diff between head and upstream
-              local upstream_indicator = ''
-              local handle = io.popen 'git rev-list --left-right --count HEAD...@{upstream} 2>/dev/null'
-
-              if handle then
-                local result = handle:read '*a'
-                handle:close()
-
-                local behind, ahead = result:match '(%d+)%s+(%d+)'
-                if behind then
-                  ahead, behind = tonumber(behind), tonumber(ahead)
-
-                  if behind > 0 and ahead > 0 then
-                    upstream_indicator = ' ⇣⇡'
-                  elseif behind > 0 then
-                    upstream_indicator = ' ⇣'
-                  elseif ahead > 0 then
-                    upstream_indicator = ' ⇡'
-                  end
-                end
-              end
-
-              -- Check for unstaged or uncommitted changes
-              local dirty_indicator = ''
-              handle = io.popen 'git status --porcelain 2>/dev/null'
-
-              if handle then
-                local result = handle:read '*a'
-                handle:close()
-
-                if result ~= '' then
-                  dirty_indicator = '!'
-                else
-                  dirty_indicator = '✓'
-                end
-
-                return str .. upstream_indicator .. dirty_indicator
-              end
-            end,
-          },
+          'branch',
           'diff',
           'diagnostics',
         },
@@ -237,16 +195,6 @@ local plugins = {
       'MunifTanjim/nui.nvim',
       'rcarriga/nvim-notify',
     },
-  },
-  -- Description: Embed the vim statusline in the tmux statusline!
-  -- https://github.com/vimpostor/vim-tpipeline
-  {
-    'vimpostor/vim-tpipeline',
-    config = function()
-      vim.g.tpipeline_autoembed = 1
-      vim.g.tpipeline_restore = 1
-      vim.g.tpipeline_clearstl = 1
-    end,
   },
   -- Indent line
   -- https://github.com/lukas-reineke/indent-blankline.nvim
