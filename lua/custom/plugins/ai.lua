@@ -25,6 +25,16 @@ local plugins = {
           },
         },
         inline = {
+          variables = {
+            ['staged_changes'] = {
+              callback = function()
+                local git_status = vim.fn.systemlist 'git diff --cached'
+
+                return table.concat(git_status, '\n')
+              end,
+              description = 'Get the current staged git changes',
+            },
+          },
           adapter = {
             name = 'copilot',
             -- Sonnet is a good balance of speed/quality for inline.
@@ -49,8 +59,6 @@ local plugins = {
         chat = {
           -- Render markdown nicely in chat buffer (uses your render-markdown.nvim)
           render_headers = false,
-          -- Start in insert mode when opening chat
-          start_in_insert_mode = true,
           window = {
             layout = 'vertical',
             width = 0.4,
@@ -187,21 +195,21 @@ local plugins = {
 -- Keymaps --
 local set = vim.keymap.set
 -- CodeCompanion
+-- Chat
 set({ 'n', 'v' }, '<leader>ac', '<cmd>CodeCompanionChat Toggle<cr>', { desc = 'AI: Toggle chat' })
--- Inline assistant (works on visual selection too)
-set({ 'n', 'v' }, '<leader>ai', '<cmd>CodeCompanion<cr>', { desc = 'AI: Inline assistant' })
--- Action palette (all available actions/prompts)
-set({ 'n', 'v' }, '<leader>aa', '<cmd>CodeCompanionActions<cr>', { desc = 'AI: Actions' })
--- Add visual selection to current chat
 set('v', '<leader>av', '<cmd>CodeCompanionChat Add<cr>', { desc = 'AI: Add to chat' })
--- Quick prompts from the built-in prompt library
+-- Inline assistant
+set({ 'n', 'v' }, '<leader>ai', '<cmd>CodeCompanion<cr>', { desc = 'AI: Inline assistant' })
+set({ 'n', 'v' }, '<leader>am', '<cmd>CodeCompanion /commit<cr>', { desc = 'AI: Generate commit message' })
 set('v', '<leader>ae', '<cmd>CodeCompanion /explain<cr>', { desc = 'AI: Explain selection' })
 set('v', '<leader>af', '<cmd>CodeCompanion /fix<cr>', { desc = 'AI: Fix selection' })
 set('v', '<leader>ar', '<cmd>CodeCompanion /refactor<cr>', { desc = 'AI: Refactor selection' })
--- Additional workflow keybindings
 set('v', '<leader>at', '<cmd>CodeCompanion /test<cr>', { desc = 'AI: Generate tests' })
 set('v', '<leader>ad', '<cmd>CodeCompanion Generate documentation for this code<cr>', { desc = 'AI: Document code' })
 set('v', '<leader>aw', '<cmd>CodeCompanion Review this code for potential issues<cr>', { desc = 'AI: Review code' })
+-- Action palette (all available actions/prompts)
+set({ 'n', 'v' }, '<leader>aa', '<cmd>CodeCompanionActions<cr>', { desc = 'AI: Actions' })
+-- Additional workflow keybindings
 -- Command mode (generate Neovim commands from natural language)
 set('n', '<leader>a:', '<cmd>CodeCompanionCmd<cr>', { desc = 'AI: Generate command' })
 vim.cmd [[cab cc CodeCompanion]]

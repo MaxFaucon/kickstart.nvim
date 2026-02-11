@@ -20,10 +20,8 @@ vim.keymap.set('n', '<leader>dbq', function()
   local start_line, end_line = helpers.get_sql_query()
   -- Highlight the SQL query range
   helpers.highlight_sql_query(start_line, end_line)
-  -- Format the SQL query
-  helpers.format_sql_query(start_line, end_line)
-  -- Get updated line range after formatting (may have changed)
-  start_line, end_line = helpers.get_sql_query()
+  -- Format the SQL query and get updated range
+  start_line, end_line = helpers.format_sql_query(start_line, end_line)
   -- Convert SQL keywords to uppercase
   helpers.convert_sql_keywords_to_uppercase(start_line, end_line)
   -- Execute the range

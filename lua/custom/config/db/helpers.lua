@@ -5,22 +5,25 @@ local M = {}
 M.get_sql_query = function()
   local cursor_line = vim.fn.line '.'
 
-  -- Find query start (look backwards for semicolon or buffer start)
+  -- Find query start (look backwards for semicolon or empty line)
   local start_line = cursor_line
   while start_line > 1 do
     local line_content = vim.fn.getline(start_line - 1)
-    if line_content:match ';%s*$' then -- ends with semicolon
+    if line_content:match ';%s*$' or line_content:match '^%s*$' then -- previous line ends with semicolon or is empty
       break
     end
     start_line = start_line - 1
   end
 
-  -- Find query end (look forward for semicolon)
+  -- Find query end (look forward for semicolon or empty line, but stop before empty line)
   local end_line = cursor_line
   local last_line = vim.fn.line '$'
   while end_line <= last_line do
     local line_content = vim.fn.getline(end_line)
-    if line_content:match ';%s*$' then -- ends with semicolon
+    if line_content:match ';%s*$' then -- current line ends with semicolon - include this line
+      break
+    elseif line_content:match '^%s*$' then -- current line is empty - exclude this line
+      end_line = end_line - 1
       break
     end
     end_line = end_line + 1
@@ -79,7 +82,7 @@ M.format_sql_query = function(start_line, end_line)
   local file = io.open(temp_file, 'w')
   if not file then
     vim.notify('Failed to create temporary file for formatting', vim.log.levels.ERROR)
-    return
+    return start_line, end_line -- return original range on error
   end
   file:write(query)
   file:close()
@@ -94,7 +97,7 @@ M.format_sql_query = function(start_line, end_line)
   -- Check if formatting was successful
   if vim.v.shell_error ~= 0 then
     vim.notify('pg_format failed: ' .. formatted, vim.log.levels.ERROR)
-    return
+    return start_line, end_line -- return original range on error
   end
 
   -- Replace the lines with formatted content
@@ -105,7 +108,11 @@ M.format_sql_query = function(start_line, end_line)
   end
 
   -- Replace the original lines
-  vim.api.nvim_buf_set_lines(0, start_line, end_line, false, formatted_lines)
+  vim.api.nvim_buf_set_lines(0, start_line - 1, end_line, false, formatted_lines)
+
+  -- Return the new end line after formatting
+  local new_end_line = start_line + #formatted_lines - 1
+  return start_line, new_end_line
 end
 
 M.save_to_history = function()

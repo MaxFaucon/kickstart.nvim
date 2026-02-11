@@ -17,10 +17,6 @@ local plugins = {
       graph_style = 'kitty',
     },
   },
-  -- https://github.com/NeogitOrg/neogit
-  {
-    'rickhowe/diffchar.vim',
-  },
   -- https://github.com/lewis6991/gitsigns.nvim
   {
     'lewis6991/gitsigns.nvim',
@@ -71,6 +67,55 @@ local plugins = {
       }
     end,
   },
+  -- PR management
+  -- https://github.com/pwntester/octo.nvim
+  {
+    'pwntester/octo.nvim',
+    cmd = 'Octo',
+    opts = {
+      -- or "fzf-lua" or "snacks" or "default"
+      picker = 'telescope',
+      -- bare Octo command opens picker of commands
+      enable_builtin = true,
+      use_local_fs = true,
+    },
+    keys = {
+      {
+        '<leader>goo',
+        '<CMD>Octo<CR>',
+        desc = 'Open Octo menu',
+      },
+      {
+        '<leader>gop',
+        '<CMD>Octo pr list<CR>',
+        desc = 'List GitHub PullRequests',
+      },
+      {
+        '<leader>gor',
+        '<CMD>Octo review start<CR>',
+        desc = 'Start code review',
+      },
+      {
+        '<leader>gon',
+        '<CMD>Octo notification list<CR>',
+        desc = 'List GitHub Notifications',
+      },
+      {
+        '<leader>os',
+        function()
+          require('octo.utils').create_base_search_command { include_current_repo = true }
+        end,
+        desc = 'Search GitHub',
+      },
+    },
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-telescope/telescope.nvim',
+      -- OR "ibhagwan/fzf-lua",
+      -- OR "folke/snacks.nvim",
+      'nvim-tree/nvim-web-devicons',
+    },
+  },
 }
 
 -- Keymaps
@@ -94,7 +139,6 @@ map('n', '<leader>gx', '<cmd>DiffviewOpen<cr>', { desc = 'Resolve conflicts' })
 
 -- Gitsigns - Buffer operations
 -- Navigation
-
 -- visual mode
 -- map('v', '<leader>hs', function()
 --   gitsigns.stage_hunk { vim.fn.line '.', vim.fn.line 'v' }

@@ -29,14 +29,5 @@ require 'custom.config.lazy'
 -- submodes
 require 'custom.config.submodes'
 
--- Setup default buffer on startup
-vim.opt.shortmess:append 'I' -- Disable intro message
-vim.schedule(function()
-  -- Only open Oil if no file was specified
-  if vim.fn.argc() == 0 then
-    require('oil').open()
-  end
-end)
-
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

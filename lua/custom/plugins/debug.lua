@@ -195,12 +195,14 @@ local plugins = {
         sourceMaps = true,
       },
       {
+        name = 'Docker: Attach to Node',
         type = 'pwa-node',
         request = 'attach',
-        name = 'Attach to 9229',
-        port = 9229,
         restart = true,
-        cwd = '${workspaceFolder}',
+        port = 9211,
+        address = 'localhost',
+        localRoot = '${workspaceFolder}',
+        remoteRoot = '/app',
         sourceMaps = true,
       },
     }
