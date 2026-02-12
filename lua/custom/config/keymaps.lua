@@ -53,11 +53,6 @@ map_set('n', '<M-k>', '<cmd>cprev<CR>', { desc = 'Go to previous diagnostic [Q]u
 map_set('n', '<leader>qo', '<cmd>copen<CR>', { desc = 'Open [Q]uickfix list' })
 map_set('n', '<leader>qc', '<cmd>cclose<CR>', { desc = 'Close [Q]uickfix list' })
 
--- Tmux: Switch to last tmux window
-map_set('n', '<leader>tl', function()
-  vim.fn.system 'tmux last-window'
-end, { desc = 'Switch to last tmux window' })
-
 -- [[ Code ]]
 -- Search
 map_set('n', '<leader>se', '<cmd>e .env<CR>', { desc = 'Open .env file' })

@@ -10,7 +10,6 @@ local plugins = {
       'nvim-lua/popup.nvim',
       {
         'nvim-telescope/telescope-fzf-native.nvim',
-        'camgraff/telescope-tmux.nvim',
 
         -- `build` is used to run some command when the plugin is installed/updated.
         -- This is only run then, not every time Neovim starts up.
@@ -162,8 +161,5 @@ end, { desc = '[S]earch [/] in Open Files' })
 map('n', '<leader>sn', function()
   builtin.find_files { cwd = vim.fn.stdpath 'config' }
 end, { desc = '[S]earch [N]eovim files' })
-
--- Tmux
-map('n', '<leader>st', '<cmd>Telescope tmux windows<cr>', { desc = '[S]earch [T]mux Windows' })
 
 return plugins
