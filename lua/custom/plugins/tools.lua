@@ -34,6 +34,28 @@ local plugins = {
       }
     end,
   },
+  {
+    'letieu/jira.nvim',
+    opts = {
+      jira = {
+        base = os.getenv 'JIRA_BASE_URL',
+        email = os.getenv 'JIRA_EMAIL',
+        token = os.getenv 'JIRA_TOKEN',
+        type = 'basic', -- Authentication type: "basic" (default) or "pat"
+        limit = 200,
+      },
+
+      -- Override active sprint query with my tasks query
+      active_sprint_query = '(assignee = currentUser() OR assignee WAS currentUser()) AND status NOT IN ("Released", "Cancelled") AND (project = "%s" OR status != "Done") AND updated >= -4w ORDER BY updated DESC',
+
+      queries = {
+        ['Active sprint'] = "project = '%s' AND sprint in openSprints() AND assignee = currentUser() ORDER BY Rank ASC",
+        ['Next sprint'] = "project = '%s' AND sprint in futureSprints() ORDER BY Rank ASC",
+        ['Backlog'] = "project = '%s' AND (issuetype IN standardIssueTypes() OR issuetype = Sub-task) AND (sprint IS EMPTY OR sprint NOT IN openSprints()) AND statusCategory != Done ORDER BY Rank ASC",
+        ['My Tasks'] = 'assignee = currentUser() AND statusCategory != Done AND created >= -4w ORDER BY updated DESC',
+      },
+    },
+  },
 }
 
 -- Keymaps

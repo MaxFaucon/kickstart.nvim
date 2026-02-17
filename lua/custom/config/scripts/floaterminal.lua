@@ -1,4 +1,4 @@
-M = require 'custom.config.create_floating_window'
+M = require 'custom.config.scripts.create_floating_window'
 
 local state = {
   floating = {
@@ -20,7 +20,3 @@ end
 
 -- Create a floating window with default dimensions
 vim.api.nvim_create_user_command('Floaterminal', toggle_terminal, {})
-
--- Key mappings for toggling the floating terminal
-vim.keymap.set({ 'n', 't' }, '<leader>tf', toggle_terminal, { desc = 'Toggle floating terminal' })
-vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })

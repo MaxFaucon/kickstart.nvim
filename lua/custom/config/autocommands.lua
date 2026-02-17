@@ -15,8 +15,9 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- Toggleterm navigation config
 function _G.set_terminal_keymaps()
   local opts = { buffer = 0 }
-  vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
-  -- vim.keymap.set('t', 'jk', [[<C-\><C-n>]], opts) -- Disabled because it impacts the lazygit terminal while navigating changes
+
+  vim.keymap.set('t', '<esc><esc>', [[<C-\><C-n>]], opts)
+
   vim.keymap.set('t', '<C-h>', [[<Cmd>wincmd h<CR>]], opts)
   vim.keymap.set('t', '<C-j>', [[<Cmd>wincmd j<CR>]], opts)
   vim.keymap.set('t', '<C-k>', [[<Cmd>wincmd k<CR>]], opts)

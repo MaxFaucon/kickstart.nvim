@@ -26,16 +26,13 @@ map_set('i', '<C-k>', '<C-o>de', { desc = 'Delete next word' })
 -- Clear highlights on search when pressing <Esc> in normal mode
 map_set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
--- Terminal
-map_set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
-
 -- Buffer keymaps
 map_set('n', '<leader>br', '<cmd>edit!<CR>', { desc = 'Refresh current file' })
 map_set('n', '<leader>bac', '<cmd>%bd<CR>', { desc = 'Close all buffers', silent = true })
 -- Copy absolute path of current file to clipboard
 map_set('n', '<leader>bp', '<cmd>let @+ = expand("%:p")<CR>', { desc = 'Copy absolute path of current file to clipboard' })
-vim.keymap.set('n', '<leader>bc', '<cmd>bdelete<CR>', { desc = 'Close a buffer tab', silent = true })
-vim.keymap.set('n', '<leader>so', '<cmd>b#<CR>', { desc = 'Switch to previous buffer', silent = true })
+map_set('n', '<leader>bc', '<cmd>bdelete<CR>', { desc = 'Close a buffer tab', silent = true })
+map_set('n', '<leader>so', '<cmd>b#<CR>', { desc = 'Switch to previous buffer', silent = true })
 
 -- Avoid c, d and x to set text in the default register (clipboard)
 -- map_set({ 'n', 'v' }, 'd', '"_d')
