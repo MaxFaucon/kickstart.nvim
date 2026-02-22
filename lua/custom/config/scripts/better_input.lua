@@ -5,6 +5,7 @@ vim.ui.input = function(opts, on_confirm)
     size = { width = 80 },
     border = { style = 'rounded', text = { top = opts.prompt or 'Input' } },
   }, {
+    default_value = opts.default or '',
     on_submit = on_confirm,
   })
   input:mount()

@@ -88,6 +88,45 @@ M.setup_autocmd_and_telescope = function()
       :find()
   end
 
+  local function db_notes_picker()
+    local dbee_global_notes = require('dbee').api.ui.editor_namespace_get_notes 'global'
+
+    pickers
+      .new({}, {
+        prompt_title = 'Database notes picker',
+        initial_mode = 'normal',
+        layout_config = {
+          anchor = 'CENTER',
+          height = 0.5,
+          width = 0.5,
+        },
+        finder = finders.new_table {
+          results = dbee_global_notes,
+          entry_maker = function(entry)
+            return {
+              value = entry.id,
+              display = entry.name,
+              ordinal = entry.name,
+            }
+          end,
+        },
+        sorter = require('telescope.config').values.generic_sorter {},
+        attach_mappings = function(bufnr, map)
+          map({ 'i', 'n' }, '<CR>', function()
+            local selection = require('telescope.actions.state').get_selected_entry()
+
+            require('telescope.actions').close(bufnr)
+            require('dbee').api.ui.editor_set_current_note(selection.value)
+
+            M.dbee_connection_changed(selection.display, selection.ordinal)
+          end)
+
+          return true -- Retain default keymaps
+        end,
+      })
+      :find()
+  end
+
   -- Autocommands
   vim.api.nvim_create_autocmd('BufEnter', {
     pattern = { '*dbee-drawer' },
@@ -103,7 +142,62 @@ M.setup_autocmd_and_telescope = function()
       end
 
       -- Dbee context keymaps
-      vim.keymap.set('n', '<leader>s', db_connections_picker, { desc = 'Database connections Telescope picker' })
+      vim.keymap.set('n', 'q', function()
+        require('dbee').close()
+      end, { desc = 'Close DBee' })
+      vim.keymap.set('n', '<leader>sc', db_connections_picker, { desc = 'Dbee search connections' })
+      vim.keymap.set('n', '<leader>sn', db_notes_picker, { desc = 'Dbee search notes' })
+      vim.keymap.set('n', '<leader>nc', function()
+        vim.ui.input({ prompt = 'Enter note name: ' }, function(input)
+          if input then
+            local new_note = require('dbee').api.ui.editor_namespace_create_note('global', input)
+            require('dbee').api.ui.editor_set_current_note(new_note)
+          end
+        end)
+      end, { desc = 'DBee create note' })
+      vim.keymap.set('n', '<leader>so', function()
+        local current_result = require('dbee').api.ui.result_get_call()
+
+        if current_result == nil then
+          vim.notify('No result in the output', vim.log.levels.WARN)
+          return
+        end
+
+        vim.ui.select({ 'csv', 'json', 'table' }, {
+          prompt = 'Choose export format:',
+        }, function(format_choice)
+          if format_choice then
+            vim.ui.select({ 'file', 'yank' }, {
+              prompt = 'Choose where to store:',
+            }, function(store_choice)
+              if store_choice == 'file' then
+                vim.ui.input({ prompt = 'Enter file path:', default = '~/Documents/extracts/' }, function(file_path)
+                  local expanded_path = vim.fn.expand(file_path)
+                  local stat = vim.loop.fs_stat(expanded_path)
+                  local path_exists = stat and stat.type == 'directory'
+
+                  if not path_exists then
+                    vim.notify('Directory does not exist', vim.log.levels.ERROR)
+                  else
+                    local timestamp = os.time()
+
+                    vim.ui.input({ prompt = 'Enter file name: ', default = timestamp .. '_' }, function(filename)
+                      if filename then
+                        local complete_path = expanded_path .. filename
+                        require('dbee').api.core.call_store_result(current_result.id, format_choice, store_choice, { extra_arg = complete_path })
+                        vim.notify('Output copied to ' .. complete_path, vim.log.levels.INFO)
+                      end
+                    end)
+                  end
+                end)
+              else
+                require('dbee').api.core.call_store_result(current_result.id, format_choice, store_choice, { extra_arg = '+' })
+                vim.notify('Output copied to clipboard', vim.log.levels.INFO)
+              end
+            end)
+          end
+        end)
+      end, { desc = 'Dbee store output' })
     end,
   })
 end
