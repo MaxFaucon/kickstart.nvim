@@ -196,15 +196,6 @@ local plugins = {
       'rcarriga/nvim-notify',
     },
   },
-  {
-    'folke/snacks.nvim',
-    ---@type snacks.Config
-    opts = {
-      input = {
-        enabled = true,
-      },
-    },
-  },
   -- Indent line
   -- https://github.com/lukas-reineke/indent-blankline.nvim
   {

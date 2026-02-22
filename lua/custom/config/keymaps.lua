@@ -31,6 +31,7 @@ map_set('n', '<leader>br', '<cmd>edit!<CR>', { desc = 'Refresh current file' })
 map_set('n', '<leader>bac', '<cmd>%bd<CR>', { desc = 'Close all buffers', silent = true })
 -- Copy absolute path of current file to clipboard
 map_set('n', '<leader>bp', '<cmd>let @+ = expand("%:p")<CR>', { desc = 'Copy absolute path of current file to clipboard' })
+map_set('n', '<leader>bf', '<cmd>let @+ = expand("%:p:t")<CR>', { desc = 'Copy file name to clipboard' })
 map_set('n', '<leader>bc', '<cmd>bdelete<CR>', { desc = 'Close a buffer tab', silent = true })
 map_set('n', '<leader>so', '<cmd>b#<CR>', { desc = 'Switch to previous buffer', silent = true })
 
