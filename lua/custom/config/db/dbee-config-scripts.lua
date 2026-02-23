@@ -1,3 +1,58 @@
+local sql_helpers = require 'custom.config.db.helpers'
+
+-- Other helpers
+local function url_encode(str)
+  str = str:gsub('\n', '')
+  str = str:gsub('([^%w%-%.%_%~])', function(c)
+    return string.format('%%%02X', string.byte(c))
+  end)
+  return str
+end
+
+local function store_output()
+  local current_result = require('dbee').api.ui.result_get_call()
+
+  if current_result == nil then
+    vim.notify('No result in the output', vim.log.levels.WARN)
+    return
+  end
+
+  vim.ui.select({ 'csv', 'json', 'table' }, {
+    prompt = 'Choose export format:',
+  }, function(format_choice)
+    if format_choice then
+      vim.ui.select({ 'file', 'yank' }, {
+        prompt = 'Choose where to store:',
+      }, function(store_choice)
+        if store_choice == 'file' then
+          vim.ui.input({ prompt = 'Enter file path:', default = '~/Documents/extracts/' }, function(file_path)
+            local expanded_path = vim.fn.expand(file_path)
+            local stat = vim.loop.fs_stat(expanded_path)
+            local path_exists = stat and stat.type == 'directory'
+
+            if not path_exists then
+              vim.notify('Directory does not exist', vim.log.levels.ERROR)
+            else
+              local timestamp = os.time()
+
+              vim.ui.input({ prompt = 'Enter file name: ', default = timestamp .. '_' }, function(filename)
+                if filename then
+                  local complete_path = expanded_path .. filename
+                  require('dbee').api.core.call_store_result(current_result.id, format_choice, store_choice, { extra_arg = complete_path })
+                  vim.notify('Output copied to ' .. complete_path, vim.log.levels.INFO)
+                end
+              end)
+            end
+          end)
+        else
+          require('dbee').api.core.call_store_result(current_result.id, format_choice, store_choice, { extra_arg = '+' })
+          vim.notify('Output copied to clipboard', vim.log.levels.INFO)
+        end
+      end)
+    end
+  end)
+end
+
 local M = {}
 
 local postgres_lsp_template = require 'custom.config.db.postgres-lsp-config-template'
@@ -32,6 +87,55 @@ M.dbee_connection_changed = function(current_connection_name, current_connection
       vim.wo[dbee_drawer_window].winbar = 'Connection: ' .. current_connection_name
     end
   end
+end
+
+M.format_query = function()
+  local start_line, end_line = sql_helpers.get_sql_query()
+
+  -- Format the SQL query and get updated range
+  sql_helpers.format_sql_query(start_line, end_line)
+end
+
+M.visualize_geometries = function(start_line, end_line)
+  local active_connection = require('dbee').api.core.get_current_connection()
+
+  if active_connection == nil then
+    vim.notify('No active connection', vim.log.levels.ERROR)
+
+    return
+  end
+
+  local query = ''
+  for line = start_line, end_line do
+    query = query .. vim.fn.getline(line)
+  end
+  local clean_query = query:gsub(';%s*$', '')
+
+  vim.ui.input({ prompt = 'Enter geom column name: ', default = 'geom' }, function(geom)
+    if geom then
+      local feature_collection_query = "SELECT json_build_object('type', 'FeatureCollection', 'features', json_agg(json_build_object('type', 'Feature', 'geometry', ST_AsGeoJSON ("
+        .. geom
+        .. ")::json, 'properties', (to_jsonb (sub) - '"
+        .. geom
+        .. "')))) FROM ("
+        .. clean_query
+        .. ') sub WHERE sub.'
+        .. geom
+        .. ' IS NOT NULL;'
+
+      local result = vim.fn.system {
+        'psql',
+        active_connection.url,
+        '-t',
+        '-A',
+        '-c',
+        feature_collection_query,
+      }
+
+      local url = 'https://geojson.io/#data=data:application/json,' .. url_encode(result)
+      vim.fn.system { 'xdg-open', url }
+    end
+  end)
 end
 
 M.setup_autocmd_and_telescope = function()
@@ -147,6 +251,7 @@ M.setup_autocmd_and_telescope = function()
       end, { desc = 'Close DBee' })
       vim.keymap.set('n', '<leader>sc', db_connections_picker, { desc = 'Dbee search connections' })
       vim.keymap.set('n', '<leader>sn', db_notes_picker, { desc = 'Dbee search notes' })
+
       vim.keymap.set('n', '<leader>nc', function()
         vim.ui.input({ prompt = 'Enter note name: ' }, function(input)
           if input then
@@ -155,49 +260,16 @@ M.setup_autocmd_and_telescope = function()
           end
         end)
       end, { desc = 'DBee create note' })
+
       vim.keymap.set('n', '<leader>so', function()
-        local current_result = require('dbee').api.ui.result_get_call()
-
-        if current_result == nil then
-          vim.notify('No result in the output', vim.log.levels.WARN)
-          return
-        end
-
-        vim.ui.select({ 'csv', 'json', 'table' }, {
-          prompt = 'Choose export format:',
-        }, function(format_choice)
-          if format_choice then
-            vim.ui.select({ 'file', 'yank' }, {
-              prompt = 'Choose where to store:',
-            }, function(store_choice)
-              if store_choice == 'file' then
-                vim.ui.input({ prompt = 'Enter file path:', default = '~/Documents/extracts/' }, function(file_path)
-                  local expanded_path = vim.fn.expand(file_path)
-                  local stat = vim.loop.fs_stat(expanded_path)
-                  local path_exists = stat and stat.type == 'directory'
-
-                  if not path_exists then
-                    vim.notify('Directory does not exist', vim.log.levels.ERROR)
-                  else
-                    local timestamp = os.time()
-
-                    vim.ui.input({ prompt = 'Enter file name: ', default = timestamp .. '_' }, function(filename)
-                      if filename then
-                        local complete_path = expanded_path .. filename
-                        require('dbee').api.core.call_store_result(current_result.id, format_choice, store_choice, { extra_arg = complete_path })
-                        vim.notify('Output copied to ' .. complete_path, vim.log.levels.INFO)
-                      end
-                    end)
-                  end
-                end)
-              else
-                require('dbee').api.core.call_store_result(current_result.id, format_choice, store_choice, { extra_arg = '+' })
-                vim.notify('Output copied to clipboard', vim.log.levels.INFO)
-              end
-            end)
-          end
-        end)
+        store_output()
       end, { desc = 'Dbee store output' })
+
+      vim.keymap.set('n', '<leader>dg', function()
+        local start_line, end_line = sql_helpers.get_sql_query()
+
+        M.visualize_geometries(start_line, end_line)
+      end, { desc = 'Visualize geometries' })
     end,
   })
 end

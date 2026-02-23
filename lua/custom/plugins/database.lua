@@ -1,4 +1,3 @@
-local sql_helpers = require 'custom.config.db.helpers'
 local dbee_scripts = require 'custom.config.db.dbee-config-scripts'
 
 local plugins = {
@@ -33,9 +32,7 @@ local plugins = {
               key = '<CR>',
               mode = 'n',
               action = function()
-                local start_line, end_line = sql_helpers.get_sql_query()
-                -- Format the SQL query and get updated range
-                sql_helpers.format_sql_query(start_line, end_line)
+                dbee_scripts.format_query()
 
                 require('dbee').api.ui.editor_do_action 'run_under_cursor'
               end,
