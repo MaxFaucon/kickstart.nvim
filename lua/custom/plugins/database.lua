@@ -13,7 +13,8 @@ local plugins = {
   },
   -- https://github.com/kndndrj/nvim-dbee
   {
-    'kndndrj/nvim-dbee',
+    'MaxFaucon/nvim-dbee',
+    -- dir = '~/Documents/projects/nvim-plugins/nvim-dbee',
     dependencies = {
       'MunifTanjim/nui.nvim',
     },
