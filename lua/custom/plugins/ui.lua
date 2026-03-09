@@ -104,13 +104,6 @@ local plugins = {
     priority = 1000,
     opts = {
       flavour = 'mocha', -- latte, frappe, macchiato, mocha
-      transparent_background = true, -- disables setting the background color.
-      show_end_of_buffer = true, -- shows the '~' characters after the end of buffers
-      term_colors = false, -- sets terminal colors (e.g. `g:terminal_color_0`)
-      no_italic = false, -- Force no italic
-      no_bold = false, -- Force no bold
-      no_underline = false, -- Force no underline
-      default_integrations = true,
       integrations = {
         bufferline = true,
         gitsigns = true,
@@ -123,9 +116,19 @@ local plugins = {
         which_key = true,
         -- For more plugins integrations please scroll down (https://github.com/catppuccin/nvim#integrations)
       },
+      highlight_overrides = {
+        mocha = function(mocha)
+          return {
+            LineNrAbove = { fg = mocha.overlay2 },
+            LineNrBelow = { fg = mocha.overlay2 },
+          }
+        end,
+      },
     },
 
-    config = function()
+    -- Triggers loading colorscheme
+    config = function(_, opts)
+      require('catppuccin').setup(opts)
       vim.cmd.colorscheme 'catppuccin-mocha'
     end,
   },
@@ -203,6 +206,13 @@ local plugins = {
     main = 'ibl',
     ---@module "ibl"
     ---@type ibl.config
+    opts = {},
+  },
+  -- Add padding after the last line of the file to always be centered when editing text
+  -- https://github.com/Aasim-A/scrollEOF.nvim
+  {
+    'Aasim-A/scrollEOF.nvim',
+    event = { 'CursorMoved', 'WinScrolled' },
     opts = {},
   },
 }

@@ -18,10 +18,7 @@ local plugins = {
         chat = {
           adapter = {
             name = 'copilot',
-            -- Best quality model available through your Copilot subscription.
-            -- You can switch models on the fly in the chat buffer with `ga`.
-            -- Other good options: "claude-sonnet-4", "gpt-4.1", "gemini-2.5-pro"
-            model = 'claude-sonnet-4',
+            model = 'claude-sonnet-4.6',
           },
         },
         inline = {
@@ -37,9 +34,7 @@ local plugins = {
           },
           adapter = {
             name = 'copilot',
-            -- Sonnet is a good balance of speed/quality for inline.
-            -- If you find it slow, try "gpt-4.1" which streams faster.
-            model = 'claude-sonnet-4',
+            model = 'claude-sonnet-4.6',
           },
         },
         cmd = {
@@ -116,24 +111,27 @@ local plugins = {
   {
     'zbirenbaum/copilot.lua',
     cmd = 'Copilot',
+    build = ':Copilot auth',
     event = 'InsertEnter',
-    config = function()
-      require('copilot').setup {
-        suggestion = {
-          enabled = true,
-          auto_trigger = true,
-          hide_during_completion = true,
-          keymap = {
-            accept = false,
-          },
+    opts = {
+      panel = { enabled = false },
+      suggestion = {
+        auto_trigger = true,
+        keymap = {
+          accept = '<C-v>',
         },
-      }
-
+      },
+    },
+    config = function(_, opts)
+      require('copilot').setup(opts)
       vim.keymap.set('i', '<C-v>', function()
         if require('copilot.suggestion').is_visible() then
           require('copilot.suggestion').accept()
+        else
+          -- fallback to original C-v behavior (insert literal char)
+          return '<C-v>'
         end
-      end)
+      end, { expr = true, silent = true, desc = 'Copilot: Accept suggestion or insert literal' })
     end,
   },
   -- Local completion plugin

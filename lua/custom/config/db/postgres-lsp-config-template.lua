@@ -17,6 +17,7 @@ M.get_config_template = function(connection_string)
     },
     db = {
       connectionString = connection_string,
+      connTimeoutSecs = 10,
     },
   }
 

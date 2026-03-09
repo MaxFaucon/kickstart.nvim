@@ -27,14 +27,6 @@ end
 -- if you only want these mappings for toggle term use term://*toggleterm#* instead
 vim.cmd 'autocmd! TermOpen term://*toggleterm#* lua set_terminal_keymaps()'
 
--- Disable copilot in specific file types
-vim.api.nvim_create_autocmd('FileType', {
-  pattern = 'typr',
-  callback = function()
-    vim.b.copilot_enabled = false
-  end,
-})
-
 -- Enable spelling check in specific file types
 vim.api.nvim_create_autocmd('FileType', {
   pattern = { 'markdown', 'text', 'gitcommit' },

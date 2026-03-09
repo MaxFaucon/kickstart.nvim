@@ -140,4 +140,36 @@ M.save_to_history = function()
   vim.api.nvim_buf_set_lines(0, buffer_first_line, buffer_last_line, false, {})
 end
 
+M.inspect_table_query = [[
+WITH column_constraints AS (
+    SELECT
+        unnest(conkey) AS attnum,
+        string_agg(
+            CASE contype
+                WHEN 'p' THEN 'PRIMARY KEY'
+                WHEN 'u' THEN 'UNIQUE'
+                WHEN 'f' THEN 'REFERENCES ' || (SELECT relname FROM pg_class WHERE oid = confrelid)
+                WHEN 'c' THEN 'CHECK'
+            END, ' | '
+        ) AS constraints
+    FROM pg_constraint
+    WHERE conrelid = '{}'::regclass
+    GROUP BY 1
+)
+SELECT
+    a.attname AS column_name,
+    format_type(a.atttypid, a.atttypmod) AS data_type,
+    CASE WHEN a.attnotnull THEN 'NOT NULL' ELSE '' END AS is_nullable,
+    COALESCE(pg_get_expr(d.adbin, d.adrelid), '') AS default_value,
+    COALESCE(cc.constraints, '') AS constraints,
+    COALESCE(col_description(a.attrelid, a.attnum), '') AS column_comment
+FROM pg_attribute a
+LEFT JOIN pg_attrdef d ON d.adrelid = a.attrelid AND d.adnum = a.attnum
+LEFT JOIN column_constraints cc ON cc.attnum = a.attnum
+WHERE a.attrelid = '{}'::regclass
+  AND a.attnum > 0
+  AND NOT a.attisdropped
+ORDER BY a.attnum;
+]]
+
 return M

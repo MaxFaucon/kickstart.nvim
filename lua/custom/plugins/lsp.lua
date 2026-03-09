@@ -232,6 +232,7 @@ local plugins = {
 
         lua_ls = {},
         postgres_lsp = {},
+        copilot = { enabled = false },
       }
 
       -- Ensure the servers and tools above are installed

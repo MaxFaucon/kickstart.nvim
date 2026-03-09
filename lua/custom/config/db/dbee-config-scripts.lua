@@ -63,23 +63,25 @@ M.dbee_connection_changed = function(current_connection_name, current_connection
   if current_connection_name ~= nil and current_connection_url ~= nil and current_connection_url ~= previous_connection_url then
     previous_connection_url = current_connection_url
 
-    local postgres_lsp_config_path = vim.fn.stdpath 'state' .. '/dbee/notes/global/postgres-language-server.jsonc'
-    local fd, err = vim.uv.fs_open(postgres_lsp_config_path, 'w', 0x666)
+    if current_connection_name == 'LOCAL' then
+      local postgres_lsp_config_path = vim.fn.stdpath 'state' .. '/dbee/notes/global/postgres-language-server.jsonc'
+      local fd, err = vim.uv.fs_open(postgres_lsp_config_path, 'w', 0x666)
 
-    if err or fd == nil then
-      print('Error creating file: ' .. err)
-    else
-      -- Write content to the file
-      local _, write_err = vim.uv.fs_write(fd, postgres_lsp_template.get_config_template(current_connection_url), 0)
-      if write_err then
-        print('Error writing to file: ' .. write_err)
+      if err or fd == nil then
+        print('Error creating file: ' .. err)
+      else
+        -- Write content to the file
+        local _, write_err = vim.uv.fs_write(fd, postgres_lsp_template.get_config_template(current_connection_url), 0)
+        if write_err then
+          print('Error writing to file: ' .. write_err)
+        end
+
+        -- Restart postgres lsp
+        vim.cmd 'LspRestart! postgres_lsp'
+
+        -- Close the file descriptor
+        vim.uv.fs_close(fd)
       end
-
-      -- Restart postgres lsp
-      vim.cmd 'LspRestart! postgres_lsp'
-
-      -- Close the file descriptor
-      vim.uv.fs_close(fd)
     end
 
     if dbee_drawer_window ~= nil then
@@ -107,13 +109,13 @@ M.visualize_geometries = function(start_line, end_line)
 
   local query = ''
   for line = start_line, end_line do
-    query = query .. vim.fn.getline(line)
+    query = query .. '\n' .. vim.fn.getline(line)
   end
   local clean_query = query:gsub(';%s*$', '')
 
   vim.ui.input({ prompt = 'Enter geom column name: ', default = 'geom' }, function(geom)
     if geom then
-      local feature_collection_query = "SELECT json_build_object('type', 'FeatureCollection', 'features', json_agg(json_build_object('type', 'Feature', 'geometry', ST_AsGeoJSON ("
+      local feature_collection_query = "SELECT json_build_object('type', 'FeatureCollection', 'features', json_agg(json_build_object('type', 'Feature', 'geometry', extensions.ST_AsGeoJSON ("
         .. geom
         .. ")::json, 'properties', (to_jsonb (sub) - '"
         .. geom
@@ -133,7 +135,7 @@ M.visualize_geometries = function(start_line, end_line)
       }
 
       local url = 'https://geojson.io/#data=data:application/json,' .. url_encode(result)
-      vim.fn.system { 'xdg-open', url }
+      vim.fn.system { 'open', url }
     end
   end)
 end
@@ -246,9 +248,6 @@ M.setup_autocmd_and_telescope = function()
       end
 
       -- Dbee context keymaps
-      vim.keymap.set('n', 'q', function()
-        require('dbee').close()
-      end, { desc = 'Close DBee' })
       vim.keymap.set('n', '<leader>sc', db_connections_picker, { desc = 'Dbee search connections' })
       vim.keymap.set('n', '<leader>sn', db_notes_picker, { desc = 'Dbee search notes' })
 
@@ -270,6 +269,19 @@ M.setup_autocmd_and_telescope = function()
 
         M.visualize_geometries(start_line, end_line)
       end, { desc = 'Visualize geometries' })
+
+      vim.keymap.set('n', '<leader>di', function()
+        local table_name = vim.fn.expand '<cword>'
+        if table_name == '' then
+          print 'No table name found under cursor'
+          return
+        end
+
+        local query = sql_helpers.inspect_table_query:gsub('{}', table_name)
+
+        require('dbee').execute(query)
+        print('Inspecting table: ' .. table_name)
+      end, { desc = '[D]atabase [I]nspect Table (dbee)' })
     end,
   })
 end
