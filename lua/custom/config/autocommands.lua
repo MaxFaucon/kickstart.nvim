@@ -35,3 +35,31 @@ vim.api.nvim_create_autocmd('FileType', {
     vim.opt.spelllang = { 'en', 'fr' }
   end,
 })
+
+vim.api.nvim_create_autocmd('BufLeave', {
+  desc = 'Dynamically update global marks when leaving a buffer',
+  callback = function()
+    local global_marks = vim.fn.getmarklist()
+    local user_global_marks = vim.tbl_filter(function(v)
+      local mark_name = string.sub(v.mark, 2, 2)
+
+      -- The mark is not a number
+      return not mark_name:match '%d'
+    end, global_marks)
+
+    if #user_global_marks == 0 then
+      return
+    end
+
+    local file_path = vim.fn.expand '%:~'
+    for _, user_global_mark in ipairs(user_global_marks) do
+      if user_global_mark.file == file_path then
+        local current_cursor_position = vim.api.nvim_win_get_cursor(0)
+        local mark_name = string.sub(user_global_mark.mark, 2, 2)
+
+        print('COUCOU', current_cursor_position[1], current_cursor_position[2])
+        vim.api.nvim_buf_set_mark(0, mark_name, current_cursor_position[1], current_cursor_position[2], {})
+      end
+    end
+  end,
+})

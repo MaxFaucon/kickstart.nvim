@@ -118,6 +118,26 @@ map('n', '<leader>sr', '<cmd>Telescope resume<cr>', { desc = '[S]earch [R]esume'
 map('n', '<leader>s;', '<cmd>Telescope oldfiles<cr>', { desc = '[S]earch Recent Files ("." for repeat)' })
 map('n', '<leader>si', '<cmd>Telescope lsp_document_symbols<cr>', { desc = '[S]earch [I]n-document Symbols' })
 
+map('n', '<leader>sm', function()
+  builtin.marks {
+    mark_type = 'global',
+    entry_maker = function(entry)
+      local first_line_char = string.sub(entry.line, 1, 1)
+      local is_number_mark = first_line_char:match '%d'
+
+      if is_number_mark then
+        return
+      end
+
+      return {
+        value = first_line_char,
+        display = entry.line,
+        ordinal = entry.line,
+      }
+    end,
+  }
+end, { desc = '[S]earch Global [M]arks' })
+
 map('n', '<leader><leader>', function()
   builtin.buffers { initial_mode = 'normal', ignore_current_buffer = true, sort_mru = true }
 end, { desc = '[ ] Find existing buffers' })
