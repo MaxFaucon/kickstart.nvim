@@ -1,4 +1,5 @@
 local sql_helpers = require 'custom.config.db.helpers'
+local window_helpers = require 'custom.config.scripts.create_floating_window'
 
 -- Other helpers
 local function url_encode(str)
@@ -282,6 +283,42 @@ M.setup_autocmd_and_telescope = function()
         require('dbee').execute(query)
         print('Inspecting table: ' .. table_name)
       end, { desc = '[D]atabase [I]nspect Table (dbee)' })
+
+      vim.keymap.set('n', '<leader>k', function()
+        local row = vim.fn.search([[^\s*[0-9]\+]], 'bnc', 1)
+        if row == 0 then
+          error "Couldn't retrieve current row number: row = 0"
+        end
+
+        -- Get the line and extract the line number
+        local line = vim.api.nvim_buf_get_lines(0, row - 1, row, true)[1] or ''
+        local index = tonumber(line:match '%d+')
+        if not index then
+          error "couldn't retrieve current row number"
+        end
+
+        require('dbee').store('json', 'yank', { from = index - 1, to = index })
+        local yanked_json = vim.fn.getreg '"'
+        local decoded_table = vim.json.decode(yanked_json)
+
+        local cursor_position = vim.api.nvim_win_get_cursor(0)
+        vim.fn.cursor(1, cursor_position[2])
+        vim.fn.search('\\k', 'bcW')
+        local column_name = vim.fn.expand '<cword>'
+
+        local cell_value = decoded_table[1][column_name]
+        local cell_value_string = type(cell_value) == 'string' and cell_value or vim.inspect(cell_value)
+        local cell_value_lines = vim.split(cell_value_string, '\n')
+
+        local max_line_length = vim.fn.max(vim.tbl_map(function(cell_line)
+          return #tostring(cell_line)
+        end, cell_value_lines))
+
+        local floating_window = window_helpers.create_floating_window { height = #cell_value_lines, width = max_line_length, cursor_position = cursor_position }
+
+        vim.api.nvim_set_option_value('modifiable', true, { buf = 0 })
+        vim.api.nvim_buf_set_lines(floating_window.buf, 0, -1, false, cell_value_lines)
+      end, { desc = 'Inspect cell value' })
     end,
   })
 end

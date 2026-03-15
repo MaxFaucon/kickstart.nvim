@@ -57,7 +57,6 @@ vim.api.nvim_create_autocmd('BufLeave', {
         local current_cursor_position = vim.api.nvim_win_get_cursor(0)
         local mark_name = string.sub(user_global_mark.mark, 2, 2)
 
-        print('COUCOU', current_cursor_position[1], current_cursor_position[2])
         vim.api.nvim_buf_set_mark(0, mark_name, current_cursor_position[1], current_cursor_position[2], {})
       end
     end
