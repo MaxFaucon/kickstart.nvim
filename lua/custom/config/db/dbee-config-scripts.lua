@@ -1,6 +1,13 @@
 local sql_helpers = require 'custom.config.db.helpers'
 local window_helpers = require 'custom.config.scripts.create_floating_window'
 
+local M = {}
+
+M.query_state = {
+  base_query = nil,
+  order_by = nil,
+}
+
 -- Other helpers
 local function url_encode(str)
   str = str:gsub('\n', '')
@@ -8,6 +15,13 @@ local function url_encode(str)
     return string.format('%%%02X', string.byte(c))
   end)
   return str
+end
+
+local function get_column_name(cursor_position)
+  vim.fn.cursor(1, cursor_position[2])
+  vim.fn.search('\\k', 'bcW')
+
+  return vim.fn.expand '<cword>'
 end
 
 local function store_output()
@@ -53,8 +67,6 @@ local function store_output()
     end
   end)
 end
-
-local M = {}
 
 local postgres_lsp_template = require 'custom.config.db.postgres-lsp-config-template'
 local previous_connection_url = nil
@@ -302,9 +314,7 @@ M.setup_autocmd_and_telescope = function()
         local decoded_table = vim.json.decode(yanked_json)
 
         local cursor_position = vim.api.nvim_win_get_cursor(0)
-        vim.fn.cursor(1, cursor_position[2])
-        vim.fn.search('\\k', 'bcW')
-        local column_name = vim.fn.expand '<cword>'
+        local column_name = get_column_name()
 
         local cell_value = decoded_table[1][column_name]
         local cell_value_string = type(cell_value) == 'string' and cell_value or vim.inspect(cell_value)
@@ -319,6 +329,20 @@ M.setup_autocmd_and_telescope = function()
         vim.api.nvim_set_option_value('modifiable', true, { buf = 0 })
         vim.api.nvim_buf_set_lines(floating_window.buf, 0, -1, false, cell_value_lines)
       end, { desc = 'Inspect cell value' })
+
+      vim.keymap.set('n', '<leader>s', function()
+        vim.ui.select({ 'ASC', 'DESC' }, {
+          prompt = 'Choose sort direction',
+        }, function(sort_direction)
+          local cursor_position = vim.api.nvim_win_get_cursor(0)
+          local column_name = get_column_name(cursor_position)
+          M.query_state.order_by = column_name
+
+          local sql = 'SELECT * FROM (' .. M.query_state.base_query .. ') sub ORDER BY ' .. M.query_state.order_by .. ' ' .. sort_direction
+
+          require('dbee').execute(sql)
+        end)
+      end, { desc = 'Sort on column' })
     end,
   })
 end
