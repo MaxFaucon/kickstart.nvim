@@ -314,7 +314,7 @@ M.setup_autocmd_and_telescope = function()
         local decoded_table = vim.json.decode(yanked_json)
 
         local cursor_position = vim.api.nvim_win_get_cursor(0)
-        local column_name = get_column_name()
+        local column_name = get_column_name(cursor_position)
 
         local cell_value = decoded_table[1][column_name]
         local cell_value_string = type(cell_value) == 'string' and cell_value or vim.inspect(cell_value)
