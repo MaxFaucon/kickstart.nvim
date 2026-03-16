@@ -5,6 +5,7 @@ local M = {}
 
 M.query_state = {
   base_query = nil,
+  select = nil,
   where = nil,
   order_by = nil,
 }
@@ -18,7 +19,8 @@ local function url_encode(str)
   return str
 end
 
-local function get_column_name(cursor_position)
+local function get_column_name()
+  local cursor_position = vim.api.nvim_win_get_cursor(0)
   vim.fn.cursor(1, cursor_position[2])
   vim.fn.search('\\k', 'bcW')
 
@@ -26,10 +28,11 @@ local function get_column_name(cursor_position)
 end
 
 local function get_final_query()
+  local select = M.query_state.select and M.query_state.select or '*'
   local where = M.query_state.where and ' ' .. M.query_state.where or ''
   local order_by = M.query_state.order_by and ' ORDER BY ' .. M.query_state.order_by or ''
 
-  return 'SELECT * FROM (' .. M.query_state.base_query .. ') sub' .. where .. '' .. order_by .. ';'
+  return 'SELECT ' .. select .. ' FROM (' .. M.query_state.base_query .. ') sub' .. where .. '' .. order_by .. ';'
 end
 
 local function store_output()
@@ -321,29 +324,22 @@ M.setup_autocmd_and_telescope = function()
         local yanked_json = vim.fn.getreg '"'
         local decoded_table = vim.json.decode(yanked_json)
 
-        local cursor_position = vim.api.nvim_win_get_cursor(0)
-        local column_name = get_column_name(cursor_position)
+        local column_name = get_column_name()
 
         local cell_value = decoded_table[1][column_name]
         local cell_value_string = type(cell_value) == 'string' and cell_value or vim.inspect(cell_value)
         local cell_value_lines = vim.split(cell_value_string, '\n')
 
-        local max_line_length = vim.fn.max(vim.tbl_map(function(cell_line)
-          return #tostring(cell_line)
-        end, cell_value_lines))
-
-        local floating_window = window_helpers.create_floating_window { height = #cell_value_lines, width = max_line_length, cursor_position = cursor_position }
-
-        vim.api.nvim_set_option_value('modifiable', true, { buf = 0 })
-        vim.api.nvim_buf_set_lines(floating_window.buf, 0, -1, false, cell_value_lines)
+        window_helpers.create_floating_window {
+          content = cell_value_lines,
+        }
       end, { desc = 'Inspect cell value' })
 
       vim.keymap.set('n', '<leader>ds', function()
         vim.ui.select({ 'ASC', 'DESC' }, {
           prompt = 'Choose sort direction',
         }, function(sort_direction)
-          local cursor_position = vim.api.nvim_win_get_cursor(0)
-          local column_name = get_column_name(cursor_position)
+          local column_name = get_column_name()
 
           M.query_state.order_by = column_name .. ' ' .. sort_direction
 
@@ -352,8 +348,7 @@ M.setup_autocmd_and_telescope = function()
       end, { desc = 'Sort on column' })
 
       vim.keymap.set('n', '<leader>df', function()
-        local cursor_position = vim.api.nvim_win_get_cursor(0)
-        local column_name = get_column_name(cursor_position)
+        local column_name = get_column_name()
         local where_condition = M.query_state.where and M.query_state.where .. ' AND ' .. column_name or 'WHERE ' .. column_name
 
         vim.ui.input({ prompt = 'Enter filter condition for column: ', default = where_condition }, function(filter_condition)
@@ -366,11 +361,32 @@ M.setup_autocmd_and_telescope = function()
       end, { desc = 'Filter on column' })
 
       vim.keymap.set('n', '<leader>dr', function()
+        M.query_state.select = nil
         M.query_state.where = nil
         M.query_state.order_by = nil
 
         require('dbee').execute(M.query_state.base_query)
       end, { desc = 'Reset filters and sorting' })
+
+      vim.keymap.set('n', '<leader>dd', function()
+        local header_line = vim.api.nvim_buf_get_lines(0, 0, 1, false)[1]
+        local columns = {}
+        for col in header_line:gmatch '[^│]+' do
+          local trimmed = vim.trim(col)
+          if trimmed ~= '' then
+            table.insert(columns, trimmed)
+          end
+        end
+
+        local callback = function(new_columns)
+          local new_columns_string = table.concat(new_columns, ',')
+          M.query_state.select = new_columns_string
+
+          require('dbee').execute(get_final_query())
+        end
+
+        window_helpers.create_floating_window { content = columns, callback = callback }
+      end, { desc = 'Remove columns' })
     end,
   })
 end

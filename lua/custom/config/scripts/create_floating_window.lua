@@ -1,20 +1,31 @@
 local M = {}
 
+local function get_window_size(opts)
+  local max_height = math.floor(vim.o.lines * 0.8)
+  local max_width = math.floor(vim.o.columns * 0.8)
+
+  if opts.content ~= nil then
+    local content_height = #opts.content
+    local content_width = vim.fn.max(vim.tbl_map(function(line)
+      return #line
+    end, opts.content))
+
+    local height = content_height > max_height and max_height or content_height
+    local width = content_width > max_width and max_width or content_width
+
+    return { height, width }
+  else
+    return { max_height, max_width }
+  end
+end
+
 M.create_floating_window = function(opts)
-  local prev_pos = opts.cursor_position or vim.api.nvim_win_get_cursor(0)
+  local prev_pos = vim.api.nvim_win_get_cursor(0)
   local prev_win = vim.api.nvim_get_current_win()
-  print('test', vim.inspect(opts.cursor_position), vim.inspect(vim.api.nvim_win_get_cursor(0)))
 
-  opts = opts or {}
-  local width = math.floor(vim.o.columns * 0.8)
-  local height = math.floor(vim.o.lines * 0.8)
-
-  if opts.width and opts.width < width then
-    width = opts.width
-  end
-  if opts.height and opts.height < height then
-    height = opts.height
-  end
+  local window_size = get_window_size(opts)
+  local height = window_size[1]
+  local width = window_size[2]
 
   -- Calculate the position to center the window
   local col = math.floor((vim.o.columns - width) / 2)
@@ -42,7 +53,14 @@ M.create_floating_window = function(opts)
   -- Create the floating window
   local win = vim.api.nvim_open_win(buf, true, win_config)
 
+  vim.api.nvim_set_option_value('modifiable', true, { buf = buf })
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, opts.content or {})
+
   vim.keymap.set('n', 'q', function()
+    if opts.callback then
+      opts.callback(vim.api.nvim_buf_get_lines(buf, 0, -1, false))
+    end
+
     vim.api.nvim_win_close(win, true)
     vim.api.nvim_set_current_win(prev_win)
     vim.api.nvim_win_set_cursor(prev_win, prev_pos)
