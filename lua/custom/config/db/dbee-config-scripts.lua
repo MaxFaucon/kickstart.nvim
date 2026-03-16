@@ -5,6 +5,7 @@ local M = {}
 
 M.query_state = {
   base_query = nil,
+  where = nil,
   order_by = nil,
 }
 
@@ -22,6 +23,13 @@ local function get_column_name(cursor_position)
   vim.fn.search('\\k', 'bcW')
 
   return vim.fn.expand '<cword>'
+end
+
+local function get_final_query()
+  local where = M.query_state.where and ' ' .. M.query_state.where or ''
+  local order_by = M.query_state.order_by and ' ORDER BY ' .. M.query_state.order_by or ''
+
+  return 'SELECT * FROM (' .. M.query_state.base_query .. ') sub' .. where .. '' .. order_by .. ';'
 end
 
 local function store_output()
@@ -264,7 +272,7 @@ M.setup_autocmd_and_telescope = function()
       vim.keymap.set('n', '<leader>sc', db_connections_picker, { desc = 'Dbee search connections' })
       vim.keymap.set('n', '<leader>sn', db_notes_picker, { desc = 'Dbee search notes' })
 
-      vim.keymap.set('n', '<leader>nc', function()
+      vim.keymap.set('n', '<leader>dn', function()
         vim.ui.input({ prompt = 'Enter note name: ' }, function(input)
           if input then
             local new_note = require('dbee').api.ui.editor_namespace_create_note('global', input)
@@ -273,7 +281,7 @@ M.setup_autocmd_and_telescope = function()
         end)
       end, { desc = 'DBee create note' })
 
-      vim.keymap.set('n', '<leader>so', function()
+      vim.keymap.set('n', '<leader>do', function()
         store_output()
       end, { desc = 'Dbee store output' })
 
@@ -296,7 +304,7 @@ M.setup_autocmd_and_telescope = function()
         print('Inspecting table: ' .. table_name)
       end, { desc = '[D]atabase [I]nspect Table (dbee)' })
 
-      vim.keymap.set('n', '<leader>k', function()
+      vim.keymap.set('n', '<leader>dk', function()
         local row = vim.fn.search([[^\s*[0-9]\+]], 'bnc', 1)
         if row == 0 then
           error "Couldn't retrieve current row number: row = 0"
@@ -330,19 +338,39 @@ M.setup_autocmd_and_telescope = function()
         vim.api.nvim_buf_set_lines(floating_window.buf, 0, -1, false, cell_value_lines)
       end, { desc = 'Inspect cell value' })
 
-      vim.keymap.set('n', '<leader>s', function()
+      vim.keymap.set('n', '<leader>ds', function()
         vim.ui.select({ 'ASC', 'DESC' }, {
           prompt = 'Choose sort direction',
         }, function(sort_direction)
           local cursor_position = vim.api.nvim_win_get_cursor(0)
           local column_name = get_column_name(cursor_position)
-          M.query_state.order_by = column_name
 
-          local sql = 'SELECT * FROM (' .. M.query_state.base_query .. ') sub ORDER BY ' .. M.query_state.order_by .. ' ' .. sort_direction
+          M.query_state.order_by = column_name .. ' ' .. sort_direction
 
-          require('dbee').execute(sql)
+          require('dbee').execute(get_final_query())
         end)
       end, { desc = 'Sort on column' })
+
+      vim.keymap.set('n', '<leader>df', function()
+        local cursor_position = vim.api.nvim_win_get_cursor(0)
+        local column_name = get_column_name(cursor_position)
+        local where_condition = M.query_state.where and M.query_state.where .. ' AND ' .. column_name or 'WHERE ' .. column_name
+
+        vim.ui.input({ prompt = 'Enter filter condition for column: ', default = where_condition }, function(filter_condition)
+          if filter_condition then
+            M.query_state.where = filter_condition
+
+            require('dbee').execute(get_final_query())
+          end
+        end)
+      end, { desc = 'Filter on column' })
+
+      vim.keymap.set('n', '<leader>dr', function()
+        M.query_state.where = nil
+        M.query_state.order_by = nil
+
+        require('dbee').execute(M.query_state.base_query)
+      end, { desc = 'Reset filters and sorting' })
     end,
   })
 end
