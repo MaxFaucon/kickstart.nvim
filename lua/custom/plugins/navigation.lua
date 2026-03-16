@@ -10,14 +10,6 @@ local plugins = {
       'nvim-tree/nvim-web-devicons',
     },
   },
-  -- Force more efficient navigation
-  -- https://github.com/m4xshen/hardtime.nvim
-  {
-    'm4xshen/hardtime.nvim',
-    lazy = false,
-    dependencies = { 'MunifTanjim/nui.nvim' },
-    opts = {},
-  },
 }
 
 -- Keymaps

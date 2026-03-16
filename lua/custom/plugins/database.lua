@@ -19,7 +19,7 @@ local plugins = {
       'MunifTanjim/nui.nvim',
     },
     build = function()
-      require('dbee').install()
+      require('dbee').install 'go'
     end,
     config = function()
       require('dbee').setup {
