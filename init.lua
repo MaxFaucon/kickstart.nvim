@@ -27,9 +27,9 @@ require 'custom.config.db.db'
 require 'custom.config.lazy'
 
 -- [[ Scripts ]]
--- submodes
 require 'custom.config.scripts.submodes'
 require 'custom.config.scripts.better_input'
+require 'custom.config.scripts.todolist'
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

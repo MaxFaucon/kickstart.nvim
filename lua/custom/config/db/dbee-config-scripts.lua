@@ -10,6 +10,12 @@ M.query_state = {
   order_by = nil,
 }
 
+M.reset_query_state = function()
+  M.query_state.select = nil
+  M.query_state.where = nil
+  M.query_state.order_by = nil
+end
+
 -- Other helpers
 local function url_encode(str)
   str = str:gsub('\n', '')
@@ -23,8 +29,12 @@ local function get_column_name()
   local cursor_position = vim.api.nvim_win_get_cursor(0)
   vim.fn.cursor(1, cursor_position[2])
   vim.fn.search('\\k', 'bcW')
+  local column_name = vim.fn.expand '<cword>'
 
-  return vim.fn.expand '<cword>'
+  -- Reset cursor position
+  vim.api.nvim_win_set_cursor(0, cursor_position)
+
+  return column_name
 end
 
 local function get_final_query()
@@ -79,11 +89,12 @@ local function store_output()
   end)
 end
 
-local postgres_lsp_template = require 'custom.config.db.postgres-lsp-config-template'
-local previous_connection_url = nil
-
 local dbee_drawer_window = nil
+
 M.dbee_connection_changed = function(current_connection_name, current_connection_url)
+  local postgres_lsp_template = require 'custom.config.db.postgres-lsp-config-template'
+  local previous_connection_url = nil
+
   if current_connection_name ~= nil and current_connection_url ~= nil and current_connection_url ~= previous_connection_url then
     previous_connection_url = current_connection_url
 
@@ -120,48 +131,6 @@ M.format_query = function()
 
   -- Format the SQL query and get updated range
   sql_helpers.format_sql_query(start_line, end_line)
-end
-
-M.visualize_geometries = function(start_line, end_line)
-  local active_connection = require('dbee').api.core.get_current_connection()
-
-  if active_connection == nil then
-    vim.notify('No active connection', vim.log.levels.ERROR)
-
-    return
-  end
-
-  local query = ''
-  for line = start_line, end_line do
-    query = query .. '\n' .. vim.fn.getline(line)
-  end
-  local clean_query = query:gsub(';%s*$', '')
-
-  vim.ui.input({ prompt = 'Enter geom column name: ', default = 'geom' }, function(geom)
-    if geom then
-      local feature_collection_query = "SELECT json_build_object('type', 'FeatureCollection', 'features', json_agg(json_build_object('type', 'Feature', 'geometry', extensions.ST_AsGeoJSON ("
-        .. geom
-        .. ")::json, 'properties', (to_jsonb (sub) - '"
-        .. geom
-        .. "')))) FROM ("
-        .. clean_query
-        .. ') sub WHERE sub.'
-        .. geom
-        .. ' IS NOT NULL;'
-
-      local result = vim.fn.system {
-        'psql',
-        active_connection.url,
-        '-t',
-        '-A',
-        '-c',
-        feature_collection_query,
-      }
-
-      local url = 'https://geojson.io/#data=data:application/json,' .. url_encode(result)
-      vim.fn.system { 'open', url }
-    end
-  end)
 end
 
 M.setup_autocmd_and_telescope = function()
@@ -289,9 +258,32 @@ M.setup_autocmd_and_telescope = function()
       end, { desc = 'Dbee store output' })
 
       vim.keymap.set('n', '<leader>dg', function()
-        local start_line, end_line = sql_helpers.get_sql_query()
+        local active_connection = require('dbee').api.core.get_current_connection()
 
-        M.visualize_geometries(start_line, end_line)
+        if active_connection == nil then
+          vim.notify('No active connection', vim.log.levels.ERROR)
+          return
+        end
+
+        local base_query = require('dbee').api.ui.result_get_call().query
+        vim.ui.input({ prompt = 'Enter geom column name: ', default = 'geom' }, function(geom)
+          if geom then
+            local feature_collection_query = "SELECT json_build_object('type', 'FeatureCollection', 'features', json_agg(json_build_object('type', 'Feature', 'geometry', extensions.ST_AsGeoJSON ("
+              .. geom
+              .. ")::json, 'properties', (to_jsonb (sub) - '"
+              .. geom
+              .. "')))) FROM ("
+              .. base_query
+              .. ') sub WHERE sub.'
+              .. geom
+              .. ' IS NOT NULL;'
+
+            local result = sql_helpers.execute_psql_query(active_connection.url, feature_collection_query)
+
+            local url = 'https://geojson.io/#data=data:application/json,' .. url_encode(result)
+            vim.fn.system { 'open', url }
+          end
+        end)
       end, { desc = 'Visualize geometries' })
 
       vim.keymap.set('n', '<leader>di', function()
@@ -302,10 +294,30 @@ M.setup_autocmd_and_telescope = function()
         end
 
         local query = sql_helpers.inspect_table_query:gsub('{}', table_name)
-
         require('dbee').execute(query)
-        print('Inspecting table: ' .. table_name)
       end, { desc = '[D]atabase [I]nspect Table (dbee)' })
+
+      vim.keymap.set('n', '<leader>dv', function()
+        local active_connection = require('dbee').api.core.get_current_connection()
+        if active_connection == nil then
+          vim.notify('No active connection', vim.log.levels.ERROR)
+          return
+        end
+
+        local view_name = vim.fn.expand '<cword>'
+        if view_name == '' then
+          print 'No view name found under cursor'
+          return
+        end
+
+        local query = "SELECT * FROM pg_catalog.pg_get_viewdef('views." .. view_name .. "', TRUE)"
+        local result = sql_helpers.execute_psql_query(active_connection.url, query)
+        local result_lines = vim.split(result, '\n')
+
+        window_helpers.create_floating_window {
+          content = result_lines,
+        }
+      end, { desc = '[D]atabase inspect [V]iew' })
 
       vim.keymap.set('n', '<leader>dk', function()
         local row = vim.fn.search([[^\s*[0-9]\+]], 'bnc', 1)
@@ -361,9 +373,7 @@ M.setup_autocmd_and_telescope = function()
       end, { desc = 'Filter on column' })
 
       vim.keymap.set('n', '<leader>dr', function()
-        M.query_state.select = nil
-        M.query_state.where = nil
-        M.query_state.order_by = nil
+        M.reset_query_state()
 
         require('dbee').execute(M.query_state.base_query)
       end, { desc = 'Reset filters and sorting' })

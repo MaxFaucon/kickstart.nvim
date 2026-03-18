@@ -65,7 +65,7 @@ map_set('n', '<leader>ll', function()
   end
 end, { desc = 'Laravel: Open Log File' })
 
--- [[ Small script keymaps ]]
+-- [[ Script keymaps ]]
 -- Change case (camel to snake or the opposite)
 map_set('n', '<leader>tc', function()
   local current_word = vim.fn.expand '<cword>'
@@ -83,3 +83,7 @@ map_set('n', '<leader>tc', function()
 
   vim.api.nvim_command('normal! ciw' .. transformed_word .. '\x1b')
 end, { desc = 'Change word case' })
+
+map_set('n', '<leader>td', function()
+  vim.cmd 'Todolist'
+end, { desc = 'Open todo list' })

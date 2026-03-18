@@ -1,5 +1,6 @@
 local plugins = {
   -- Agents management
+  -- https://github.com/olimorris/codecompanion.nvim
   {
     'olimorris/codecompanion.nvim',
     version = '^18.0.0',

@@ -172,4 +172,17 @@ WHERE a.attrelid = '{}'::regclass
 ORDER BY a.attnum;
 ]]
 
+M.execute_psql_query = function(connection_url, query)
+  local result = vim.fn.system {
+    'psql',
+    connection_url,
+    '-t',
+    '-A',
+    '-c',
+    query,
+  }
+
+  return result
+end
+
 return M

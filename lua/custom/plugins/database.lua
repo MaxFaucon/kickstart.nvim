@@ -36,6 +36,7 @@ local plugins = {
                 dbee_scripts.format_query()
 
                 require('dbee').api.ui.editor_do_action 'run_under_cursor'
+                dbee_scripts.reset_query_state()
                 dbee_scripts.query_state.base_query = require('dbee').api.ui.result_get_call().query
               end,
             },
