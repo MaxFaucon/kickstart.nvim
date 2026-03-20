@@ -1,3 +1,5 @@
+local session_management = require 'custom.config.scripts.session_management'
+
 -- [[ Core Keymaps ]]
 local map_set = vim.keymap.set
 local map_del = vim.keymap.del
@@ -27,7 +29,7 @@ map_set('i', '<C-k>', '<C-o>de', { desc = 'Delete next word' })
 map_set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Buffer keymaps
-map_set('n', '<leader>br', '<cmd>edit!<CR>', { desc = 'Refresh current file' })
+map_set('n', '<leader>br', '<cmd>edit!<CR>', { desc = 'Reload current file' })
 map_set('n', '<leader>bac', '<cmd>%bd<CR>', { desc = 'Close all buffers', silent = true })
 -- Copy absolute path of current file to clipboard
 map_set('n', '<leader>bp', '<cmd>let @+ = expand("%:p")<CR>', { desc = 'Copy absolute path of current file to clipboard' })
@@ -50,6 +52,11 @@ map_set('n', '<M-j>', '<cmd>cnext<CR>', { desc = 'Go to next diagnostic [Q]uickf
 map_set('n', '<M-k>', '<cmd>cprev<CR>', { desc = 'Go to previous diagnostic [Q]uickfix' })
 map_set('n', '<leader>qo', '<cmd>copen<CR>', { desc = 'Open [Q]uickfix list' })
 map_set('n', '<leader>qc', '<cmd>cclose<CR>', { desc = 'Close [Q]uickfix list' })
+
+-- Sessions
+map_set('n', '<leader>ps', session_management.save_current_project, { desc = 'Save session for current project' })
+map_set('n', '<leader>sp', session_management.sessions_picker, { desc = 'Search and load a session' })
+map_set('n', '<leader>pl', session_management.load_current_project, { desc = 'Reload the current project' })
 
 -- [[ Code ]]
 -- Search

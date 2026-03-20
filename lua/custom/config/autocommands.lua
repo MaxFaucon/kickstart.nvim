@@ -1,3 +1,5 @@
+local session_management = require 'custom.config.scripts.session_management'
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -59,6 +61,27 @@ vim.api.nvim_create_autocmd('BufLeave', {
 
         vim.api.nvim_buf_set_mark(0, mark_name, current_cursor_position[1], current_cursor_position[2], {})
       end
+    end
+  end,
+})
+
+vim.api.nvim_create_autocmd('VimLeavePre', {
+  desc = 'Save the current project in a session when leaving vim',
+  callback = function()
+    local project_root = vim.fs.root(0, '.git')
+    if project_root ~= nil then
+      session_management.save_current_project()
+    end
+  end,
+})
+
+vim.api.nvim_create_autocmd('VimEnter', {
+  desc = 'Save the current project in a session when leaving vim',
+  callback = function()
+    local project_root = vim.fs.root(0, '.git')
+    if project_root ~= nil then
+      session_management.load_current_project()
+      vim.cmd ':filetype detect'
     end
   end,
 })
