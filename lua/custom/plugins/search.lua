@@ -111,7 +111,7 @@ map('n', '<leader>ss', '<cmd>Telescope builtin<cr>', { desc = '[S]earch [S]elect
 map('n', '<leader>sw', '<cmd>Telescope grep_string<cr>', { desc = '[S]earch current [W]ord' })
 map('n', '<leader>su', '<cmd>Telescope git_status<cr>', { desc = '[S]earch Git Stat[U]s' })
 map('n', '<leader>sb', '<cmd>Telescope git_branches<cr>', { desc = '[S]earch Git [B]ranches' })
-map('n', '<leader>sP', '<cmd>Telescope spell_suggest<cr>', { desc = '[S]earch S[P]ell Suggest' })
+map('n', '<leader>sS', '<cmd>Telescope spell_suggest<cr>', { desc = '[S]earch [S]pell Suggest' })
 map('n', '<leader>sg', '<cmd>Telescope live_grep<cr>', { desc = '[S]earch by [G]rep' })
 map('n', '<leader>sd', '<cmd>Telescope diagnostics<cr>', { desc = '[S]earch [D]iagnostics' })
 map('n', '<leader>sr', '<cmd>Telescope resume<cr>', { desc = '[S]earch [R]esume' })
@@ -178,8 +178,12 @@ map('n', '<leader>s/', function()
   }
 end, { desc = '[S]earch [/] in Open Files' })
 
-map('n', '<leader>sn', function()
-  builtin.find_files { cwd = vim.fn.stdpath 'config' }
-end, { desc = '[S]earch [N]eovim files' })
+map('n', '<leader>sc', function()
+  builtin.find_files { hidden = true, search_dirs = { vim.fn.expand '~' .. '/.zshrc.local', vim.fn.expand '~' .. '/dotfiles' } }
+end, { desc = '[S]earch [C]onfig files' })
+
+map('n', '<leader>sP', function()
+  builtin.find_files { cwd = vim.fn.expand '~' .. '/Documents/projects' }
+end, { desc = '[S]earch [P]roject files' })
 
 return plugins
