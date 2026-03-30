@@ -14,6 +14,15 @@ local draft_state = {
   },
 }
 
+-- Create notes directory if does not exist
+local notes_path = vim.fn.stdpath 'state' .. '/notes'
+if not vim.uv.fs_stat(notes_path) then
+  local directory_created = vim.fn.mkdir(notes_path)
+  if not directory_created then
+    vim.notify('Failed to create notes directory: ' .. notes_path, vim.log.levels.ERROR)
+  end
+end
+
 local function setup_todolist_keymaps()
   vim.keymap.set('n', '<leader>tn', function()
     local cursor_position = vim.api.nvim_win_get_cursor(0)
@@ -42,16 +51,22 @@ end
 
 local toggle_todo_list = function()
   if not vim.api.nvim_win_is_valid(todolist_state.floating.win) then
-    local todo_list_path = vim.fn.stdpath 'state' .. '/todolist.md'
-    if not vim.uv.fs_stat(todo_list_path) then
-      vim.notify('Todo list file does not exist: ' .. todo_list_path, vim.log.levels.ERROR)
-      return
+    local todolist_path = notes_path .. '/todolist.md'
+    if not vim.uv.fs_stat(todolist_path) then
+      local file_created = vim.fn.writefile({}, todolist_path)
+
+      if not file_created then
+        vim.notify('Failed to create todolist file: ' .. todolist_path, vim.log.levels.ERROR)
+        return
+      else
+        vim.notify('Created new todolist file: ' .. todolist_path, vim.log.levels.INFO)
+      end
     end
 
     todolist_state.floating = floating_window.create_floating_window { use_default_size = true }
 
     -- Open a file and replace previous buffer
-    vim.cmd.edit(todo_list_path)
+    vim.cmd.edit(todolist_path)
     vim.api.nvim_buf_delete(todolist_state.floating.buf, { force = true })
     todolist_state.floating.buf = vim.api.nvim_win_get_buf(todolist_state.floating.win)
 
@@ -73,10 +88,16 @@ end
 
 local toggle_draft = function()
   if not vim.api.nvim_win_is_valid(draft_state.floating.win) then
-    local draft_path = vim.fn.stdpath 'state' .. '/draft.md'
+    local draft_path = notes_path .. '/todolist.md'
     if not vim.uv.fs_stat(draft_path) then
-      vim.notify('The draft note file does not exist: ' .. draft_path, vim.log.levels.ERROR)
-      return
+      local file_created = vim.fn.writefile({}, draft_path)
+
+      if not file_created then
+        vim.notify('Failed to create todolist file: ' .. draft_path, vim.log.levels.ERROR)
+        return
+      else
+        vim.notify('Created new todolist file: ' .. draft_path, vim.log.levels.INFO)
+      end
     end
 
     draft_state.floating = floating_window.create_floating_window { use_default_size = true }
