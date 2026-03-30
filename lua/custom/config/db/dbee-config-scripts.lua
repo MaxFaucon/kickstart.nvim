@@ -1,22 +1,8 @@
+-- Imports
 local sql_helpers = require 'custom.config.db.helpers'
 local window_helpers = require 'custom.config.scripts.create_floating_window'
 
-local M = {}
-
-M.query_state = {
-  base_query = nil,
-  select = nil,
-  where = nil,
-  order_by = nil,
-}
-
-M.reset_query_state = function()
-  M.query_state.select = nil
-  M.query_state.where = nil
-  M.query_state.order_by = nil
-end
-
--- Other helpers
+-- Helpers
 local function url_encode(str)
   str = str:gsub('\n', '')
   str = str:gsub('([^%w%-%.%_%~])', function(c)
@@ -89,6 +75,22 @@ local function store_output()
   end)
 end
 
+-- Exports
+local M = {}
+
+M.query_state = {
+  base_query = nil,
+  select = nil,
+  where = nil,
+  order_by = nil,
+}
+
+M.reset_query_state = function()
+  M.query_state.select = nil
+  M.query_state.where = nil
+  M.query_state.order_by = nil
+end
+
 local dbee_drawer_window = nil
 
 M.dbee_connection_changed = function(current_connection_name, current_connection_url)
@@ -138,6 +140,7 @@ M.setup_autocmd_and_telescope = function()
   local pickers = require 'telescope.pickers'
   local finders = require 'telescope.finders'
 
+  -- Pickers
   local function db_connections_picker()
     local dbee_sources = require('dbee').api.core.get_sources()
     local available_connections = {}

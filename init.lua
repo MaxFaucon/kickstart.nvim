@@ -29,7 +29,7 @@ require 'custom.config.lazy'
 -- [[ Scripts ]]
 require 'custom.config.scripts.submodes'
 require 'custom.config.scripts.better_input'
-require 'custom.config.scripts.todolist'
+require 'custom.config.scripts.floating_notes'
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

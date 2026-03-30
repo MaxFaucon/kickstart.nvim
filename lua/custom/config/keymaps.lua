@@ -91,6 +91,10 @@ map_set('n', '<leader>tc', function()
   vim.api.nvim_command('normal! ciw' .. transformed_word .. '\x1b')
 end, { desc = 'Change word case' })
 
-map_set('n', '<leader>td', function()
+map_set('n', '<leader>ft', function()
   vim.cmd 'Todolist'
 end, { desc = 'Open todo list' })
+
+map_set('n', '<leader>fd', function()
+  vim.cmd 'Draft'
+end, { desc = 'Open draft note' })
