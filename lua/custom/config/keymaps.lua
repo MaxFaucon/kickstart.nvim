@@ -1,5 +1,15 @@
 local session_management = require 'custom.config.scripts.session_management'
 
+-- [[ User Commands ]]
+vim.api.nvim_create_user_command('Path', function()
+  local relative_path = vim.fn.expand '%:~:.'
+  if relative_path == '' then
+    vim.notify('No file associated with the current buffer', vim.log.levels.WARN)
+  else
+    vim.notify(relative_path, vim.log.levels.INFO)
+  end
+end, { desc = 'Shows the relative path of the current file' })
+
 -- [[ Core Keymaps ]]
 local map_set = vim.keymap.set
 local map_del = vim.keymap.del
@@ -56,11 +66,27 @@ map_set('n', '<leader>qc', '<cmd>cclose<CR>', { desc = 'Close [Q]uickfix list' }
 -- Sessions
 map_set('n', '<leader>ps', session_management.save_current_project, { desc = 'Save session for current project' })
 map_set('n', '<leader>sp', session_management.sessions_picker, { desc = 'Search and load a session' })
-map_set('n', '<leader>pl', session_management.load_current_project, { desc = 'Reload the current project' })
+map_set('n', '<leader>pl', function()
+  session_management.save_current_project()
+  vim.cmd 'restart'
+end, { desc = 'Reload the current project' })
 
 -- [[ Code ]]
 -- Search
 map_set('n', '<leader>se', '<cmd>e .env<CR>', { desc = 'Open .env file' })
+
+-- Treesitter selection
+vim.keymap.set('n', '<CR>', function()
+  require('vim.treesitter._select').select_parent(vim.v.count1)
+end, { desc = 'Init treesitter selection' })
+
+vim.keymap.set('x', '<CR>', function()
+  require('vim.treesitter._select').select_parent(vim.v.count1)
+end, { desc = 'Expand treesitter selection' })
+
+vim.keymap.set('x', '<BS>', function()
+  require('vim.treesitter._select').select_child(vim.v.count1)
+end, { desc = 'Shrink treesitter selection' })
 
 -- Laravel
 map_set('n', '<leader>ll', function()

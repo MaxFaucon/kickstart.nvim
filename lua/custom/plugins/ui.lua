@@ -66,7 +66,7 @@ local plugins = {
   -- https://github.com/nvim-lualine/lualine.nvim
   {
     'nvim-lualine/lualine.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    dependencies = { 'nvim-tree/nvim-web-devicons', 'stevearc/overseer.nvim' },
     opts = {
       options = {
         component_separators = { left = '|', right = '|' },
@@ -86,12 +86,17 @@ local plugins = {
         lualine_c = {
           {
             'filename',
-
+            path = 0, -- Show filename only
             symbols = {
               modified = ' ●',
             },
           },
+          'lsp_status',
+          'overseer',
         },
+        lualine_x = { 'encoding', 'fileformat', 'filetype', 'searchcount', 'selectioncount' },
+        lualine_y = { 'progress' },
+        lualine_z = { 'location' },
       },
     },
   },
@@ -152,22 +157,6 @@ local plugins = {
     'nvim-tree/nvim-web-devicons',
     event = 'VeryLazy',
     opts = {},
-  },
-  -- Top bar
-  -- https://github.com/Bekaboo/dropbar.nvim
-  {
-    'Bekaboo/dropbar.nvim',
-    -- optional, but required for fuzzy finder support
-    dependencies = {
-      'nvim-telescope/telescope-fzf-native.nvim',
-      build = 'make',
-    },
-    config = function()
-      local dropbar_api = require 'dropbar.api'
-      vim.keymap.set('n', '<Leader>;', dropbar_api.pick, { desc = 'Pick symbols in winbar' })
-      vim.keymap.set('n', '[;', dropbar_api.goto_context_start, { desc = 'Go to start of current context' })
-      vim.keymap.set('n', '];', dropbar_api.select_next_context, { desc = 'Select next context' })
-    end,
   },
   -- Notification
   -- Description: A feature-rich notification and command-line UI for Neovim, enhancing

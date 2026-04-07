@@ -165,10 +165,7 @@ map('n', '<leader>sF', function()
 end, { desc = '[F]ind [F]iles (all)' })
 
 map('n', '<leader>/', function()
-  builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-    winblend = 10,
-    previewer = false,
-  })
+  builtin.current_buffer_fuzzy_find()
 end, { desc = '[/] Fuzzily search in current buffer' })
 
 map('n', '<leader>s/', function()
@@ -178,7 +175,7 @@ map('n', '<leader>s/', function()
   }
 end, { desc = '[S]earch [/] in Open Files' })
 
-map('n', '<leader>sc', function()
+map('n', '<leader>sC', function()
   builtin.find_files { hidden = true, search_dirs = { vim.fn.expand '~' .. '/.zshrc.local', vim.fn.expand '~' .. '/dotfiles' } }
 end, { desc = '[S]earch [C]onfig files' })
 

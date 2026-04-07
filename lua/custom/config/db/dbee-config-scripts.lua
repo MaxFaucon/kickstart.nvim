@@ -2,6 +2,21 @@
 local sql_helpers = require 'custom.config.db.helpers'
 local window_helpers = require 'custom.config.scripts.create_floating_window'
 
+local M = {}
+
+M.query_state = {
+  base_query = nil,
+  select = nil,
+  where = nil,
+  order_by = nil,
+}
+
+M.reset_query_state = function()
+  M.query_state.select = nil
+  M.query_state.where = nil
+  M.query_state.order_by = nil
+end
+
 -- Helpers
 local function url_encode(str)
   str = str:gsub('\n', '')
@@ -76,20 +91,6 @@ local function store_output()
 end
 
 -- Exports
-local M = {}
-
-M.query_state = {
-  base_query = nil,
-  select = nil,
-  where = nil,
-  order_by = nil,
-}
-
-M.reset_query_state = function()
-  M.query_state.select = nil
-  M.query_state.where = nil
-  M.query_state.order_by = nil
-end
 
 local dbee_drawer_window = nil
 
@@ -113,8 +114,8 @@ M.dbee_connection_changed = function(current_connection_name, current_connection
           print('Error writing to file: ' .. write_err)
         end
 
-        -- Restart postgres lsp
-        vim.cmd 'LspRestart! postgres_lsp'
+        -- Restart postgres lsp (not needed since lsp does not work for remote connections)
+        -- vim.cmd 'lsp restart postgres_lsp'
 
         -- Close the file descriptor
         vim.uv.fs_close(fd)
@@ -288,6 +289,11 @@ M.setup_autocmd_and_telescope = function()
           end
         end)
       end, { desc = 'Visualize geometries' })
+
+      vim.keymap.set('n', '<leader>dh', function()
+        local history_file_path = vim.fn.stdpath 'state' .. '/dbee/notes/global/history.sql'
+        sql_helpers.save_to_history(history_file_path)
+      end, { desc = '[D]atabase save to [H]istory' })
 
       vim.keymap.set('n', '<leader>di', function()
         local table_name = vim.fn.expand '<cword>'

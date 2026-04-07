@@ -113,27 +113,11 @@ local plugins = {
     'zbirenbaum/copilot.lua',
     cmd = 'Copilot',
     build = ':Copilot auth',
-    event = 'InsertEnter',
+    event = 'VimEnter',
     opts = {
       panel = { enabled = false },
-      suggestion = {
-        auto_trigger = true,
-        keymap = {
-          accept = '<C-v>',
-        },
-      },
+      suggestion = { enabled = false },
     },
-    config = function(_, opts)
-      require('copilot').setup(opts)
-      vim.keymap.set('i', '<C-v>', function()
-        if require('copilot.suggestion').is_visible() then
-          require('copilot.suggestion').accept()
-        else
-          -- fallback to original C-v behavior (insert literal char)
-          return '<C-v>'
-        end
-      end, { expr = true, silent = true, desc = 'Copilot: Accept suggestion or insert literal' })
-    end,
   },
   -- Local completion plugin
   -- https://github.com/milanglacier/minuet-ai.nvim

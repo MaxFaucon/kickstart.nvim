@@ -15,6 +15,9 @@ local plugins = {
     event = 'VimEnter',
     version = '1.*',
     dependencies = {
+      {
+        'giuxtaposition/blink-cmp-copilot',
+      },
       -- Snippet Engine
       {
         'L3MON4D3/LuaSnip',
@@ -101,17 +104,24 @@ local plugins = {
       },
 
       completion = {
+        ghost_text = { enabled = true },
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
         documentation = { auto_show = true, auto_show_delay_ms = 500 },
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'lazydev', 'buffer', 'laravel' },
+        default = { 'copilot', 'lsp', 'path', 'snippets', 'lazydev', 'buffer', 'laravel' },
         per_filetype = {
           sql = { 'lsp', 'snippets', 'dadbod', 'buffer' },
         },
         providers = {
+          copilot = {
+            name = 'copilot',
+            module = 'blink-cmp-copilot',
+            score_offset = 100,
+            async = true,
+          },
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
           dadbod = {
             name = 'Dadbod',

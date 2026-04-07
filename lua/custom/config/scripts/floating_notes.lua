@@ -79,24 +79,24 @@ end
 local function setup_draft_keymaps()
   vim.keymap.set('n', '<leader>c', function()
     vim.api.nvim_buf_set_lines(draft_state.floating.buf, 0, -1, false, {})
-  end, { buffer = todolist_state.floating.buf, desc = 'Clear draft note' })
+  end, { buffer = draft_state.floating.buf, desc = 'Clear draft note' })
 
   vim.keymap.set('n', 'q', function()
     vim.cmd ':x'
-  end, { buffer = todolist_state.floating.buf, desc = 'Close draft note' })
+  end, { buffer = draft_state.floating.buf, desc = 'Close draft note' })
 end
 
 local toggle_draft = function()
   if not vim.api.nvim_win_is_valid(draft_state.floating.win) then
-    local draft_path = notes_path .. '/todolist.md'
+    local draft_path = notes_path .. '/draft.md'
     if not vim.uv.fs_stat(draft_path) then
       local file_created = vim.fn.writefile({}, draft_path)
 
       if not file_created then
-        vim.notify('Failed to create todolist file: ' .. draft_path, vim.log.levels.ERROR)
+        vim.notify('Failed to create draft note file: ' .. draft_path, vim.log.levels.ERROR)
         return
       else
-        vim.notify('Created new todolist file: ' .. draft_path, vim.log.levels.INFO)
+        vim.notify('Created new draft note file: ' .. draft_path, vim.log.levels.INFO)
       end
     end
 
