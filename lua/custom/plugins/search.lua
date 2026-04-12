@@ -23,23 +23,32 @@ local plugins = {
       },
       { 'nvim-telescope/telescope-ui-select.nvim' },
       { 'nvim-telescope/telescope-media-files.nvim' },
+      -- https://github.com/fdschmidt93/telescope-egrepify.nvim
+      { 'fdschmidt93/telescope-egrepify.nvim' },
     },
     config = function()
+      local actions = require 'telescope.actions'
+
       require('telescope').setup {
         defaults = {
           layout_strategy = 'center',
+          file_ignore_patterns = { 'vendor/*', 'node_modules/*', '.git/*', '.idea/*', '_ide_helper_models.php', '_ide_helper.php' },
           layout_config = {
             anchor = 'S',
             height = 0.40,
             width = 0.99,
             preview_cutoff = 1,
           },
+          mappings = {
+            i = {
+              ['<C-f>'] = actions.to_fuzzy_refine,
+            },
+          },
         },
         pickers = {
           find_files = {
             hidden = false, -- Show hidden files
             no_ignore = false, -- Don't respect .gitignore
-            file_ignore_patterns = { 'vendor/*', 'node_modules/*', '.git/*', '.idea/*' },
           },
         },
         extensions = {
@@ -83,6 +92,23 @@ local plugins = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
           },
+          egrepify = {
+            title = true, -- inline filenames instead of section headers
+            lnum = true, -- line numbers
+            col = true, -- column numbers
+            results_ts_hl = true, -- treesitter highlighting in results
+            prefixes = {
+              ['-'] = {
+                flag = 'glob',
+                cb = function(input)
+                  return string.format([[!*{%s}*]], input)
+                end,
+              },
+              ['!'] = {
+                flag = 'invert-match',
+              },
+            },
+          },
           media_files = {
             filetypes = { 'png', 'jpg', 'jpeg', 'mp4', 'webm', 'mkv' },
             find_cmd = 'rg',
@@ -96,6 +122,7 @@ local plugins = {
       pcall(require('telescope').load_extension, 'media_files')
       pcall(require('telescope').load_extension, 'zf-native')
       pcall(require('telescope').load_extension, 'zk')
+      pcall(require('telescope').load_extension, 'egrepify')
     end,
   },
 }
@@ -112,7 +139,7 @@ map('n', '<leader>sw', '<cmd>Telescope grep_string<cr>', { desc = '[S]earch curr
 map('n', '<leader>su', '<cmd>Telescope git_status<cr>', { desc = '[S]earch Git Stat[U]s' })
 map('n', '<leader>sb', '<cmd>Telescope git_branches<cr>', { desc = '[S]earch Git [B]ranches' })
 map('n', '<leader>sS', '<cmd>Telescope spell_suggest<cr>', { desc = '[S]earch [S]pell Suggest' })
-map('n', '<leader>sg', '<cmd>Telescope live_grep<cr>', { desc = '[S]earch by [G]rep' })
+map('n', '<leader>sg', '<cmd>Telescope egrepify<cr>', { desc = '[S]earch by [G]rep' })
 map('n', '<leader>sd', '<cmd>Telescope diagnostics<cr>', { desc = '[S]earch [D]iagnostics' })
 map('n', '<leader>sr', '<cmd>Telescope resume<cr>', { desc = '[S]earch [R]esume' })
 map('n', '<leader>s;', '<cmd>Telescope oldfiles<cr>', { desc = '[S]earch Recent Files ("." for repeat)' })
@@ -150,16 +177,6 @@ map('n', '<leader>sF', function()
       'f',
       '--hidden',
       '--no-ignore',
-      '--exclude',
-      'node_modules',
-      '--exclude',
-      '.git',
-      '--exclude',
-      'vendor',
-      '--exclude',
-      '.idea',
-      '--exclude',
-      '.vscode',
     },
   }
 end, { desc = '[F]ind [F]iles (all)' })

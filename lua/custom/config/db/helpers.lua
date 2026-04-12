@@ -69,6 +69,39 @@ M.convert_sql_keywords_to_uppercase = function(start_line, end_line)
   end
 end
 
+M.add_soft_delete_condition_on_join = function()
+  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+  local current_line = vim.api.nvim_get_current_line()
+  local word_before_on = vim.fn.matchlist(current_line:sub(1, col), '\\v(\\w+)\\s+ON')[2]
+
+  if word_before_on ~= nil then
+    local soft_delete_string = 'AND ' .. word_before_on .. '.deleted_at IS NULL'
+    vim.api.nvim_buf_set_text(0, row - 1, col, row - 1, col, { soft_delete_string })
+    vim.api.nvim_win_set_cursor(0, { row, col + #soft_delete_string + 1 })
+  else
+    vim.notify('No JOIN condition found on the current line', vim.log.levels.WARN)
+  end
+end
+
+M.add_table_abbreviation = function()
+  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+  local current_line = vim.api.nvim_get_current_line()
+  local previous_word = vim.fn.matchlist(current_line:sub(1, col), '\\v(\\w+)\\s*$')[2]
+
+  if previous_word == nil then
+    vim.notify('No table name found before the cursor', vim.log.levels.WARN)
+    return
+  end
+
+  local abbreviation = ''
+  for w in string.gmatch(previous_word, '%w+') do
+    abbreviation = abbreviation .. w:sub(1, 1)
+  end
+
+  vim.api.nvim_buf_set_text(0, row - 1, col, row - 1, col, { abbreviation })
+  vim.api.nvim_win_set_cursor(0, { row, col + #abbreviation + 1 })
+end
+
 M.format_sql_query = function(start_line, end_line)
   -- Get the query content
   local lines = {}

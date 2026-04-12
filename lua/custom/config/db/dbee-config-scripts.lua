@@ -328,6 +328,14 @@ M.setup_autocmd_and_telescope = function()
         }
       end, { desc = '[D]atabase inspect [V]iew' })
 
+      vim.keymap.set('i', '<C-j>', function()
+        sql_helpers.add_soft_delete_condition_on_join()
+      end, { desc = 'Add soft delete condition on JOIN' })
+
+      vim.keymap.set('i', '<C-a>', function()
+        sql_helpers.add_table_abbreviation()
+      end, { desc = 'Add table abbreviation' })
+
       vim.keymap.set('n', '<leader>dk', function()
         local row = vim.fn.search([[^\s*[0-9]\+]], 'bnc', 1)
         if row == 0 then

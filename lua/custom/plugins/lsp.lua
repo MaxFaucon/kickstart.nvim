@@ -1,11 +1,4 @@
 local plugins = {
-  -- Typescript specific lsp
-  -- https://github.com/pmizio/typescript-tools.nvim
-  {
-    'pmizio/typescript-tools.nvim',
-    dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
-    opts = {},
-  },
   {
     -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
     -- used for completion, annotations and signatures of Neovim apis

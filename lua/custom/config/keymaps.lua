@@ -21,19 +21,13 @@ map_set('n', '<space><space>x', '<cmd>source %<CR>')
 -- map_set('v', '<space>x', ':lua<CR>')
 
 -- Navigation
-map_set({ 'i', 'n' }, '<C-h>', '<C-w>h', { desc = 'Go to left window' })
-map_set({ 'i', 'n' }, '<C-j>', '<C-w>j', { desc = 'Go to bottom window' })
-map_set({ 'i', 'n' }, '<C-k>', '<C-w>k', { desc = 'Go to top window' })
-map_set({ 'i', 'n' }, '<C-l>', '<C-w>l', { desc = 'Go to right window' })
+map_set('n', '<C-h>', '<C-w>h', { desc = 'Go to left window' })
+map_set('n', '<C-j>', '<C-w>j', { desc = 'Go to bottom window' })
+map_set('n', '<C-k>', '<C-w>k', { desc = 'Go to top window' })
+map_set('n', '<C-l>', '<C-w>l', { desc = 'Go to right window' })
 
 -- Insert mode key mapping
-map_del('i', '<C-s>') -- Remove default <C-s> mapping in insert mode
-map_set('i', '<C-h>', '<C-o>h', { desc = 'Move left in insert mode' })
-map_set('i', '<C-l>', '<C-o>a', { desc = 'Move right in insert mode' })
-map_set('i', '<C-b>', '<C-o>b', { desc = 'Move to the previous word in insert mode' })
-map_set('i', '<C-w>', '<C-o>w', { desc = 'Move to the next word in insert mode' })
-map_set('i', '<C-j>', '<C-o>db', { desc = 'Delete previous word' })
-map_set('i', '<C-k>', '<C-o>de', { desc = 'Delete next word' })
+map_set('i', '<C-w>', '<C-o><C-w>W', { desc = 'Focus window above' })
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 map_set('n', '<Esc>', '<cmd>nohlsearch<CR>')
