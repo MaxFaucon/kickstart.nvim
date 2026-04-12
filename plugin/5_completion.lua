@@ -4,15 +4,6 @@ vim.pack.add {
   -- Snippet Engine for Neovim written in Lua.
   {
     src = 'https://github.com/L3MON4D3/LuaSnip',
-    build = (function()
-      -- Build Step is needed for regex support in snippets.
-      -- This step is not supported in many windows environments.
-      -- Remove the below condition to re-enable on windows.
-      if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
-        return
-      end
-      return 'make install_jsregexp'
-    end)(),
   },
   -- Set of preconfigured snippets for different languages.
   'https://github.com/rafamadriz/friendly-snippets',
@@ -20,9 +11,21 @@ vim.pack.add {
   {
     src = 'https://github.com/Saghen/blink.cmp',
     version = '1.*',
-    build = 'cargo build --release',
   },
 }
+
+vim.api.nvim_create_autocmd('PackChanged', {
+  callback = function(ev)
+    if ev.data.spec.name == 'blink.cmp' then
+      vim.system({ 'cargo', 'build', '--release' }, { cwd = ev.data.path })
+    end
+    if ev.data.spec.name == 'LuaSnip' then
+      if vim.fn.has 'win32' == 0 and vim.fn.executable 'make' == 1 then
+        vim.system({ 'make', 'install_jsregexp' }, { cwd = ev.data.path })
+      end
+    end
+  end,
+})
 
 -- Blink
 require('blink.cmp').setup {

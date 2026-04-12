@@ -109,6 +109,11 @@ require('conform').setup {
 
 require('nvim-autopairs').setup()
 
+-- Overseer's private_setup() wraps vim.fn.jobstart by default, which breaks
+-- plugins relying on jobstart with rpc=true (e.g. nvim-dbee).
+-- Calling setup() applies the config default (enabled = false) and undoes the wrapping.
+require('overseer').setup()
+
 -- [[ KEYMAPS [c] ]]
 -- Keymaps --
 local set = vim.keymap.set

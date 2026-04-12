@@ -8,10 +8,7 @@ vim.pack.add {
   -- https://github.com/zbirenbaum/copilot.lua
   {
     src = 'https://github.com/zbirenbaum/copilot.lua',
-    build = ':Copilot auth',
   },
-  -- Local completion plugin
-  -- https://github.com/milanglacier/minuet-ai.nvim
 }
 
 local adapter_name = ''

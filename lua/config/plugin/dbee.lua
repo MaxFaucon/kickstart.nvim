@@ -271,6 +271,14 @@ M.setup_autocmd_and_telescope = function()
       vim.keymap.set('n', '<leader>sc', db_connections_picker, { desc = 'Dbee search connections' })
       vim.keymap.set('n', '<leader>sn', db_notes_picker, { desc = 'Dbee search notes' })
 
+      vim.keymap.set('i', '<C-j>', function()
+        sql_helpers.add_soft_delete_condition_on_join()
+      end, { desc = 'Add soft delete condition on JOIN' })
+
+      vim.keymap.set('i', '<C-a>', function()
+        sql_helpers.add_table_abbreviation()
+      end, { desc = 'Add table abbreviation' })
+
       vim.keymap.set('n', '<leader>dn', function()
         vim.ui.input({ prompt = 'Enter note name: ' }, function(input)
           if input then
