@@ -82,7 +82,7 @@ vim.api.nvim_create_autocmd('VimEnter', {
   callback = function()
     local project_root = vim.fs.root(0, '.git')
     if project_root ~= nil then
-      session_management.load_current_project()
+      session_management.reload_current_project()
       vim.cmd ':filetype detect'
     end
   end,

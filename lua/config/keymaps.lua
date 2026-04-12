@@ -94,6 +94,7 @@ end, { desc = 'Change word case' })
 -- Sessions
 map('n', '<leader>ps', session_management.save_current_project, { desc = 'Save session for current project' })
 map('n', '<leader>pp', session_management.sessions_picker, { desc = 'Select and load a session' })
+map('n', '<leader>pl', session_management.switch_last_project, { desc = 'Load the last session' })
 map('n', '<leader>pr', function()
   session_management.save_current_project()
   vim.cmd 'restart'
