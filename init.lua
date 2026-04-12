@@ -10,5 +10,5 @@ require 'config.keymaps'
 require 'config.autocommands'
 
 -- [[ Scripts ]]
-require 'lua.config.scripts.better_input'
-require 'lua.config.scripts.floating_notes'
+require 'helpers.better_input'
+require 'tools.floating_notes'

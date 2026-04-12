@@ -6,7 +6,7 @@ local c = ls.choice_node
 local rep = require('luasnip.extras').rep
 local fmt = require('luasnip.extras.fmt').fmt
 
-local inspect_table_query = require('config.db.helpers').inspect_table_query
+local inspect_table_query = require('helpers.sql_utilities').inspect_table_query
 
 return {
   s('txx', {

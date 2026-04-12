@@ -1,4 +1,4 @@
-local session_management = require 'config.scripts.session_management'
+local session_management = require 'tools.session_management'
 
 -- [[ User Commands ]]
 vim.api.nvim_create_user_command('Path', function()

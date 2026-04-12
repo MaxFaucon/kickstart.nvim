@@ -1,6 +1,6 @@
 -- Imports
-local sql_helpers = require 'config.db.helpers'
-local window_helpers = require 'config.scripts.create_floating_window'
+local sql_helpers = require 'helpers.sql_helpers'
+local window_helpers = require 'helpers.create_floating_window'
 
 local M = {}
 
@@ -44,6 +44,30 @@ local function get_final_query()
   local order_by = M.query_state.order_by and ' ORDER BY ' .. M.query_state.order_by or ''
 
   return 'SELECT ' .. select .. ' FROM (' .. M.query_state.base_query .. ') sub' .. where .. '' .. order_by .. ';'
+end
+
+local function get_config_template(connection_string)
+  local config = {
+    ['$schema'] = 'https://pg-language-server.com/latest/schema.json',
+    linter = {
+      enabled = true,
+      rules = {
+        recommended = true,
+      },
+    },
+    typecheck = {
+      enabled = true,
+    },
+    plpgsqlCheck = {
+      enabled = true,
+    },
+    db = {
+      connectionString = connection_string,
+      connTimeoutSecs = 10,
+    },
+  }
+
+  return vim.json.encode(config)
 end
 
 local function store_output()
@@ -95,7 +119,6 @@ end
 local dbee_drawer_window = nil
 
 M.dbee_connection_changed = function(current_connection_name, current_connection_url)
-  local postgres_lsp_template = require 'config.db.postgres-lsp-config-template'
   local previous_connection_url = nil
 
   if current_connection_name ~= nil and current_connection_url ~= nil and current_connection_url ~= previous_connection_url then
@@ -109,7 +132,7 @@ M.dbee_connection_changed = function(current_connection_name, current_connection
         print('Error creating file: ' .. err)
       else
         -- Write content to the file
-        local _, write_err = vim.uv.fs_write(fd, postgres_lsp_template.get_config_template(current_connection_url), 0)
+        local _, write_err = vim.uv.fs_write(fd, get_config_template(current_connection_url), 0)
         if write_err then
           print('Error writing to file: ' .. write_err)
         end

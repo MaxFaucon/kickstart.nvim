@@ -1,4 +1,4 @@
-local floating_window = require 'config.scripts.create_floating_window'
+local floating_window = require 'helpers.create_floating_window'
 
 local todolist_state = {
   floating = {

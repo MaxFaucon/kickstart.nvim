@@ -1,4 +1,4 @@
-M = require 'config.scripts.create_floating_window'
+M = require 'helpers.create_floating_window'
 
 local state = {
   floating = {

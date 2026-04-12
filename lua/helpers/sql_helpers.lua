@@ -1,4 +1,4 @@
-local sql_keywords_set = require 'config.db.sql_keywords'
+local sql_keywords_set = require 'helpers.sql_keywords'
 
 local M = {}
 

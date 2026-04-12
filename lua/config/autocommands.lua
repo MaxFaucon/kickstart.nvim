@@ -1,4 +1,4 @@
-local session_management = require 'config.scripts.session_management'
+local session_management = require 'tools.session_management'
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`

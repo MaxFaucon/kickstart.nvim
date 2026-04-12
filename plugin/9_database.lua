@@ -8,7 +8,7 @@ vim.pack.add {
   },
 }
 
-local dbee_scripts = require 'config.db.dbee-config-scripts'
+local dbee_config = require 'config.plugin.dbee'
 
 require('dbee').setup {
   {
@@ -22,11 +22,11 @@ require('dbee').setup {
           key = '<CR>',
           mode = 'n',
           action = function()
-            dbee_scripts.format_query()
+            dbee_config.format_query()
 
             require('dbee').api.ui.editor_do_action 'run_under_cursor'
-            dbee_scripts.reset_query_state()
-            dbee_scripts.query_state.base_query = require('dbee').api.ui.result_get_call().query
+            dbee_config.reset_query_state()
+            dbee_config.query_state.base_query = require('dbee').api.ui.result_get_call().query
           end,
         },
         { key = 'BB', mode = 'n', action = 'run_under_cursor' },
@@ -47,7 +47,7 @@ require('dbee').setup {
             local current_connection = require('dbee').api.core.get_current_connection()
 
             if current_connection ~= nil then
-              dbee_scripts.dbee_connection_changed(current_connection.name, current_connection.url)
+              dbee_config.dbee_connection_changed(current_connection.name, current_connection.url)
             end
           end,
         },
@@ -69,4 +69,4 @@ require('dbee').setup {
   },
 }
 
-vim.schedule(dbee_scripts.setup_autocmd_and_telescope)
+vim.schedule(dbee_config.setup_autocmd_and_telescope)
