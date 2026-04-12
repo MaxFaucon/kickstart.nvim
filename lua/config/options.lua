@@ -22,6 +22,8 @@ vim.o.smartcase = true -- Override ignorecase if search pattern has uppercase
 vim.o.scrolloff = 999 -- High number to always be centered
 vim.o.sidescrolloff = 40
 
+vim.opt.autoindent = true
+vim.opt.smartindent = true
 vim.o.shiftwidth = 4 -- Number of spaces to use for each step of (auto)indent
 vim.o.tabstop = 4 -- Number of spaces that a <Tab> counts for
 vim.opt.expandtab = true -- Use spaces instead of tabs

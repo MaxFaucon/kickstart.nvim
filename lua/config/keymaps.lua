@@ -100,7 +100,73 @@ map('n', '<leader>pr', function()
   vim.cmd 'restart'
 end, { desc = 'Reload the current project' })
 
--- Treesitter selection
-vim.keymap.set('n', '<CR>', function()
+-- Treesitter text objects
+map('n', '<CR>', function()
   require('vim.treesitter._select').select_parent(vim.v.count1)
 end, { desc = 'Init treesitter selection' })
+
+map('x', '<CR>', function()
+  require('vim.treesitter._select').select_parent(vim.v.count1)
+end, { desc = 'Expand treesitter selection' })
+
+map('x', '<BS>', function()
+  require('vim.treesitter._select').select_child(vim.v.count1)
+end, { desc = 'Shrink treesitter selection' })
+
+map('n', ']n', function()
+  local node = vim.treesitter.get_node()
+  if node == nil then
+    vim.notify('No treesitter node found', vim.log.levels.WARN)
+    return
+  end
+
+  local current = node
+  while current do
+    local next_sibling = current:next_sibling()
+    if next_sibling then
+      local next_sibling_row, next_sibling_col = next_sibling:range()
+
+      vim.api.nvim_win_set_cursor(0, { next_sibling_row + 1, next_sibling_col })
+      return
+    end
+    current = current:parent()
+  end
+end)
+
+map('n', '[n', function()
+  local node = vim.treesitter.get_node()
+  if node == nil then
+    vim.notify('No treesitter node found', vim.log.levels.WARN)
+    return
+  end
+
+  local current = node
+  while current do
+    local prev_sibling = current:prev_sibling()
+    if prev_sibling then
+      local prev_sibling_row, prev_sibling_col = prev_sibling:range()
+
+      vim.api.nvim_win_set_cursor(0, { prev_sibling_row + 1, prev_sibling_col })
+      return
+    end
+    current = current:parent()
+  end
+end)
+
+map('n', ']p', function()
+  local node = vim.treesitter.get_node()
+  if not node then
+    return
+  end
+
+  local start_row, start_col = node:range()
+  local current = node:parent()
+  while current do
+    local row, col = current:range()
+    if row ~= start_row or col ~= start_col then
+      vim.api.nvim_win_set_cursor(0, { row + 1, col })
+      return
+    end
+    current = current:parent()
+  end
+end)

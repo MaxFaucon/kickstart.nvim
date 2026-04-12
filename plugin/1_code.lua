@@ -50,9 +50,6 @@ local function treesitter_try_attach(buf, language)
   -- for more info on folds see `:help folds`
   vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
   vim.wo.foldmethod = 'expr'
-
-  -- enables treesitter based indentation
-  vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 end
 
 local available_parsers = require('nvim-treesitter').get_available()

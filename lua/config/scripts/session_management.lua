@@ -6,7 +6,7 @@ local function get_current_session_path()
   local project_root = vim.fs.root(0, '.git')
   if project_root == nil then
     vim.notify('No git project root', vim.log.levels.WARN)
-    return
+    return ''
   end
 
   local project_root_name = vim.fn.fnamemodify(project_root, ':t')
