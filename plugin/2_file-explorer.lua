@@ -13,7 +13,7 @@ require('oil').setup {
   },
 }
 
--- [[ KEYMAPS [f] ]]
+-- [[ KEYMAPS [b] ]]
 local map = vim.keymap.set
 -- Oil
-map('n', '<leader>fo', '<cmd>Oil<CR>', { desc = 'Open Oil', silent = true })
+map('n', '<leader>bo', '<cmd>Oil<CR>', { desc = 'Open Oil', silent = true })

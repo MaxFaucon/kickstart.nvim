@@ -115,8 +115,6 @@ require('nvim-autopairs').setup()
 -- [[ KEYMAPS [c] ]]
 -- Keymaps --
 local set = vim.keymap.set
-set('n', '<leader>cr', '<cmd>OverseerRun<CR>', { desc = 'Run Overseer' })
-set('n', '<leader>ct', '<cmd>OverseerToggle<CR>', { desc = 'Toggle Overseer' })
-set('n', '<leader>cs', '<cmd>OverseerShell<CR>', { desc = 'Shell Overseer' })
-
-return plugins
+set('n', '<leader>cr', '<cmd>OverseerRun<CR>', { desc = 'Run command from list' })
+set('n', '<leader>ct', '<cmd>OverseerToggle<CR>', { desc = 'Toggle commands list' })
+set('n', '<leader>cs', '<cmd>OverseerShell<CR>', { desc = 'Run shell command' })

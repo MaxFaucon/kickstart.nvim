@@ -38,6 +38,7 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
 })
 
+-- Marks
 vim.api.nvim_create_autocmd('BufLeave', {
   desc = 'Dynamically update global marks when leaving a buffer',
   callback = function()
@@ -65,6 +66,7 @@ vim.api.nvim_create_autocmd('BufLeave', {
   end,
 })
 
+-- Sessions
 vim.api.nvim_create_autocmd('VimLeavePre', {
   desc = 'Save the current project in a session when leaving vim',
   callback = function()
