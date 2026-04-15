@@ -1,4 +1,5 @@
 local session_management = require 'tools.session_management'
+local mode_management = require 'tools.mode_management'
 
 -- [[ User Commands ]]
 vim.api.nvim_create_user_command('Path', function()
@@ -30,8 +31,8 @@ map('n', '<C-k>', '<C-w>k', { desc = 'Go to top window' })
 map('n', '<C-l>', '<C-w>l', { desc = 'Go to right window' })
 map('i', '<C-w>', '<C-o><C-w>W', { desc = 'Focus window above' })
 
--- UI [u]
-map('n', '<leader>uz', function()
+-- Window [w]
+map('n', '<leader>wz', function()
   local cursor_position = vim.api.nvim_win_get_cursor(0)
 
   if vim.t.zen then
@@ -42,7 +43,11 @@ map('n', '<leader>uz', function()
     vim.api.nvim_win_set_cursor(0, cursor_position)
     vim.t.zen = true
   end
-end, { desc = '[U]I zoom' })
+end, { desc = '[W]indow zoom' })
+map('n', '<leader>wr', function()
+  local keymaps = mode_management.resize_window_keymaps
+  mode_management.toggle_mode(keymaps, 'Window Resize')
+end, { desc = 'Resize window' })
 
 -- Buffer [b]
 map('n', '<leader>br', '<cmd>edit!<CR>', { desc = 'Reload current file' })

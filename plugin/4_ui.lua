@@ -55,6 +55,7 @@ require('which-key').setup {
     { '<leader>s', group = '[S]earch' },
     { '<leader>t', group = '[T]oggle' },
     { '<leader>u', group = '[U]I' },
+    { '<leader>w', group = '[W]indow' },
     { '<leader>z', group = '[Z]K' },
   },
 }
