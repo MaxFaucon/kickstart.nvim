@@ -115,8 +115,8 @@
       "src": "https://github.com/igorlfs/nvim-dap-view"
     },
     "nvim-dbee": {
-      "rev": "dda517694889a5d238d7aa407403984da9f80cc0",
-      "src": "https://github.com/kndndrj/nvim-dbee"
+      "rev": "1ea5c82c6a8a063340fdac5519133b63c1fc24ae",
+      "src": "https://github.com/MaxFaucon/nvim-dbee"
     },
     "nvim-lspconfig": {
       "rev": "cb5bc0b2b35a6d513e3298d285db81453e791f4f",

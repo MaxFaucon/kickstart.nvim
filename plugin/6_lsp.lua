@@ -179,30 +179,3 @@ vim.lsp.config('intelephense', {
   },
 })
 vim.lsp.enable 'intelephense'
-
--- local plugins = {
---     config = function()
---       vim.api.nvim_create_autocmd('LspAttach', {
---         group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
---         callback = function(event)
---
---           -- The following two autocommands are used to highlight references of the
---           -- word under your cursor when your cursor rests there for a little while.
---           --    See `:help CursorHold` for information about when this is executed
---           --
---           -- When you move your cursor, the highlights will be cleared (the second autocommand).
---
---           -- The following code creates a keymap to toggle inlay hints in your
---           -- code, if the language server you are using supports them
---           --
---           -- This may be unwanted, since they displace some of your code
---           if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
---           end
---         end,
---       })
---
---       -- Diagnostic Config
---       -- See :help vim.diagnostic.Opts
---     end,
---   }
--- }

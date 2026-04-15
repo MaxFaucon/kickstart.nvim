@@ -1,7 +1,7 @@
 vim.pack.add {
   -- Interactive database client for neovim
   {
-    src = 'https://github.com/kndndrj/nvim-dbee',
+    src = 'https://github.com/MaxFaucon/nvim-dbee',
   },
 }
 

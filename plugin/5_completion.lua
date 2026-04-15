@@ -47,7 +47,7 @@ require('blink.cmp').setup {
   sources = {
     default = { 'lsp', 'path', 'snippets', 'lazydev', 'buffer', 'copilot' },
     per_filetype = {
-      sql = { 'lsp', 'snippets', 'dadbod', 'buffer' },
+      sql = { 'lsp', 'snippets', 'buffer' },
     },
     providers = {
       copilot = {
