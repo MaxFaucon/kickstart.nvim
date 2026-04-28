@@ -21,15 +21,26 @@ M.resize_window_keymaps = {
 M.toggle_mode = function(keymaps, mode_name)
   local map = vim.keymap.set
   local unmap = vim.keymap.del
+  local saved = {}
 
   for _, keymap in ipairs(keymaps) do
-    print('test', keymap.default, keymap.new)
+    -- Save existing buffer-local mapping if any
+    local existing = vim.fn.maparg(keymap.new, 'n', false, true)
+    saved[keymap.new] = existing
+
     map('n', keymap.new, keymap.default, { buf = 0, nowait = true })
   end
 
   map('n', '<Esc>', function()
     for _, keymap in ipairs(keymaps) do
-      unmap('n', keymap.new, { buf = 0 })
+      local existing = saved[keymap.new]
+
+      if existing and existing.buffer and existing.buffer == 1 then
+        -- Restore the original buffer-local mapping
+        vim.fn.mapset(existing)
+      else
+        unmap('n', keymap.new, { buf = 0 })
+      end
     end
 
     unmap('n', '<Esc>', { buf = 0 })

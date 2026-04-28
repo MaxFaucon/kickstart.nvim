@@ -128,6 +128,18 @@ require('codecompanion').setup {
 require('copilot').setup {
   panel = { enabled = false },
   suggestion = { enabled = false },
+  should_attach = function(bufnr)
+    if vim.bo[bufnr].filetype == 'sql' then
+      return true
+    end
+    if not vim.bo[bufnr].buflisted then
+      return false
+    end
+    if vim.bo[bufnr].buftype ~= '' then
+      return false
+    end
+    return true
+  end,
 }
 
 -- [[ KEYMAPS [a] ]]
