@@ -26,6 +26,7 @@ function _G.set_terminal_keymaps()
   vim.keymap.set('t', '<C-l>', [[<Cmd>wincmd l<CR>]], opts)
   vim.keymap.set('t', '<C-w>', [[<C-\><C-n><C-w>]], opts)
 end
+
 -- if you only want these mappings for toggle term use term://*toggleterm#* instead
 vim.cmd 'autocmd! TermOpen term://*toggleterm#* lua set_terminal_keymaps()'
 
@@ -77,9 +78,21 @@ vim.api.nvim_create_autocmd('VimLeavePre', {
   end,
 })
 
+-- Skip session restore for git files
+local file = vim.fn.argv(0)
+if file:match("git%-rebase%-todo") or file:match("COMMIT_EDITMSG") or file:match("MERGE_MSG") then
+  -- don't load session
+  return
+end
+
 vim.api.nvim_create_autocmd('VimEnter', {
-  desc = 'Save the current project in a session when leaving vim',
+  desc = 'Reload the current project session when entering vim',
   callback = function()
+    -- Don't load a session if a file is passed as an argument to nvim
+    if vim.fn.argc() > 0 then
+      return
+    end
+
     local project_root = vim.fs.root(0, '.git')
     if project_root ~= nil then
       session_management.reload_current_project()

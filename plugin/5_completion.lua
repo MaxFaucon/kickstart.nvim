@@ -1,6 +1,4 @@
 vim.pack.add {
-  -- To have copilot suggestion in blink
-  'https://github.com/giuxtaposition/blink-cmp-copilot',
   -- Snippet Engine for Neovim written in Lua.
   {
     src = 'https://github.com/L3MON4D3/LuaSnip',
@@ -10,7 +8,7 @@ vim.pack.add {
   -- Performant, batteries-included completion plugin for Neovim
   {
     src = 'https://github.com/Saghen/blink.cmp',
-    version = '1.*',
+    version = 'v1',
   },
 }
 
@@ -40,22 +38,16 @@ require('blink.cmp').setup {
   },
 
   completion = {
-    ghost_text = { enabled = true },
+    ghost_text = { enabled = false },
     documentation = { auto_show = true, auto_show_delay_ms = 500 },
   },
 
   sources = {
-    default = { 'lsp', 'path', 'snippets', 'lazydev', 'buffer', 'copilot' },
+    default = { 'lsp', 'path', 'snippets', 'lazydev', 'buffer' },
     per_filetype = {
       sql = { 'lsp', 'snippets', 'buffer' },
     },
     providers = {
-      copilot = {
-        name = 'copilot',
-        module = 'blink-cmp-copilot',
-        score_offset = 100,
-        async = true,
-      },
       lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
     },
   },
@@ -73,10 +65,10 @@ require('blink.cmp').setup {
       function(a, b)
         local kinds = require('blink.cmp.types').CompletionItemKind
         local priority = {
-          [kinds.Keyword] = 1, -- SQL keywords
-          [kinds.Class] = 2, -- Tables
-          [kinds.Field] = 3, -- Columns
-          [kinds.Module] = 4, -- Schemas
+          [kinds.Keyword] = 1,  -- SQL keywords
+          [kinds.Class] = 2,    -- Tables
+          [kinds.Field] = 3,    -- Columns
+          [kinds.Module] = 4,   -- Schemas
           [kinds.Function] = 5, -- SQL functions
           [kinds.Variable] = 6, -- Aliases
         }

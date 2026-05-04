@@ -127,7 +127,16 @@ require('codecompanion').setup {
 
 require('copilot').setup {
   panel = { enabled = false },
-  suggestion = { enabled = false },
+  suggestion = {
+    enabled = true,
+    auto_trigger = false,
+    keymap = {
+      accept = "<C-l>",
+      next = "<C-j>",
+      prev = "<C-k>",
+      dismiss = "<C-x>",
+    },
+  },
   should_attach = function(bufnr)
     if vim.bo[bufnr].filetype == 'sql' then
       return true
