@@ -1,6 +1,8 @@
 vim.pack.add {
   -- Visualize debugging sessions in neovim
   'https://github.com/igorlfs/nvim-dap-view',
+  -- Bridge between Mason and dap
+  'https://github.com/jay-babu/mason-nvim-dap.nvim',
   -- Debug Adapter Protocol client implementation for Neovim
   'https://github.com/mfussenegger/nvim-dap',
 }
@@ -9,6 +11,12 @@ require('dap-view').setup {
   auto_toggle = true,
 }
 
+require("mason-nvim-dap").setup({
+  ensure_installed = { "php" },
+  automatic_installation = true,
+  handlers = {},
+})
+
 local dap = require 'dap'
 
 -- Change breakpoint icons
@@ -16,7 +24,7 @@ vim.api.nvim_set_hl(0, 'DapBreak', { fg = '#e51400' })
 vim.api.nvim_set_hl(0, 'DapStop', { fg = '#ffcc00' })
 local breakpoint_icons = vim.g.have_nerd_font
     and { Breakpoint = '', BreakpointCondition = '', BreakpointRejected = '', LogPoint = '', Stopped = '' }
-  or { Breakpoint = '●', BreakpointCondition = '⊜', BreakpointRejected = '⊘', LogPoint = '◆', Stopped = '⭔' }
+    or { Breakpoint = '●', BreakpointCondition = '⊜', BreakpointRejected = '⊘', LogPoint = '◆', Stopped = '⭔' }
 for type, icon in pairs(breakpoint_icons) do
   local tp = 'Dap' .. type
   local hl = (type == 'Stopped') and 'DapStop' or 'DapBreak'
@@ -72,6 +80,7 @@ dap.configurations.php = {
     request = 'launch',
     name = 'Listen for Xdebug',
     port = 9003,
+    log = true,
     -- Only if PHP is running in a container
     pathMappings = {
       ['/var/www/html'] = vim.fn.getcwd(),

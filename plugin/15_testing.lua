@@ -14,13 +14,15 @@ require('neotest').setup {
     require 'neotest-jest' {
       jestCommand = function()
         local filename = vim.fn.expand '%:t'
+
         if string.find(filename, 'integration') then
           return 'npx jest --detectOpenHandles --testTimeout=60000'
         end
+
         return 'npx jest'
       end,
 
-      jestConfigFile = function()
+      jestConfigFile = function(file)
         local filename = vim.fn.expand '%:t'
         local jest_config_file = 'jest.config.js'
 
@@ -33,7 +35,11 @@ require('neotest').setup {
           end
         end
 
-        return jest_config_file
+        local match = file:match("(.*/[^/]+/)src")
+        if match then
+          return match .. jest_config_file
+        end
+        return vim.fn.getcwd() .. '/' .. jest_config_file
       end,
 
       env = { CI = true },
@@ -61,5 +67,6 @@ map('n', '<leader>nf', '<cmd>lua require("neotest").run.run(vim.fn.expand("%"))<
 map('n', '<leader>nq', '<cmd>lua require("neotest").run.stop()<CR>', { desc = 'Stop Test' })
 map('n', '<leader>np', '<cmd>lua require("neotest").summary.toggle()<CR>', { desc = 'Toggle Test Summary' })
 map('n', '<leader>no', '<cmd>lua require("neotest").output.open()<CR>', { desc = 'Open Test Output' })
-map('n', '<leader>nl', '<cmd>lua require("neotest").run.run({strategy = "dap"})<CR>', { desc = 'Run Nearest Test with DAP' })
+map('n', '<leader>nl', '<cmd>lua require("neotest").run.run({strategy = "dap"})<CR>',
+  { desc = 'Run Nearest Test with DAP' })
 map('n', '<leader>na', '<cmd>lua require("neotest").run.attach()<CR>', { desc = 'Attach to Running Test' })

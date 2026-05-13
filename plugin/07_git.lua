@@ -5,6 +5,8 @@ vim.pack.add {
   'https://github.com/NeogitOrg/neogit',
   -- Git integration for buffers
   'https://github.com/lewis6991/gitsigns.nvim',
+  -- Git PR reviews, requires gh and gh-dash
+  'https://github.com/daliusd/ghlite.nvim',
 }
 
 require('codediff').setup {
@@ -64,6 +66,10 @@ require('gitsigns').setup {
   end,
 }
 
+require('ghlite').setup({
+  diff_tool = 'codediff',
+})
+
 -- [[ KEYMAPS [g] ]]
 local map = vim.keymap.set
 
@@ -90,6 +96,19 @@ map('n', '<leader>gD', '<cmd>Gitsigns diffthis "@"<cr>', { desc = 'git [D]iff ag
 map('n', '<leader>gv', '<cmd>CodeDiff<cr>', { desc = 'Open CodeDiff' })
 map('n', '<leader>gf', '<cmd>CodeDiff file HEAD<cr>', { desc = 'Git diff current buffer' })
 map('n', '<leader>gD', '<cmd>CodeDiff HEAD~1<cr>', { desc = 'Diff last commit' })
-map('n', '<leader>gh', '<cmd>CodeDiff history %<cr>', { desc = 'File history (current)' })
-map('n', '<leader>gH', '<cmd>CodeDiff history<cr>', { desc = 'File history (all)' })
+map('n', '<leader>gH', '<cmd>CodeDiff history %<cr>', { desc = 'File history (current)' })
+-- map('n', '<leader>gH', '<cmd>CodeDiff history<cr>', { desc = 'File history (all)' })
 map('n', '<leader>gm', '<cmd>CodeDiff origin/main...HEAD<cr>', { desc = 'Diff with main' })
+
+-- GH lite
+map('n', '<leader>ghs', '<cmd>GHLite<cr>', { desc = 'PR Select' })
+map('n', '<leader>gho', '<cmd>GHLitePRCheckout<cr>', { desc = 'PR Checkout' })
+map('n', '<leader>ghv', '<cmd>GHLitePRView<cr>', { desc = 'PR View' })
+map('n', '<leader>ghu', '<cmd>GHLitePRLoadComments<cr>', { desc = 'PR Load Comments' })
+map('n', '<leader>ghp', '<cmd>GHLitePRDiff<cr>', { desc = 'PR Diff' })
+map('n', '<leader>ghl', '<cmd>GHLitePRDiffview<cr>', { desc = 'PR Diffview' })
+map('n', '<leader>gha', '<cmd>GHLitePRAddComment<cr>', { desc = 'PR Add comment' })
+map('x', '<leader>gha', '<cmd>GHLitePRAddComment<cr>', { desc = 'PR Add comment' })
+map('n', '<leader>ghc', '<cmd>GHLitePRUpdateComment<cr>', { desc = 'PR Update comment' })
+map('n', '<leader>ghd', '<cmd>GHLitePRDeleteComment<cr>', { desc = 'PR Delete comment' })
+map('n', '<leader>ghg', '<cmd>GHLitePROpenComment<cr>', { desc = 'PR Open comment' })

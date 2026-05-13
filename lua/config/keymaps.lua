@@ -11,6 +11,10 @@ vim.api.nvim_create_user_command('Path', function()
   end
 end, { desc = 'Shows the relative path of the current file' })
 
+vim.api.nvim_create_user_command('PackUpdate', function()
+  vim.pack.update()
+end, { desc = 'Update plugins' })
+
 -- [[ Keymaps ]]
 local map = vim.keymap.set
 
@@ -105,6 +109,10 @@ map('n', '<leader>pr', function()
   session_management.save_current_project()
   vim.cmd 'restart'
 end, { desc = 'Reload the current project' })
+map('n', '<leader>pd', function()
+  session_management.delete_current_project_session()
+  vim.cmd 'restart'
+end, { desc = 'Reset the current project session' })
 
 -- Treesitter text objects
 map('n', '<CR>', function()

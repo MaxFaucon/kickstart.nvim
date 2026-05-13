@@ -70,6 +70,8 @@ local toggle_todo_list = function()
     vim.api.nvim_buf_delete(todolist_state.floating.buf, { force = true })
     todolist_state.floating.buf = vim.api.nvim_win_get_buf(todolist_state.floating.win)
 
+    vim.api.nvim_set_option_value('relativenumber', true, { win = todolist_state.floating.win })
+
     setup_todolist_keymaps()
   else
     vim.api.nvim_win_close(todolist_state.floating.win, false)
@@ -106,6 +108,8 @@ local toggle_draft = function()
     vim.cmd.edit(draft_path)
     vim.api.nvim_buf_delete(draft_state.floating.buf, { force = true })
     draft_state.floating.buf = vim.api.nvim_win_get_buf(draft_state.floating.win)
+
+    vim.api.nvim_set_option_value('relativenumber', true, { win = draft_state.floating.win })
 
     setup_draft_keymaps()
   else
