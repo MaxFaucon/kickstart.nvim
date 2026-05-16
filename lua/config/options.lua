@@ -106,3 +106,23 @@ vim.opt.foldenable = true
 
 -- Git
 vim.opt.diffopt:append { 'internal', 'algorithm:patience', 'linematch:30', 'indent-heuristic', 'iwhiteall' }
+
+-- Tabs
+function _G.my_tabline()
+  local s = ''
+  for i = 1, vim.fn.tabpagenr '$' do
+    local winnr = vim.fn.tabpagewinnr(i)
+    local buflist = vim.fn.tabpagebuflist(i)
+    local bufnr = buflist[winnr]
+    local bufname = vim.fn.bufname(bufnr)
+    local label = bufname == '' and '[No Name]' or vim.fn.fnamemodify(bufname, ':t')
+
+    -- highlight active tab
+    s = s .. (i == vim.fn.tabpagenr() and '%#TabLineSel#' or '%#TabLine#')
+    s = s .. ' ' .. i .. ' ' .. label .. ' '
+  end
+  s = s .. '%#TabLineFill#'
+  return s
+end
+
+vim.o.tabline = '%!v:lua.my_tabline()'

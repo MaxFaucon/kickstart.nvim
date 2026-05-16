@@ -80,6 +80,7 @@ M.toggle_terminal = function(terminal_type, split_direction)
 
   if terminal_buf == nil then
     terminal_buf = vim.api.nvim_create_buf(true, false)
+    -- vim.api.nvim_buf_set_name(terminal_buf, 'Terminal')
     new_terminal = true
   end
 
@@ -103,7 +104,6 @@ M.toggle_terminal = function(terminal_type, split_direction)
   end
 
   vim.wo[terminal_win].relativenumber = true
-  vim.cmd.startinsert()
 end
 
 return M

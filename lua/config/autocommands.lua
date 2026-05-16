@@ -25,10 +25,10 @@ vim.api.nvim_create_autocmd('FileType', {
 
 -- Terminal
 -- Start in insert mode when opening a terminal
-vim.api.nvim_create_autocmd({ 'TermOpen' }, {
+vim.api.nvim_create_autocmd({ 'TermOpen', 'BufEnter' }, {
   pattern = { 'term://*' },
   callback = function()
-    vim.cmd 'startinsert'
+    vim.cmd.startinsert()
   end,
 })
 
