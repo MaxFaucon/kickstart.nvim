@@ -63,7 +63,7 @@ local toggle_todo_list = function()
       end
     end
 
-    todolist_state.floating = floating_window.create_floating_window { use_default_size = true }
+    todolist_state.floating = floating_window.create_floating_window { use_default_size = true, bufName = 'todolist' }
 
     -- Open a file and replace previous buffer
     vim.cmd.edit(todolist_path)
@@ -102,7 +102,7 @@ local toggle_draft = function()
       end
     end
 
-    draft_state.floating = floating_window.create_floating_window { use_default_size = true }
+    draft_state.floating = floating_window.create_floating_window { use_default_size = true, bufName = 'draft-note' }
 
     -- Open a file and replace previous buffer
     vim.cmd.edit(draft_path)

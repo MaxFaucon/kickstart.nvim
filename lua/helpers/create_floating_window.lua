@@ -2,14 +2,15 @@ local M = {}
 
 ---@class FloatingWindowOptions
 ---@field buf? integer The buffer used to open the floating window
+---@field bufName string The name of the buffer in the floating window
 ---@field content? table<string> The content of the floating window
 ---@field callback? function Callback function called when leaving the floating window
 ---@field use_default_size? boolean When true, use the default size for the floating window (80%)
 
 ---@param opts FloatingWindowOptions
 local function get_window_size(opts)
-  local max_height = math.floor(vim.o.lines * 0.8)
-  local max_width = math.floor(vim.o.columns * 0.8)
+  local max_height = math.floor(vim.o.lines * 0.9)
+  local max_width = math.floor(vim.o.columns * 0.9)
 
   if not opts.use_default_size and opts.content ~= nil then
     local content_height = #opts.content
@@ -45,6 +46,8 @@ M.create_floating_window = function(opts)
     buf = opts.buf
   else
     buf = vim.api.nvim_create_buf(false, false) -- No file, not scratch buffer
+    vim.api.nvim_buf_set_name(buf, opts.bufName)
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, opts.content or {})
   end
 
   -- Define window configuration
@@ -60,8 +63,6 @@ M.create_floating_window = function(opts)
 
   -- Create the floating window
   local win = vim.api.nvim_open_win(buf, true, win_config)
-
-  vim.api.nvim_buf_set_lines(buf, 0, -1, false, opts.content or {})
 
   vim.keymap.set('n', 'q', function()
     if opts.callback then

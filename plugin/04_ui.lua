@@ -18,7 +18,36 @@ require('vim._core.ui2').enable {
     ---cmdline or in a separate ephemeral message window.
     ---@type string|table<string, 'cmd'|'msg'|'pager'> Default message target
     ---or table mapping |ui-messages| kinds and triggers to a target.
-    targets = 'cmd',
+    targets = {
+      [''] = 'msg',
+      empty = 'msg',
+      bufwrite = 'msg',
+      confirm = 'cmd',
+      emsg = 'cmd',
+      echo = 'cmd',
+      echomsg = 'cmd',
+      echoerr = 'msg',
+      completion = 'cmd',
+      list_cmd = 'pager',
+      lua_error = 'cmd',
+      lua_print = 'msg',
+      progress = 'pager',
+      rpc_error = 'pager',
+      quickfix = 'msg',
+      search_cmd = 'cmd',
+      search_count = 'cmd',
+      shell_cmd = 'pager',
+      shell_err = 'pager',
+      shell_out = 'pager',
+      shell_ret = 'pager',
+      undo = 'msg',
+      verbose = 'pager',
+      wildlist = 'cmd',
+      wmsg = 'msg',
+      -- /!\ Also applies on bufwrite
+      -- typed_cmd = 'msg',
+    },
+    -- targets = 'msg',
     cmd = { -- Options related to messages in the cmdline window.
       height = 0.5, -- Maximum height while expanded for messages beyond 'cmdheight'.
     },
@@ -60,6 +89,14 @@ require('which-key').setup {
   },
 }
 
+local function show_macro_recording()
+  local reg = vim.fn.reg_recording()
+  if reg == '' then
+    return ''
+  end
+  return 'Recording @' .. reg
+end
+
 require('lualine').setup {
   options = {
     component_separators = { left = '|', right = '|' },
@@ -86,12 +123,37 @@ require('lualine').setup {
       },
       'lsp_status',
       'overseer',
+      {
+        'macro-recording',
+        fmt = show_macro_recording,
+      },
     },
     lualine_x = { 'encoding', 'fileformat', 'filetype', 'searchcount', 'selectioncount' },
     lualine_y = { 'progress' },
     lualine_z = { 'location' },
   },
 }
+
+-- Force statusline update on macro events
+vim.api.nvim_create_autocmd('RecordingEnter', {
+  callback = function()
+    require('lualine').refresh { place = { 'statusline' } }
+  end,
+})
+
+vim.api.nvim_create_autocmd('RecordingLeave', {
+  callback = function()
+    -- Wait 50ms to ensure reg_recording clears before refresh
+    local timer = vim.loop.new_timer()
+    timer:start(
+      50,
+      0,
+      vim.schedule_wrap(function()
+        require('lualine').refresh { place = { 'statusline' } }
+      end)
+    )
+  end,
+})
 
 require('catppuccin').setup {
   flavour = 'mocha', -- latte, frappe, macchiato, mocha

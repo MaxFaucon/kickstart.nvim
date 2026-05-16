@@ -14,28 +14,21 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
--- Toggleterm navigation config
-function _G.set_terminal_keymaps()
-  local opts = { buffer = 0 }
-
-  vim.keymap.set('t', '<esc><esc>', [[<C-\><C-n>]], opts)
-
-  vim.keymap.set('t', '<C-h>', [[<Cmd>wincmd h<CR>]], opts)
-  vim.keymap.set('t', '<C-j>', [[<Cmd>wincmd j<CR>]], opts)
-  vim.keymap.set('t', '<C-k>', [[<Cmd>wincmd k<CR>]], opts)
-  vim.keymap.set('t', '<C-l>', [[<Cmd>wincmd l<CR>]], opts)
-  vim.keymap.set('t', '<C-w>', [[<C-\><C-n><C-w>]], opts)
-end
-
--- if you only want these mappings for toggle term use term://*toggleterm#* instead
-vim.cmd 'autocmd! TermOpen term://*toggleterm#* lua set_terminal_keymaps()'
-
 -- Enable spelling check in specific file types
 vim.api.nvim_create_autocmd('FileType', {
   pattern = { 'markdown', 'text', 'gitcommit' },
   callback = function()
     vim.opt_local.spell = true
     vim.opt.spelllang = { 'en', 'fr' }
+  end,
+})
+
+-- Terminal
+-- Start in insert mode when opening a terminal
+vim.api.nvim_create_autocmd({ 'TermOpen' }, {
+  pattern = { 'term://*' },
+  callback = function()
+    vim.cmd 'startinsert'
   end,
 })
 
@@ -71,6 +64,15 @@ vim.api.nvim_create_autocmd('BufLeave', {
 vim.api.nvim_create_autocmd('VimLeavePre', {
   desc = 'Save the current project in a session when leaving vim',
   callback = function()
+    -- Remove terminal buffers since the process if killed when leaving neovim
+    local current_buffers = vim.api.nvim_list_bufs()
+    for _, buffer in ipairs(current_buffers) do
+      local bt = vim.bo[buffer].buftype
+      if bt == 'terminal' then
+        vim.api.nvim_buf_delete(buffer, { force = true })
+      end
+    end
+
     local project_root = vim.fs.root(0, '.git')
     if project_root ~= nil then
       session_management.save_current_project()
@@ -80,13 +82,13 @@ vim.api.nvim_create_autocmd('VimLeavePre', {
 
 -- Skip session restore for git files
 local file = vim.fn.argv(0)
-if file:match("git%-rebase%-todo") or file:match("COMMIT_EDITMSG") or file:match("MERGE_MSG") then
+if file:match 'git%-rebase%-todo' or file:match 'COMMIT_EDITMSG' or file:match 'MERGE_MSG' then
   -- don't load session
   return
 end
 
 vim.api.nvim_create_autocmd('VimEnter', {
-  desc = 'Reload the current project session when entering vim',
+  desc = 'Source the current project session when entering vim',
   callback = function()
     -- Don't load a session if a file is passed as an argument to nvim
     if vim.fn.argc() > 0 then
@@ -95,7 +97,7 @@ vim.api.nvim_create_autocmd('VimEnter', {
 
     local project_root = vim.fs.root(0, '.git')
     if project_root ~= nil then
-      session_management.reload_current_project()
+      session_management.source_current_project()
       vim.cmd ':filetype detect'
     end
   end,

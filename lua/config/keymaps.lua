@@ -1,5 +1,6 @@
 local session_management = require 'tools.session_management'
 local mode_management = require 'tools.mode_management'
+local toggle_terminal = require 'tools.toggle_terminal'
 
 -- [[ User Commands ]]
 vim.api.nvim_create_user_command('Path', function()
@@ -62,9 +63,31 @@ map('n', '<leader>bf', '<cmd>let @+ = expand("%:p:t")<CR>', { desc = 'Copy file 
 map('n', '<leader>bc', '<cmd>bdelete<CR>', { desc = 'Close a buffer tab', silent = true })
 map('n', '<leader>bs', '<cmd>b#<CR>', { desc = 'Switch to previous buffer', silent = true })
 
+-- Terminal [t]
+map('n', '<leader>tf', function()
+  toggle_terminal.toggle_terminal 'float'
+end, { desc = 'Toggle floating terminal', silent = true })
+map('n', '<leader>tt', function()
+  toggle_terminal.toggle_terminal 'tab'
+end, { desc = 'Toggle tab terminal', silent = true })
+map('n', '<leader>tb', function()
+  toggle_terminal.toggle_terminal('split', 'below')
+end, { desc = 'Toggle split below terminal', silent = true })
+map('n', '<leader>tr', function()
+  toggle_terminal.toggle_terminal('split', 'right')
+end, { desc = 'Toggle split right terminal', silent = true })
+map('n', '<leader>tg', function()
+  toggle_terminal.toggle_terminal('split', 'left')
+end, { desc = 'Toggle split left terminal', silent = true })
+map('n', '<leader>tp', function()
+  toggle_terminal.toggle_terminal('split', 'above')
+end, { desc = 'Toggle split above terminal', silent = true })
+
 -- Quickfix [q] and Toggle [t]
 map('n', '<leader>qd', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 map('n', '<leader>qs', ':vimgrep /<C-r>//g %<CR>:copen<CR>', { desc = 'Search to quickfix' })
+
+map('n', '<leader>tw', '<cmd>set wrap!<CR>', { desc = 'Toggle wrap' })
 map('n', '<leader>tq', function()
   local quickfix_window_id = vim.fn.getqflist({ winid = 0 })['winid']
 

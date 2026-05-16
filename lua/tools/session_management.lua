@@ -30,7 +30,7 @@ M.delete_current_project_session = function()
   end
 end
 
-M.reload_current_project = function()
+M.source_current_project = function()
   local session_name_path = get_current_session_path()
 
   local session_exists = vim.fn.filereadable(session_name_path)
@@ -75,37 +75,37 @@ M.sessions_picker = function()
   end, sessions)
 
   pickers
-      .new({}, {
-        prompt_title = 'Project sessions picker',
-        initial_mode = 'insert',
-        layout_config = {
-          anchor = 'CENTER',
-          height = 0.5,
-          width = 0.5,
-        },
-        finder = finders.new_table {
-          results = session_names,
-          entry_maker = function(entry)
-            return {
-              value = entry.path,
-              display = entry.name,
-              ordinal = entry.name,
-            }
-          end,
-        },
-        sorter = require('telescope.config').values.generic_sorter {},
-        attach_mappings = function(bufnr, map)
-          map({ 'i', 'n' }, '<CR>', function()
-            local selection = require('telescope.actions.state').get_selected_entry()
-            require('telescope.actions').close(bufnr)
-
-            M.switch_project(selection.value)
-          end)
-
-          return true -- Retain default keymaps
+    .new({}, {
+      prompt_title = 'Project sessions picker',
+      initial_mode = 'insert',
+      layout_config = {
+        anchor = 'CENTER',
+        height = 0.5,
+        width = 0.5,
+      },
+      finder = finders.new_table {
+        results = session_names,
+        entry_maker = function(entry)
+          return {
+            value = entry.path,
+            display = entry.name,
+            ordinal = entry.name,
+          }
         end,
-      })
-      :find()
+      },
+      sorter = require('telescope.config').values.generic_sorter {},
+      attach_mappings = function(bufnr, map)
+        map({ 'i', 'n' }, '<CR>', function()
+          local selection = require('telescope.actions.state').get_selected_entry()
+          require('telescope.actions').close(bufnr)
+
+          M.switch_project(selection.value)
+        end)
+
+        return true -- Retain default keymaps
+      end,
+    })
+    :find()
 end
 
 return M

@@ -36,6 +36,14 @@ local parsers = {
 }
 require('nvim-treesitter').install(parsers)
 
+vim.api.nvim_create_user_command('TSAvailable', function()
+  print(vim.inspect(require('nvim-treesitter').get_available()))
+end, { desc = 'Get available Treesitter parser' })
+
+vim.api.nvim_create_user_command('TSInstalled', function()
+  print(vim.inspect(require('nvim-treesitter').get_installed()))
+end, { desc = 'Get installed Treesitter parser' })
+
 ---@param buf integer
 ---@param language string
 local function treesitter_try_attach(buf, language)

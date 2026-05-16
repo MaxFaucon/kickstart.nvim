@@ -356,6 +356,7 @@ M.setup_autocmd_and_telescope = function()
 
         window_helpers.create_floating_window {
           content = result_lines,
+          bufName = 'dbee-inspect-view',
         }
       end, { desc = '[D]atabase inspect [V]iew' })
 
@@ -384,6 +385,7 @@ M.setup_autocmd_and_telescope = function()
 
         window_helpers.create_floating_window {
           content = cell_value_lines,
+          bufName = 'dbee-inspect-cell',
         }
       end, { desc = 'Inspect cell value' })
 
@@ -435,7 +437,7 @@ M.setup_autocmd_and_telescope = function()
           require('dbee').execute(get_final_query())
         end
 
-        window_helpers.create_floating_window { content = columns, callback = callback }
+        window_helpers.create_floating_window { content = columns, callback = callback, bufName = 'dbee-remove-columns' }
       end, { desc = 'Remove columns' })
     end,
   })

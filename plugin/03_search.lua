@@ -2,6 +2,7 @@ vim.pack.add {
   {
     -- FZF sorter for telescope written in c
     src = 'https://github.com/nvim-telescope/telescope-fzf-native.nvim',
+    build = 'make',
   },
   -- Variable user customization for telescope.live_grep to set rg flags on-the-fly
   'https://github.com/fdschmidt93/telescope-egrepify.nvim',
