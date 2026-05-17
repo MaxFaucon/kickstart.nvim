@@ -30,9 +30,6 @@ local setup_terminal_config = function(buf_id)
   map('t', '<C-k>', function()
     close_terminal_window(buf_id)
   end, opts)
-  map('t', '<C-l>', function()
-    close_terminal_window(buf_id)
-  end, opts)
 end
 
 local toggle_tab_terminal = function(buf_id)
@@ -43,7 +40,8 @@ local toggle_tab_terminal = function(buf_id)
 end
 
 local toggle_floating_terminal = function(buf_id)
-  return floating_window_helper.create_floating_window({ buf = buf_id, bufName = 'floating-terminal', use_default_size = true }).win
+  return floating_window_helper.create_floating_window({ buf = buf_id, bufName = 'floating-terminal', use_default_size = true })
+      .win
 end
 
 ---@alias SplitDirection "above" | "below" | "left" | "right"

@@ -68,6 +68,15 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
+-- Completion
+vim.api.nvim_create_autocmd('TextChangedI', {
+  callback = function()
+    if vim.fn.pumvisible() == 0 then
+      vim.lsp.completion.get()
+    end
+  end,
+})
+
 vim.diagnostic.config {
   severity_sort = true,
   float = { border = 'rounded', source = 'if_many' },
