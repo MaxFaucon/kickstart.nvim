@@ -1,29 +1,29 @@
-vim.pack.add {
-  -- Snippet Engine for Neovim written in Lua.
-  {
-    src = 'https://github.com/L3MON4D3/LuaSnip',
-  },
-  -- Set of preconfigured snippets for different languages.
-  'https://github.com/rafamadriz/friendly-snippets',
-  -- Performant, batteries-included completion plugin for Neovim
-  -- {
-  --   src = 'https://github.com/Saghen/blink.cmp',
-  --   version = 'v1',
-  -- },
-}
-
-vim.api.nvim_create_autocmd('PackChanged', {
-  callback = function(ev)
-    if ev.data.spec.name == 'blink.cmp' then
-      vim.system({ 'cargo', 'build', '--release' }, { cwd = ev.data.path })
-    end
-    if ev.data.spec.name == 'LuaSnip' then
-      if vim.fn.has 'win32' == 0 and vim.fn.executable 'make' == 1 then
-        vim.system({ 'make', 'install_jsregexp' }, { cwd = ev.data.path })
-      end
-    end
-  end,
-})
+-- vim.pack.add {
+--   -- Snippet Engine for Neovim written in Lua.
+--   {
+--     src = 'https://github.com/L3MON4D3/LuaSnip',
+--   },
+--   -- Set of preconfigured snippets for different languages.
+--   'https://github.com/rafamadriz/friendly-snippets',
+--   -- Performant, batteries-included completion plugin for Neovim
+--   -- {
+--   --   src = 'https://github.com/Saghen/blink.cmp',
+--   --   version = 'v1',
+--   -- },
+-- }
+--
+-- vim.api.nvim_create_autocmd('PackChanged', {
+--   callback = function(ev)
+--     if ev.data.spec.name == 'blink.cmp' then
+--       vim.system({ 'cargo', 'build', '--release' }, { cwd = ev.data.path })
+--     end
+--     if ev.data.spec.name == 'LuaSnip' then
+--       if vim.fn.has 'win32' == 0 and vim.fn.executable 'make' == 1 then
+--         vim.system({ 'make', 'install_jsregexp' }, { cwd = ev.data.path })
+--       end
+--     end
+--   end,
+-- })
 
 -- Blink
 -- require('blink.cmp').setup {
@@ -93,19 +93,19 @@ vim.api.nvim_create_autocmd('PackChanged', {
 -- }
 
 -- Snippets
-require('luasnip.loaders.from_lua').load {
-  paths = { '~/.config/nvim/lua/custom/config/snippets' },
-}
-
-local ls = require 'luasnip'
-vim.keymap.set({ 'i', 's' }, '<C-j>', function()
-  if ls.choice_active() then
-    ls.change_choice(1)
-  end
-end)
-
-vim.keymap.set({ 'i', 's' }, '<C-k>', function()
-  if ls.choice_active() then
-    ls.change_choice(-1)
-  end
-end)
+-- require('luasnip.loaders.from_lua').load {
+--   paths = { '~/.config/nvim/lua/custom/config/snippets' },
+-- }
+--
+-- local ls = require 'luasnip'
+-- vim.keymap.set({ 'i', 's' }, '<C-j>', function()
+--   if ls.choice_active() then
+--     ls.change_choice(1)
+--   end
+-- end)
+--
+-- vim.keymap.set({ 'i', 's' }, '<C-k>', function()
+--   if ls.choice_active() then
+--     ls.change_choice(-1)
+--   end
+-- end)

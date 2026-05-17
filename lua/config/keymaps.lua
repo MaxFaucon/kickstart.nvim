@@ -15,6 +15,9 @@ end, { desc = 'Shows the relative path of the current file' })
 vim.api.nvim_create_user_command('PackUpdate', function()
   vim.pack.update()
 end, { desc = 'Update plugins' })
+vim.api.nvim_create_user_command('PackDelete', function(opts)
+  vim.pack.del { opts.args }
+end, { desc = 'Delete plugin', nargs = 1 })
 
 -- [[ Keymaps ]]
 local map = vim.keymap.set
@@ -34,7 +37,17 @@ map('n', '<C-h>', '<C-w>h', { desc = 'Go to left window' })
 map('n', '<C-j>', '<C-w>j', { desc = 'Go to bottom window' })
 map('n', '<C-k>', '<C-w>k', { desc = 'Go to top window' })
 map('n', '<C-l>', '<C-w>l', { desc = 'Go to right window' })
-map('i', '<C-w>', '<C-o><C-w>W', { desc = 'Focus window above' })
+map('n', '<C-f>', '<C-w>w', { desc = 'Focus floating window' })
+map('i', '<C-f>', '<C-o><C-w>w', { desc = 'Focus floating window' })
+
+-- Completion
+-- Avoid having enter accepting the completion suggestion by default
+map('i', '<CR>', function()
+  if vim.fn.pumvisible() == 1 then
+    return vim.keycode '<C-e><CR>'
+  end
+  return vim.keycode '<CR>'
+end, { expr = true })
 
 -- Window [w]
 map('n', '<leader>wz', function()

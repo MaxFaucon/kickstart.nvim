@@ -22,6 +22,8 @@ local actions = require 'telescope.actions'
 require('telescope').setup {
   defaults = {
     layout_strategy = 'center',
+    sorting_strategy = 'ascending',
+    scroll_strategy = 'limit',
     layout_config = {
       anchor = 'S',
       height = 0.40,
@@ -46,9 +48,9 @@ require('telescope').setup {
       require('telescope.themes').get_dropdown(),
     },
     egrepify = {
-      title = true, -- inline filenames instead of section headers
-      lnum = true, -- line numbers
-      col = true, -- column numbers
+      title = false, -- inline filenames instead of section headers
+      lnum = false, -- line numbers
+      col = false, -- column numbers
       results_ts_hl = true, -- treesitter highlighting in results
       prefixes = {
         ['-'] = {

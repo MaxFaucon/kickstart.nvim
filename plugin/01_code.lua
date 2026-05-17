@@ -5,10 +5,6 @@ vim.pack.add {
   'https://github.com/stevearc/conform.nvim',
   -- A task runner and job management plugin for Neovim
   'https://github.com/stevearc/overseer.nvim',
-  -- Autopairs for neovim written in lua
-  'https://github.com/windwp/nvim-autopairs',
-  -- Smart and powerful comment plugin for neovim.
-  'https://github.com/numToStr/Comment.nvim',
 }
 
 -- Treesitter
@@ -114,8 +110,6 @@ require('conform').setup {
     typescript = { 'eslint_d', stop_after_first = true },
   },
 }
-
-require('nvim-autopairs').setup()
 
 -- Overseer's private_setup() wraps vim.fn.jobstart by default, which breaks
 -- plugins relying on jobstart with rpc=true (e.g. nvim-dbee).

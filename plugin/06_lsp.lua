@@ -57,22 +57,24 @@ vim.api.nvim_create_autocmd('LspAttach', {
       vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
     end, '[T]oggle Inlay [H]ints')
 
-    -- Completion
-    vim.lsp.completion.enable(true, event.data.client_id, event.buf, {
-      autotrigger = true,
-      convert = function(item)
-        return { abbr = item.label:gsub('%b()', '') }
-      end,
-    })
-    vim.keymap.set('i', '<C-Space>', vim.lsp.completion.get, { desc = 'Trigger autocompletion' })
-  end,
-})
+    if client and client:supports_method 'textDocument/completion' then
+      vim.lsp.completion.enable(true, event.data.client_id, event.buf, {
+        autotrigger = true,
+        convert = function(item)
+          return { abbr = item.label:gsub('%b()', '') }
+        end,
+      })
 
--- Completion
-vim.api.nvim_create_autocmd('TextChangedI', {
-  callback = function()
-    if vim.fn.pumvisible() == 0 then
-      vim.lsp.completion.get()
+      -- Completion
+      vim.api.nvim_create_autocmd('TextChangedI', {
+        callback = function()
+          if vim.fn.pumvisible() == 0 then
+            vim.lsp.completion.get()
+          end
+        end,
+      })
+
+      vim.keymap.set('i', '<C-Space>', vim.lsp.completion.get, { desc = 'Trigger autocompletion' })
     end
   end,
 })

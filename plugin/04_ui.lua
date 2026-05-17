@@ -1,14 +1,10 @@
 vim.pack.add {
-  -- Keymaps helper
-  'https://github.com/folke/which-key.nvim',
   -- Status line
   'https://github.com/nvim-lualine/lualine.nvim',
   -- Theme
   { src = 'https://github.com/catppuccin/nvim', name = 'catppuccin' },
   -- Scroll past the end of file just like scrolloff option
   'https://github.com/Aasim-A/scrollEOF.nvim',
-  -- Indent guides for Neovim
-  'https://github.com/lukas-reineke/indent-blankline.nvim',
 }
 
 require('vim._core.ui2').enable {
@@ -19,9 +15,9 @@ require('vim._core.ui2').enable {
     ---@type string|table<string, 'cmd'|'msg'|'pager'> Default message target
     ---or table mapping |ui-messages| kinds and triggers to a target.
     targets = {
-      [''] = 'msg',
+      [''] = 'cmd',
       empty = 'msg',
-      bufwrite = 'msg',
+      bufwrite = 'cmd',
       confirm = 'cmd',
       emsg = 'cmd',
       echo = 'cmd',
@@ -61,52 +57,6 @@ require('vim._core.ui2').enable {
     pager = { -- Options related to message window.
       height = 1, -- Maximum height.
     },
-  },
-}
-
-require('which-key').setup {
-  delay = 100,
-  preset = 'modern',
-  triggers = {
-    { '<auto>', mode = 'nxso' },
-    { '<C-x>', mode = 'i' },
-  },
-  icons = {
-    mappings = false,
-  },
-
-  -- Document existing key chains
-  spec = {
-    { '<leader>a', group = '[A]I' },
-    { '<leader>b', group = '[B]uffer' },
-    { '<leader>c', group = '[C]ode' },
-    { '<leader>d', group = '[D]atabase/[D]ebug' },
-    { '<leader>g', group = '[G]it' },
-    { '<leader>n', group = '[N]eotest' },
-    { '<leader>p', group = '[P]erso' },
-    { '<leader>q', group = '[Q]uickfix' },
-    { '<leader>s', group = '[S]earch' },
-    { '<leader>t', group = '[T]oggle' },
-    { '<leader>u', group = '[U]I' },
-    { '<leader>w', group = '[W]indow' },
-    { '<leader>z', group = '[Z]K' },
-    -- Insert mode C-x completions
-    { '<C-x><C-d>', desc = 'Definition completion', mode = 'i' },
-    { '<C-x><C-e>', desc = 'Scroll up', mode = 'i' },
-    { '<C-x><C-f>', desc = 'File name completion', mode = 'i' },
-    { '<C-x><C-i>', desc = 'Path pattern completion', mode = 'i' },
-    { '<C-x><C-k>', desc = 'Dictionary completion', mode = 'i' },
-    { '<C-x><C-l>', desc = 'Whole line completion', mode = 'i' },
-    { '<C-x><C-n>', desc = 'Next keyword completion', mode = 'i' },
-    { '<C-x><C-o>', desc = 'Omni completion', mode = 'i' },
-    { '<C-x><C-p>', desc = 'Previous keyword completion', mode = 'i' },
-    { '<C-x><C-s>', desc = 'Spelling suggestion', mode = 'i' },
-    { '<C-x><C-t>', desc = 'Thesaurus completion', mode = 'i' },
-    { '<C-x><C-u>', desc = 'User defined completion', mode = 'i' },
-    { '<C-x><C-v>', desc = 'Vim command-line completion', mode = 'i' },
-    { '<C-x><C-y>', desc = 'Scroll down', mode = 'i' },
-    { '<C-x><C-]>', desc = 'Tag completion', mode = 'i' },
-    { '<C-x>s', desc = 'Spelling suggestion (alt)', mode = 'i' },
   },
 }
 
@@ -208,13 +158,3 @@ require('catppuccin').setup {
 vim.cmd.colorscheme 'catppuccin-nvim'
 
 require('scrollEOF').setup()
-
-require('ibl').setup()
-
--- [[ KEYMAPS [u] ]]
-local map = vim.keymap.set
-
--- Which key
-map('n', '<leader>?', function()
-  require('which-key').show { global = false }
-end, { desc = 'Buffer Local Keymaps (which-key)' })

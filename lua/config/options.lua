@@ -8,6 +8,9 @@ vim.g.maplocalleader = ' '
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
 
+-- Shortmess (shorten messages)
+vim.opt.shortmess:append 'c' -- completion messages
+
 -- Set UTF-8 as the default encoding
 vim.opt.encoding = 'utf-8'
 vim.opt.fileencoding = 'utf-8'
