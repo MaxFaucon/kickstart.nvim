@@ -67,6 +67,10 @@ require('vim._core.ui2').enable {
 require('which-key').setup {
   delay = 100,
   preset = 'modern',
+  triggers = {
+    { '<auto>', mode = 'nxso' },
+    { '<C-x>', mode = 'i' },
+  },
   icons = {
     mappings = false,
   },
@@ -86,6 +90,23 @@ require('which-key').setup {
     { '<leader>u', group = '[U]I' },
     { '<leader>w', group = '[W]indow' },
     { '<leader>z', group = '[Z]K' },
+    -- Insert mode C-x completions
+    { '<C-x><C-d>', desc = 'Definition completion', mode = 'i' },
+    { '<C-x><C-e>', desc = 'Scroll up', mode = 'i' },
+    { '<C-x><C-f>', desc = 'File name completion', mode = 'i' },
+    { '<C-x><C-i>', desc = 'Path pattern completion', mode = 'i' },
+    { '<C-x><C-k>', desc = 'Dictionary completion', mode = 'i' },
+    { '<C-x><C-l>', desc = 'Whole line completion', mode = 'i' },
+    { '<C-x><C-n>', desc = 'Next keyword completion', mode = 'i' },
+    { '<C-x><C-o>', desc = 'Omni completion', mode = 'i' },
+    { '<C-x><C-p>', desc = 'Previous keyword completion', mode = 'i' },
+    { '<C-x><C-s>', desc = 'Spelling suggestion', mode = 'i' },
+    { '<C-x><C-t>', desc = 'Thesaurus completion', mode = 'i' },
+    { '<C-x><C-u>', desc = 'User defined completion', mode = 'i' },
+    { '<C-x><C-v>', desc = 'Vim command-line completion', mode = 'i' },
+    { '<C-x><C-y>', desc = 'Scroll down', mode = 'i' },
+    { '<C-x><C-]>', desc = 'Tag completion', mode = 'i' },
+    { '<C-x>s', desc = 'Spelling suggestion (alt)', mode = 'i' },
   },
 }
 

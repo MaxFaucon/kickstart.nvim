@@ -6,10 +6,10 @@ vim.pack.add {
   -- Set of preconfigured snippets for different languages.
   'https://github.com/rafamadriz/friendly-snippets',
   -- Performant, batteries-included completion plugin for Neovim
-  {
-    src = 'https://github.com/Saghen/blink.cmp',
-    version = 'v1',
-  },
+  -- {
+  --   src = 'https://github.com/Saghen/blink.cmp',
+  --   version = 'v1',
+  -- },
 }
 
 vim.api.nvim_create_autocmd('PackChanged', {
@@ -26,71 +26,71 @@ vim.api.nvim_create_autocmd('PackChanged', {
 })
 
 -- Blink
-require('blink.cmp').setup {
-  keymap = {
-    preset = 'default',
-
-    ['<C-k>'] = false, -- Disable the default signature help keymap
-  },
-
-  appearance = {
-    nerd_font_variant = 'mono',
-  },
-
-  completion = {
-    ghost_text = { enabled = false },
-    documentation = { auto_show = true, auto_show_delay_ms = 500 },
-  },
-
-  sources = {
-    default = { 'lsp', 'path', 'snippets', 'lazydev', 'buffer' },
-    per_filetype = {
-      sql = { 'lsp', 'snippets', 'buffer' },
-    },
-    providers = {
-      lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
-    },
-  },
-
-  snippets = { preset = 'luasnip' },
-
-  -- See :h blink-cmp-config-fuzzy for more information
-  fuzzy = {
-    implementation = 'prefer_rust_with_warning',
-    prebuilt_binaries = {
-      force_version = 'v1.10.2',
-    },
-    sorts = {
-      'score',
-      function(a, b)
-        local kinds = require('blink.cmp.types').CompletionItemKind
-        local priority = {
-          [kinds.Keyword] = 1,  -- SQL keywords
-          [kinds.Class] = 2,    -- Tables
-          [kinds.Field] = 3,    -- Columns
-          [kinds.Module] = 4,   -- Schemas
-          [kinds.Function] = 5, -- SQL functions
-          [kinds.Variable] = 6, -- Aliases
-        }
-
-        local a_priority = priority[a.kind] or 99
-        local b_priority = priority[b.kind] or 99
-
-        if a_priority ~= b_priority then
-          return a_priority < b_priority
-        else
-          -- Fallback to score comparison if priorities are equal
-          return a.score > b.score
-        end
-      end,
-      'sort_text',
-      'exact',
-    },
-  },
-
-  -- Shows a signature help window while you type arguments for a function
-  signature = { enabled = true },
-}
+-- require('blink.cmp').setup {
+--   keymap = {
+--     preset = 'default',
+--
+--     ['<C-k>'] = false, -- Disable the default signature help keymap
+--   },
+--
+--   appearance = {
+--     nerd_font_variant = 'mono',
+--   },
+--
+--   completion = {
+--     ghost_text = { enabled = false },
+--     documentation = { auto_show = true, auto_show_delay_ms = 500 },
+--   },
+--
+--   sources = {
+--     default = { 'lsp', 'path', 'snippets', 'lazydev', 'buffer' },
+--     per_filetype = {
+--       sql = { 'lsp', 'snippets', 'buffer' },
+--     },
+--     providers = {
+--       lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
+--     },
+--   },
+--
+--   snippets = { preset = 'luasnip' },
+--
+--   -- See :h blink-cmp-config-fuzzy for more information
+--   fuzzy = {
+--     implementation = 'prefer_rust_with_warning',
+--     prebuilt_binaries = {
+--       force_version = 'v1.10.2',
+--     },
+--     sorts = {
+--       'score',
+--       function(a, b)
+--         local kinds = require('blink.cmp.types').CompletionItemKind
+--         local priority = {
+--           [kinds.Keyword] = 1,  -- SQL keywords
+--           [kinds.Class] = 2,    -- Tables
+--           [kinds.Field] = 3,    -- Columns
+--           [kinds.Module] = 4,   -- Schemas
+--           [kinds.Function] = 5, -- SQL functions
+--           [kinds.Variable] = 6, -- Aliases
+--         }
+--
+--         local a_priority = priority[a.kind] or 99
+--         local b_priority = priority[b.kind] or 99
+--
+--         if a_priority ~= b_priority then
+--           return a_priority < b_priority
+--         else
+--           -- Fallback to score comparison if priorities are equal
+--           return a.score > b.score
+--         end
+--       end,
+--       'sort_text',
+--       'exact',
+--     },
+--   },
+--
+--   -- Shows a signature help window while you type arguments for a function
+--   signature = { enabled = true },
+-- }
 
 -- Snippets
 require('luasnip.loaders.from_lua').load {

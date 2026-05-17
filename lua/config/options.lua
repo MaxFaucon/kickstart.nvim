@@ -32,6 +32,9 @@ vim.opt.expandtab = true -- Use spaces instead of tabs
 
 vim.opt.termguicolors = true
 
+-- Completion
+vim.opt.completeopt = { 'fuzzy', 'menuone', 'noinsert', 'popup', 'preview' }
+
 -- Disable swap files
 vim.opt.swapfile = false
 
