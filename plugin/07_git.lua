@@ -1,8 +1,6 @@
 vim.pack.add {
   -- A Neovim plugin that provides VSCode-style diff rendering
   'https://github.com/esmuellert/codediff.nvim',
-  -- An interactive and powerful Git interface for Neovim
-  'https://github.com/NeogitOrg/neogit',
   -- Git integration for buffers
   'https://github.com/lewis6991/gitsigns.nvim',
   -- Git PR reviews, requires gh and gh-dash
@@ -16,23 +14,6 @@ require('codediff').setup {
       accept_current = '<leader>gco',
       accept_both = '<leader>gcb',
       discard = '<leader>gcd',
-    },
-  },
-}
-
-require('neogit').setup {
-  integrations = { telescope = true, codediff = true },
-  graph_style = 'kitty',
-  git_services = {
-    ["github-pro"] = {
-      pull_request = "https://github.com/${owner}/${repository}/compare/${branch_name}?expand=1",
-      commit = "https://github.com/${owner}/${repository}/commit/${oid}",
-      tree = "https://github.com/${owner}/${repository}/tree/${branch_name}",
-    },
-    ["github-perso"] = {
-      pull_request = "https://github.com/${owner}/${repository}/compare/${branch_name}?expand=1",
-      commit = "https://github.com/${owner}/${repository}/commit/${oid}",
-      tree = "https://github.com/${owner}/${repository}/tree/${branch_name}",
     },
   },
 }
@@ -72,14 +53,6 @@ require('ghlite').setup({
 
 -- [[ KEYMAPS [g] ]]
 local map = vim.keymap.set
-
--- Neogit - Core operations
-map('n', '<leader>gg', '<cmd>Neogit<cr>', { desc = 'Neogit status' })
-map('n', '<leader>gc', '<cmd>Neogit commit<cr>', { desc = 'Git commit' })
-map('n', '<leader>gp', '<cmd>Neogit push<cr>', { desc = 'Git push' })
-map('n', '<leader>gP', '<cmd>Neogit pull<cr>', { desc = 'Git pull' })
-map('n', '<leader>gB', '<cmd>Neogit branch<cr>', { desc = 'Git branches' })
-map('n', '<leader>gl', '<cmd>Neogit log<cr>', { desc = 'Git log' })
 
 -- Gitsigns - Buffer operations
 -- normal mode

@@ -76,6 +76,12 @@ map('n', '<leader>bf', '<cmd>let @+ = expand("%:p:t")<CR>', { desc = 'Copy file 
 map('n', '<leader>bc', '<cmd>bdelete<CR>', { desc = 'Close a buffer tab', silent = true })
 map('n', '<leader>bs', '<cmd>b#<CR>', { desc = 'Switch to previous buffer', silent = true })
 
+map('n', '<leader>tp', function()
+  toggle_terminal.toggle_terminal('float')
+
+  vim.fn.chansend(vim.b.terminal_job_id, 'cd ' .. vim.fn.getcwd() .. '\n')
+end, { desc = 'Toggle terminal in current project' })
+
 -- Terminal [t]
 map('n', '<leader>tf', function()
   toggle_terminal.toggle_terminal 'float'
@@ -92,7 +98,7 @@ end, { desc = 'Toggle split right terminal', silent = true })
 map('n', '<leader>tg', function()
   toggle_terminal.toggle_terminal('split', 'left')
 end, { desc = 'Toggle split left terminal', silent = true })
-map('n', '<leader>tp', function()
+map('n', '<leader>ta', function()
   toggle_terminal.toggle_terminal('split', 'above')
 end, { desc = 'Toggle split above terminal', silent = true })
 

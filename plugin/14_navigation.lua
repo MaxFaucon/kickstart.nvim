@@ -11,7 +11,6 @@ local unmap = vim.keymap.del
 
 -- Aerial
 map('n', '<leader>sa', '<cmd>Telescope aerial<CR>', { desc = '[S]how [A]erial', silent = true })
-map('n', '<leader>ta', '<cmd>AerialToggle!<CR>', { desc = '[T]oggle [A]erial', silent = true })
 unmap('n', '[a') -- Unset default keymap to avoid conflict
 unmap('n', ']a') -- Unset default keymap to avoid conflict
 map('n', '[a', '<cmd>AerialPrev<CR>', { desc = 'Go to previous symbol in Aerial', silent = true })

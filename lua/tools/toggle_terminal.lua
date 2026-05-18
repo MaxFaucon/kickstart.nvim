@@ -30,6 +30,8 @@ local setup_terminal_config = function(buf_id)
   map('t', '<C-k>', function()
     close_terminal_window(buf_id)
   end, opts)
+
+  vim.bo[buf_id].buflisted = false
 end
 
 local toggle_tab_terminal = function(buf_id)
