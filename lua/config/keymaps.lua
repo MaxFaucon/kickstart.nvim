@@ -1,6 +1,7 @@
 local session_management = require 'tools.session_management'
 local mode_management = require 'tools.mode_management'
 local toggle_terminal = require 'tools.toggle_terminal'
+local navigation = require 'tools.code_tools'
 
 -- [[ User Commands ]]
 vim.api.nvim_create_user_command('Path', function()
@@ -77,7 +78,7 @@ map('n', '<leader>bc', '<cmd>bdelete<CR>', { desc = 'Close a buffer tab', silent
 map('n', '<leader>bs', '<cmd>b#<CR>', { desc = 'Switch to previous buffer', silent = true })
 
 map('n', '<leader>tp', function()
-  toggle_terminal.toggle_terminal('float')
+  toggle_terminal.toggle_terminal 'float'
 
   vim.fn.chansend(vim.b.terminal_job_id, 'cd ' .. vim.fn.getcwd() .. '\n')
 end, { desc = 'Toggle terminal in current project' })
@@ -123,6 +124,14 @@ end, { desc = 'Open draft note' })
 
 -- Code [c]
 map('n', '<leader>ce', '<cmd>e .env<CR>', { desc = 'Open .env file' })
+map('n', '<leader>cf', navigation.pick_functions, { desc = 'Get buffer top level functions' })
+map('n', '<leader>cc', navigation.pick_classes, { desc = 'Get buffer top level classes' })
+map('n', '[f', function()
+  navigation.jump_function 'previous'
+end, { desc = 'Go to next function', silent = true })
+map('n', ']f', function()
+  navigation.jump_function 'next'
+end, { desc = 'Go to previous function', silent = true })
 
 -- Personal [p]
 -- Change case (camel to snake or the opposite)

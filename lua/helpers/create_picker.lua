@@ -3,6 +3,8 @@ local M = {}
 ---@class Element The picker elements
 ---@field value string The picker element value
 ---@field display string The picker element to display
+---@field filename string? The filename (used for preview)
+---@field lnum integer? The line number in the file (used for preview)
 
 ---@alias Position "CENTER"|"NW"|"N"|"NE"|"E"|"SE"|"S"|"SW"|"W"
 ---@class Layout The picker layout
@@ -23,6 +25,7 @@ local M = {}
 M.create_picker = function(options)
   local pickers = require 'telescope.pickers'
   local finders = require 'telescope.finders'
+  local conf = require('telescope.config').values
 
   if options.layout == nil then
     options.layout = {
@@ -36,9 +39,14 @@ M.create_picker = function(options)
     options.initial_mode = 'insert'
   end
 
+  local needs_preview = vim.iter(options.elements):all(function(e)
+    return e.filename and e.lnum
+  end)
+
   pickers
     .new({}, {
       prompt_title = options.title,
+      previewer = needs_preview and conf.grep_previewer {} or nil,
       initial_mode = options.initial_mode,
       layout_config = {
         anchor = options.layout.position,
@@ -52,6 +60,8 @@ M.create_picker = function(options)
             value = entry.value,
             display = entry.display,
             ordinal = entry.display,
+            filename = entry.filename,
+            lnum = entry.lnum,
           }
         end,
       },

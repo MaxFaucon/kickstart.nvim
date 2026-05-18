@@ -4,10 +4,6 @@
       "rev": "1900f89dc17c603eec29960f57c00bd9ae696495",
       "src": "https://github.com/antoinemadec/FixCursorHold.nvim"
     },
-    "aerial.nvim": {
-      "rev": "43dd88ad4024b1945906887521057c73d3b0d84e",
-      "src": "https://github.com/stevearc/aerial.nvim"
-    },
     "catppuccin": {
       "rev": "426dbebe06b5c69fd846ceb17b42e12f890aedf1",
       "src": "https://github.com/catppuccin/nvim"

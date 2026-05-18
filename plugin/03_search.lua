@@ -112,7 +112,7 @@ map('n', '<leader>sm', function()
 end, { desc = '[S]earch Global [M]arks' })
 
 map('n', '<leader>se', function()
-  builtin.buffers { initial_mode = 'normal', ignore_current_buffer = true, sort_mru = true }
+  builtin.buffers { initial_mode = 'normal', ignore_current_buffer = true, sort_lastused = true }
 end, { desc = 'Search existing buffers' })
 
 map('n', '<leader>sF', function()
