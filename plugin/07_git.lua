@@ -7,7 +7,14 @@ vim.pack.add {
   'https://github.com/daliusd/ghlite.nvim',
 }
 
+require('ghlite').setup {
+  diff_tool = 'codediff',
+}
+
 require('codediff').setup {
+  diff = {
+    layout = 'inline',
+  },
   keymaps = {
     conflict = {
       accept_incoming = '<leader>gct',
@@ -46,10 +53,6 @@ require('gitsigns').setup {
     end, { desc = 'Jump to previous git change' })
   end,
 }
-
-require('ghlite').setup({
-  diff_tool = 'codediff',
-})
 
 -- [[ KEYMAPS [g] ]]
 local map = vim.keymap.set

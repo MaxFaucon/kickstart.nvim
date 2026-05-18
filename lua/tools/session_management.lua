@@ -1,3 +1,4 @@
+local create_picker = require 'helpers.create_picker'
 local M = {}
 
 local last_session_path = nil
@@ -65,47 +66,19 @@ M.switch_last_project = function()
 end
 
 M.sessions_picker = function()
-  local pickers = require 'telescope.pickers'
-  local finders = require 'telescope.finders'
-
   local sessions_path = vim.fn.stdpath 'state' .. '/sessions/'
   local sessions = vim.fn.globpath(sessions_path, '*', false, true)
   local session_names = vim.tbl_map(function(session_path)
-    return { path = session_path, name = vim.fn.fnamemodify(session_path, ':t:r') }
+    return { value = session_path, display = vim.fn.fnamemodify(session_path, ':t:r') }
   end, sessions)
 
-  pickers
-    .new({}, {
-      prompt_title = 'Project sessions picker',
-      initial_mode = 'insert',
-      layout_config = {
-        anchor = 'CENTER',
-        height = 0.5,
-        width = 0.5,
-      },
-      finder = finders.new_table {
-        results = session_names,
-        entry_maker = function(entry)
-          return {
-            value = entry.path,
-            display = entry.name,
-            ordinal = entry.name,
-          }
-        end,
-      },
-      sorter = require('telescope.config').values.generic_sorter {},
-      attach_mappings = function(bufnr, map)
-        map({ 'i', 'n' }, '<CR>', function()
-          local selection = require('telescope.actions.state').get_selected_entry()
-          require('telescope.actions').close(bufnr)
-
-          M.switch_project(selection.value)
-        end)
-
-        return true -- Retain default keymaps
-      end,
-    })
-    :find()
+  create_picker.create_picker {
+    title = 'Project sessions picker',
+    elements = session_names,
+    on_select = function(value)
+      M.switch_project(value)
+    end,
+  }
 end
 
 return M
