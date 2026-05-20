@@ -2,7 +2,7 @@ local M = {}
 
 ---@class FloatingWindowOptions
 ---@field buf? integer The buffer used to open the floating window
----@field bufName string The name of the buffer in the floating window
+---@field bufName? string The name of the buffer in the floating window
 ---@field content? table<string> The content of the floating window
 ---@field callback? function Callback function called when leaving the floating window
 ---@field use_default_size? boolean When true, use the default size for the floating window (80%)
@@ -46,7 +46,9 @@ M.create_floating_window = function(opts)
     buf = opts.buf
   else
     buf = vim.api.nvim_create_buf(false, false) -- No file, not scratch buffer
-    vim.api.nvim_buf_set_name(buf, opts.bufName)
+    if opts.bufName ~= nil then
+      vim.api.nvim_buf_set_name(buf, opts.bufName)
+    end
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, opts.content or {})
   end
 

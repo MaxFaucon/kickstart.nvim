@@ -75,8 +75,8 @@ M.sessions_picker = function()
   create_picker.create_picker {
     title = 'Project sessions picker',
     elements = session_names,
-    on_select = function(value)
-      M.switch_project(value)
+    on_select = function(element)
+      M.switch_project(element.value)
     end,
   }
 end

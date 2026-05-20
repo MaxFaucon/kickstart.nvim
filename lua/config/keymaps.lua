@@ -124,7 +124,8 @@ end, { desc = 'Open draft note' })
 
 -- Code [c]
 map('n', '<leader>ce', '<cmd>e .env<CR>', { desc = 'Open .env file' })
-map('n', '<leader>cf', navigation.pick_functions, { desc = 'Get buffer top level functions' })
+map('n', '<leader>cf', navigation.pick_top_level_functions, { desc = 'Get buffer top level functions' })
+map('n', '<leader>cF', navigation.pick_all_functions, { desc = 'Get buffer functions' })
 map('n', '<leader>cc', navigation.pick_classes, { desc = 'Get buffer top level classes' })
 map('n', '[f', function()
   navigation.jump_function 'previous'

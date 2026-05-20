@@ -65,16 +65,15 @@ vim.api.nvim_create_autocmd('LspAttach', {
         end,
       })
 
-      -- Completion
-      vim.api.nvim_create_autocmd('TextChangedI', {
-        callback = function()
-          if vim.fn.pumvisible() == 0 then
-            vim.lsp.completion.get()
-          end
-        end,
-      })
-
-      vim.keymap.set('i', '<C-Space>', vim.lsp.completion.get, { desc = 'Trigger autocompletion' })
+      vim.keymap.set('i', '<C-Space>', function()
+        if vim.fn.pumvisible() == 1 then
+          -- feedkeys is async, so schedule completion
+          vim.fn.feedkeys(vim.keycode('<C-e>'), 'n')
+          vim.schedule(function() vim.lsp.completion.get() end)
+        else
+          vim.lsp.completion.get()
+        end
+      end, { desc = 'Trigger/refresh autocompletion' })
     end
   end,
 })

@@ -1,6 +1,7 @@
 -- Imports
 local sql_helpers = require 'helpers.sql_helpers'
 local window_helpers = require 'helpers.create_floating_window'
+local create_picker = require 'helpers.create_picker'
 
 local M = {}
 
@@ -99,7 +100,8 @@ local function store_output()
               vim.ui.input({ prompt = 'Enter file name: ', default = timestamp .. '_' }, function(filename)
                 if filename then
                   local complete_path = expanded_path .. filename
-                  require('dbee').api.core.call_store_result(current_result.id, format_choice, store_choice, { extra_arg = complete_path })
+                  require('dbee').api.core.call_store_result(current_result.id, format_choice, store_choice,
+                    { extra_arg = complete_path })
                   vim.notify('Output copied to ' .. complete_path, vim.log.levels.INFO)
                 end
               end)
@@ -160,10 +162,6 @@ M.format_query = function()
 end
 
 M.setup_autocmd_and_telescope = function()
-  -- Telescope entries for connections
-  local pickers = require 'telescope.pickers'
-  local finders = require 'telescope.finders'
-
   -- Pickers
   local function db_connections_picker()
     local dbee_sources = require('dbee').api.core.get_sources()
@@ -174,83 +172,44 @@ M.setup_autocmd_and_telescope = function()
       local source_connections = require('dbee').api.core.source_get_connections(dbee_source.name(dbee_source))
 
       for j = 1, #source_connections, 1 do
-        table.insert(available_connections, source_connections[j])
+        local connection = source_connections[j]
+        table.insert(available_connections, {
+          value = connection.id,
+          display = connection.name,
+          additional_data = connection.url
+        })
       end
     end
 
-    pickers
-      .new({}, {
-        prompt_title = 'Database connections picker',
-        initial_mode = 'normal',
-        layout_config = {
-          anchor = 'CENTER',
-          height = 0.5,
-          width = 0.5,
-        },
-        finder = finders.new_table {
-          results = available_connections,
-          entry_maker = function(entry)
-            return {
-              value = entry.id,
-              display = entry.name,
-              ordinal = entry.url,
-            }
-          end,
-        },
-        sorter = require('telescope.config').values.generic_sorter {},
-        attach_mappings = function(bufnr, map)
-          map({ 'i', 'n' }, '<CR>', function()
-            local selection = require('telescope.actions.state').get_selected_entry()
+    create_picker.create_picker {
+      title = 'Database connections picker',
+      elements = available_connections,
+      on_select = function(element)
+        require('dbee').api.core.set_current_connection(element.value)
 
-            require('telescope.actions').close(bufnr)
-            require('dbee').api.core.set_current_connection(selection.value)
-
-            M.dbee_connection_changed(selection.display, selection.ordinal)
-          end)
-
-          return true -- Retain default keymaps
-        end,
-      })
-      :find()
+        M.dbee_connection_changed(element.display, element.additional_data)
+      end,
+    }
   end
 
   local function db_notes_picker()
     local dbee_global_notes = require('dbee').api.ui.editor_namespace_get_notes 'global'
+    local notes_picker_elements = {}
 
-    pickers
-      .new({}, {
-        prompt_title = 'Database notes picker',
-        initial_mode = 'normal',
-        layout_config = {
-          anchor = 'CENTER',
-          height = 0.5,
-          width = 0.5,
-        },
-        finder = finders.new_table {
-          results = dbee_global_notes,
-          entry_maker = function(entry)
-            return {
-              value = entry.id,
-              display = entry.name,
-              ordinal = entry.name,
-            }
-          end,
-        },
-        sorter = require('telescope.config').values.generic_sorter {},
-        attach_mappings = function(bufnr, map)
-          map({ 'i', 'n' }, '<CR>', function()
-            local selection = require('telescope.actions.state').get_selected_entry()
-
-            require('telescope.actions').close(bufnr)
-            require('dbee').api.ui.editor_set_current_note(selection.value)
-
-            M.dbee_connection_changed(selection.display, selection.ordinal)
-          end)
-
-          return true -- Retain default keymaps
-        end,
+    for _, global_note in pairs(dbee_global_notes) do
+      table.insert(notes_picker_elements, {
+        value = global_note.id,
+        display = global_note.name
       })
-      :find()
+    end
+
+    create_picker.create_picker {
+      title = 'Database notes picker',
+      elements = notes_picker_elements,
+      on_select = function(element)
+        require('dbee').api.ui.editor_set_current_note(element.value)
+      end
+    }
   end
 
   -- Autocommands
@@ -303,15 +262,16 @@ M.setup_autocmd_and_telescope = function()
         local base_query = require('dbee').api.ui.result_get_call().query
         vim.ui.input({ prompt = 'Enter geom column name: ', default = 'geom' }, function(geom)
           if geom then
-            local feature_collection_query = "SELECT json_build_object('type', 'FeatureCollection', 'features', json_agg(json_build_object('type', 'Feature', 'geometry', extensions.ST_AsGeoJSON ("
-              .. geom
-              .. ")::json, 'properties', (to_jsonb (sub) - '"
-              .. geom
-              .. "')))) FROM ("
-              .. base_query
-              .. ') sub WHERE sub.'
-              .. geom
-              .. ' IS NOT NULL;'
+            local feature_collection_query =
+                "SELECT json_build_object('type', 'FeatureCollection', 'features', json_agg(json_build_object('type', 'Feature', 'geometry', extensions.ST_AsGeoJSON ("
+                .. geom
+                .. ")::json, 'properties', (to_jsonb (sub) - '"
+                .. geom
+                .. "')))) FROM ("
+                .. base_query
+                .. ') sub WHERE sub.'
+                .. geom
+                .. ' IS NOT NULL;'
 
             local result = sql_helpers.execute_psql_query(active_connection.url, feature_collection_query)
 
@@ -356,7 +316,6 @@ M.setup_autocmd_and_telescope = function()
 
         window_helpers.create_floating_window {
           content = result_lines,
-          bufName = 'dbee-inspect-view',
         }
       end, { desc = '[D]atabase inspect [V]iew' })
 
@@ -385,7 +344,6 @@ M.setup_autocmd_and_telescope = function()
 
         window_helpers.create_floating_window {
           content = cell_value_lines,
-          bufName = 'dbee-inspect-cell',
         }
       end, { desc = 'Inspect cell value' })
 
@@ -403,15 +361,17 @@ M.setup_autocmd_and_telescope = function()
 
       vim.keymap.set('n', '<leader>df', function()
         local column_name = get_column_name()
-        local where_condition = M.query_state.where and M.query_state.where .. ' AND ' .. column_name or 'WHERE ' .. column_name
+        local where_condition = M.query_state.where and M.query_state.where .. ' AND ' .. column_name or
+            'WHERE ' .. column_name
 
-        vim.ui.input({ prompt = 'Enter filter condition for column: ', default = where_condition }, function(filter_condition)
-          if filter_condition then
-            M.query_state.where = filter_condition
+        vim.ui.input({ prompt = 'Enter filter condition for column: ', default = where_condition },
+          function(filter_condition)
+            if filter_condition then
+              M.query_state.where = filter_condition
 
-            require('dbee').execute(get_final_query())
-          end
-        end)
+              require('dbee').execute(get_final_query())
+            end
+          end)
       end, { desc = 'Filter on column' })
 
       vim.keymap.set('n', '<leader>dr', function()
@@ -437,7 +397,7 @@ M.setup_autocmd_and_telescope = function()
           require('dbee').execute(get_final_query())
         end
 
-        window_helpers.create_floating_window { content = columns, callback = callback, bufName = 'dbee-remove-columns' }
+        window_helpers.create_floating_window { content = columns, callback = callback }
       end, { desc = 'Remove columns' })
     end,
   })

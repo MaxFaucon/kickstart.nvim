@@ -3,6 +3,7 @@ local M = {}
 ---@class Element The picker elements
 ---@field value string The picker element value
 ---@field display string The picker element to display
+---@field additional_data? string Any additional information to add on the picker element
 ---@field filename string? The filename (used for preview)
 ---@field lnum integer? The line number in the file (used for preview)
 
@@ -16,7 +17,7 @@ local M = {}
 ---@class PickerOptions
 ---@field title string The picker title
 ---@field elements Element[] The picker elements
----@field on_select fun(value: string) Callback when an element is selected
+---@field on_select fun(element: Element) Callback when an element is selected
 ---@field mappings? table<string, fun(bufnr: integer)> Extra mappings (key -> handler)
 ---@field layout? Layout The picker layout options
 ---@field initial_mode? InitialMode The picker initial mode
@@ -44,50 +45,51 @@ M.create_picker = function(options)
   end)
 
   pickers
-    .new({}, {
-      prompt_title = options.title,
-      previewer = needs_preview and conf.grep_previewer {} or nil,
-      initial_mode = options.initial_mode,
-      layout_config = {
-        anchor = options.layout.position,
-        height = options.layout.height,
-        width = options.layout.width,
-      },
-      finder = finders.new_table {
-        results = options.elements,
-        entry_maker = function(entry)
-          return {
-            value = entry.value,
-            display = entry.display,
-            ordinal = entry.display,
-            filename = entry.filename,
-            lnum = entry.lnum,
-          }
-        end,
-      },
-      sorter = require('telescope.config').values.generic_sorter {},
-      attach_mappings = function(bufnr, map)
-        map({ 'i', 'n' }, '<CR>', function()
-          local selection = require('telescope.actions.state').get_selected_entry()
-          require('telescope.actions').close(bufnr)
+      .new({}, {
+        prompt_title = options.title,
+        previewer = needs_preview and conf.grep_previewer {} or nil,
+        initial_mode = options.initial_mode,
+        layout_config = {
+          anchor = options.layout.position,
+          height = options.layout.height,
+          width = options.layout.width,
+        },
+        finder = finders.new_table {
+          results = options.elements,
+          entry_maker = function(entry)
+            return {
+              value = entry.value,
+              display = entry.display,
+              ordinal = entry.display,
+              additional_data = entry.additional_data,
+              filename = entry.filename,
+              lnum = entry.lnum,
+            }
+          end,
+        },
+        sorter = require('telescope.config').values.generic_sorter {},
+        attach_mappings = function(bufnr, map)
+          map({ 'i', 'n' }, '<CR>', function()
+            local selection = require('telescope.actions.state').get_selected_entry()
+            require('telescope.actions').close(bufnr)
 
-          options.on_select(selection.value)
-        end)
+            options.on_select(selection)
+          end)
 
-        if options.mappings then
-          for key, handler in pairs(options.mappings) do
-            map({ 'i', 'n' }, key, function()
-              local selection = require('telescope.actions.state').get_selected_entry()
-              require('telescope.actions').close(bufnr)
+          if options.mappings then
+            for key, handler in pairs(options.mappings) do
+              map({ 'i', 'n' }, key, function()
+                local selection = require('telescope.actions.state').get_selected_entry()
+                require('telescope.actions').close(bufnr)
 
-              handler(selection.value)
-            end)
+                handler(selection.value)
+              end)
+            end
           end
-        end
-        return true
-      end,
-    })
-    :find()
+          return true
+        end,
+      })
+      :find()
 end
 
 return M

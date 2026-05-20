@@ -15,22 +15,22 @@ vim.opt.shortmess:append 'c' -- completion messages
 vim.opt.encoding = 'utf-8'
 vim.opt.fileencoding = 'utf-8'
 
-vim.o.laststatus = 3 -- Always show the status line
+vim.o.laststatus = 3    -- Always show the status line
 
-vim.o.cmdheight = 0 -- Only display command line when used
+vim.o.cmdheight = 0     -- Only display command line when used
 
-vim.o.timeoutlen = 300 -- 300ms between 'j's
+vim.o.timeoutlen = 300  -- 300ms between 'j's
 -- vim.o.colorcolumn = '80' -- Code length indicator
 vim.o.ignorecase = true -- Ignore case in search patterns
-vim.o.smartcase = true -- Override ignorecase if search pattern has uppercase
+vim.o.smartcase = true  -- Override ignorecase if search pattern has uppercase
 -- Minimal number of screen lines to keep above and below the cursor.
-vim.o.scrolloff = 999 -- High number to always be centered
+vim.o.scrolloff = 999   -- High number to always be centered
 vim.o.sidescrolloff = 40
 
 vim.opt.autoindent = true
 vim.opt.smartindent = true
-vim.o.shiftwidth = 4 -- Number of spaces to use for each step of (auto)indent
-vim.o.tabstop = 4 -- Number of spaces that a <Tab> counts for
+vim.o.shiftwidth = 4     -- Number of spaces to use for each step of (auto)indent
+vim.o.tabstop = 4        -- Number of spaces that a <Tab> counts for
 vim.opt.expandtab = true -- Use spaces instead of tabs
 
 vim.opt.termguicolors = true
