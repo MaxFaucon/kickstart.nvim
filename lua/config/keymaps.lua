@@ -84,6 +84,9 @@ map('n', '<leader>tp', function()
 end, { desc = 'Toggle terminal in current project' })
 
 -- Terminal [t]
+map('n', '<leader>to', function()
+  toggle_terminal.toggle_terminal 'default'
+end, { desc = 'Open terminal', silent = true })
 map('n', '<leader>tf', function()
   toggle_terminal.toggle_terminal 'float'
 end, { desc = 'Toggle floating terminal', silent = true })
